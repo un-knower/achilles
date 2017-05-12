@@ -9,7 +9,6 @@
         <relativePath>../../pom.xml</relativePath> <!-- lookup parent from repository -->
     </parent>
     <artifactId>achilles.server</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>achilles.server</name>
 
@@ -18,11 +17,23 @@
             <groupId>com.quancheng.application</groupId>
             <artifactId>dependency</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>protobuf-java</artifactId>
+            		<groupId>com.google.protobuf</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.quancheng.application</groupId>
             <artifactId>achilles.dao</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>protobuf-java</artifactId>
+            		<groupId>com.google.protobuf</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.quancheng.shared</groupId>
@@ -35,6 +46,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
     </dependencies>
 
 </project>

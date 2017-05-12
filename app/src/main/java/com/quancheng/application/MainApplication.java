@@ -1,13 +1,10 @@
 package com.quancheng.application;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.net.InetAddress;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
-
-import java.net.InetAddress;
 
 /**
  * 主入口
@@ -20,18 +17,14 @@ import java.net.InetAddress;
 @ImportResource({"classpath*:quancheng-app-*.xml"})
 @SpringBootApplication
 public class MainApplication {
-
-    private final static Logger logger = LogManager.getLogger(MainApplication.class);
-
+    static{
+        System.setProperty("APP_NAME", "achilles-service");
+    }
     public static void main(String[] args) {
-
-
         if (System.getProperty("SALUKI_GRPC_HOST") == null) {
             System.setProperty("SALUKI_GRPC_HOST", getLocal());
         }
-
         SpringApplication.run(MainApplication.class, args);
-
     }
 
     /**
