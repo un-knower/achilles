@@ -14,11 +14,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.quancheng.application</groupId>
-            <artifactId>dependency</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-tcnative-boringssl-static</artifactId>
             <version>1.1.33.Fork23</version>
@@ -27,15 +22,8 @@
             <groupId>com.quancheng.application</groupId>
             <artifactId>achilles.server</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>

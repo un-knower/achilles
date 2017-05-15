@@ -15,25 +15,8 @@
     <dependencies>
         <dependency>
             <groupId>com.quancheng.application</groupId>
-            <artifactId>dependency</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-            	<exclusion>
-            		<artifactId>protobuf-java</artifactId>
-            		<groupId>com.google.protobuf</groupId>
-            	</exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.quancheng.application</groupId>
             <artifactId>achilles.dao</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-            	<exclusion>
-            		<artifactId>protobuf-java</artifactId>
-            		<groupId>com.google.protobuf</groupId>
-            	</exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.quancheng.shared</groupId>
@@ -44,9 +27,12 @@
                     <groupId>com.quancheng</groupId>
                     <artifactId>saluki-serializer</artifactId>
                 </exclusion>
+                <exclusion>
+                	<artifactId>guava</artifactId>
+                	<groupId>com.google.guava</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
-
     </dependencies>
 
 </project>
