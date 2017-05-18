@@ -14,8 +14,8 @@
 
     <properties>
         <starter.version>1.0.1-SNAPSHOT</starter.version>
-        <saluki.version>1.5.1</saluki.version>
-        <grpc.version>1.0.1</grpc.version>
+        <saluki.version>1.5.3-SNAPSHOT</saluki.version>
+        <grpc.version>1.1.2</grpc.version>
         <netty.version>4.1.3.Final</netty.version>
     </properties>
 
