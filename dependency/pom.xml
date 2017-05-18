@@ -17,6 +17,7 @@
         <saluki.version>1.5.3-SNAPSHOT</saluki.version>
         <grpc.version>1.1.2</grpc.version>
         <netty.version>4.1.3.Final</netty.version>
+        <saluki.monitor.version>1.5.2</saluki.monitor.version>
     </properties>
 
     <dependencies>
@@ -81,7 +82,7 @@
         <dependency>
             <groupId>com.quancheng.saluki</groupId>
             <artifactId>spring-boot-starter-saluki-monitor</artifactId>
-            <version>${saluki.version}</version>
+            <version>${saluki.monitor.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
