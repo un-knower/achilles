@@ -137,7 +137,7 @@ public class RestaurantGhController {
 //                convert.put("recommendsCompany", parseSources());
                 DownloadBuilder<RestaurantGonghai> eb = new DownloadBuilder<>(RestaurantGonghai.class, convert);
                 eb.append(page.getContent());
-                mv.getModel().remove("page");
+                mv.clear();
                 Pageable pageables = null;
                 while (page.hasNext()) {
                     pageables = page.nextPageable();
@@ -147,11 +147,12 @@ public class RestaurantGhController {
                             supportReverse, sales, mv);
                     page = (Page<RestaurantGonghai>) mv.getModel().get("page");
                     eb.append(page.getContent());
-                    mv.getModel().remove("page");
+                    mv.clear();
                 }
                 String filePath = eb.saveOnServer();
                 ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath, "公海餐厅", username);
                 eb=null;
+                
             }
         }
         EXECUTOR_SERVICE.submit(new AsyncUploadToOSS(mv, request.getRemoteUser()));
