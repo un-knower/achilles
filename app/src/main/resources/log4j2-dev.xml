@@ -13,7 +13,7 @@
     </Appenders>
     <Loggers>
         <Logger name="log4j.logger.java.sql.PreparedStatement" level="DEBUG"/>
-        <Root level="error">
+        <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>

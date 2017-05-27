@@ -339,6 +339,7 @@ public class OrderQueryController {
                             orderStatus, sales, searchKey, company, 5000, pageable.getPageNumber(), mv);
                     page = (Page<OrderRecordVo>) mv.getModel().get("page");
                     downloadBuilder.append(page.getContent());
+                    mv.getModel().remove("page");
                 }
                 String filePath = downloadBuilder.saveOnServer();
                 ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath,model, username);

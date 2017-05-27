@@ -137,6 +137,7 @@ public class RestaurantGhController {
 //                convert.put("recommendsCompany", parseSources());
                 DownloadBuilder<RestaurantGonghai> eb = new DownloadBuilder<>(RestaurantGonghai.class, convert);
                 eb.append(page.getContent());
+                mv.getModel().remove("page");
                 Pageable pageables = null;
                 while (page.hasNext()) {
                     pageables = page.nextPageable();
@@ -146,33 +147,8 @@ public class RestaurantGhController {
                             supportReverse, sales, mv);
                     page = (Page<RestaurantGonghai>) mv.getModel().get("page");
                     eb.append(page.getContent());
+                    mv.getModel().remove("page");
                 }
-                /*
-                 * mv.setViewName(null); return new
-                 * BaseResponse(eb.saveOnServer());
-                 */
-                // SynDownload.mkfile(
-                // new DownloadBuilder<>(RestaurantGonghai.class,convert),
-                // this,
-                // EnumDownLoadModel.REST_GH,
-                // new Object[]{EXPORTLIMIT,0,
-                // restName,city,ownCompany,restStatus,restResource,
-                // ghTaskName,recommendersEmail,recommendersCompany,projectName,
-                // inStoreDateStart,
-                // inStoreDateEnd,shelfTimeStart,shelfTimeEnd,supportTakeout,supportReverse,
-                // sales,
-                // mv},
-                // new Class<?>[]{int.class, int.class,
-                // String.class, String.class,String.class,String.class,
-                // String.class,
-                // String.class, String.class,String.class,String.class,
-                // String.class,
-                // String.class, String.class,String.class,String.class,
-                // String.class,
-                // String.class,
-                // ModelAndView.class },
-                // request);
-                // return new BaseResponse();
                 String filePath = eb.saveOnServer();
                 ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath, "公海餐厅", username);
             }
