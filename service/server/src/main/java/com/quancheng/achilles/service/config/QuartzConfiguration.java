@@ -102,7 +102,7 @@ public class QuartzConfiguration {
 		// fix the issue that sqlSession can't be autowired
 		scheduler.setJobFactory(autoWiringSpringBeanJobFactory());
 		
-		scheduler.setConfigLocation(new ClassPathResource("quartz.properties"));
+		scheduler.setConfigLocation(new ClassPathResource("application-quartz.properties"));
 		scheduler.setTriggers( cacheSyncJobTrigger.getObject(), ctfb.getObject());
 		scheduler.setApplicationContextSchedulerContextKey("applicationContextKey");
 		scheduler.setAutoStartup(true);
