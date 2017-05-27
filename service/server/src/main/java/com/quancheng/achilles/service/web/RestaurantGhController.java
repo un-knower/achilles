@@ -56,10 +56,10 @@ public class RestaurantGhController {
 //    @Value("${achilles.restaurant.sources}")
 //    String restaurantSources;
 
-    @Value("${achilles.restaurant.priority}")
+    @Value("${inn.restaurant.priority}")
     String restaurantPriority;
 
-    @Value("${achilles.restaurant.manage.type}")
+    @Value("${inn.restaurant.manage.type}")
     String restaurantManageType;
 
     @RequestMapping(value = "/ops/restaurant/gh_index", method = { RequestMethod.GET }, produces = {

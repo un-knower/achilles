@@ -19,7 +19,7 @@
         <Logger name="druid.sql.Connection" level="info"/>
         <Logger name="druid.sql.Statement" level="warn"/>
         <Logger name="druid.sql.ResultSet" level="warn"/>
-        <Root level="info">
+        <Root level="error">
             <AppenderRef ref="Uploadlog"/>
         </Root>
     </Loggers>
