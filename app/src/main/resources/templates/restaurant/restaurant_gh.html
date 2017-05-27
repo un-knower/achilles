@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">公海餐厅</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">公海餐厅</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-12">
+                     <div class="white-box">
+                        <h3 class="box-title">公海餐厅 
+                            <a class="pull-right" href="#">编辑报表</a>
+                            <a class="pull-right qc-download" href="#" th:attr="data-url=@{/ops/restaurant/export}">导出</a>
+                        </h3>
+                        <div class="row">
+                          <form id="query-form" th:action="@{/ops/restaurant/gh}" method="post">
+	                          <input type="hidden" name="pageNum" th:value="${page.number}" />
+	                          <input type="hidden" name="pageSize" th:value="${page.size}" />
+	                          <div class="col-md-2">
+                                    <input name="restName" class="form-control" th:value="${restName}" placeholder= "线上餐厅名"/>
+                              </div>
+                              <div class="col-md-2">
+                                  <input name="ghTaskName" class="form-control search"  th:value="${ghTaskName}" placeholder="公海任务名"/>
+                              </div>
+                              <div class="col-md-2">
+                                  <input name="recommendersEmail" class="form-control search" th:value="${recommendersEmail}"  placeholder="推荐人邮箱"/>
+                              </div>
+                              <div class="col-md-2">
+                                  <input name="projectName" class="form-control search"  th:value="${projectName}"  placeholder="项目名"/>
+                              </div>
+                              <div class="col-md-2">
+                                <select class="selectpicker" data-style="form-control" name="city" multiple="multiple" title="全部城市" data-live-search="true">
+                                  <option th:each="x : ${cityList}" th:text="${x}" th:value="${x}" th:selected="${city!=null and city.contains(x)}"></option>
+                                </select>
+                              </div>
+	                          <div class="col-md-2">
+	                            <select class="selectpicker"  data-style="form-control" name="ownCompany">
+	                              <option th:selected="${company==-1}" value="-1">所属企业</option>
+	                              <option th:each="x : ${companyList}" th:value="${x.id}" th:text="${x.title}" th:selected="${ownCompany==x.id}"></option>
+	                            </select>
+	                          </div>
+	                          <div class="col-md-2">
+	                            <select class="selectpicker"  data-style="form-control" name="restStatus">
+	                              <option th:selected="${restStatus==-1}" value="-1">餐厅状态</option>
+	                              <option th:selected="${restStatus=='0'}" value="0">正常</option>
+                                  <option th:selected="${restStatus=='1'}" value="1">禁用</option>
+	                            </select>
+	                          </div>
+<!-- 	                          <div class="col-md-2">  
+	                            <select class="selectpicker"  data-style="form-control" name="restResource">
+	                              <option th:selected="${restResource==-1}" value="-1">餐厅来源</option>
+	                              <option th:each="x : ${restResourceList}" th:text="${x.value}" th:value="${x.key}"  th:selected="${restResource==x.key}"></option>
+	                            </select>
+ 	                          </div> -->
+<!--                               <div class="col-md-2"> 
+                                <select class="selectpicker"  data-style="form-control" name="recommendersCompany">
+                                  <option th:selected="${recommendersCompany==-1}" value="-1">推荐企业</option>
+                                  <option th:each="x : ${restResourceList}" th:text="${x.value}" th:value="${x.key}"  th:selected="${recommendersCompany==x.key}"></option>
+                                </select>
+                              </div> -->
+                              
+                              <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" name="supportTakeout">
+                                  <option th:selected="${supportTakeout==-1}" value="-1">是否支持外卖</option>
+                                  <option th:selected="${supportTakeout=='1'}" value="1">否</option>
+                                  <option th:selected="${supportTakeout=='0'}" value="0">是</option>
+                                </select>
+                              </div>
+                              <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" name="supportReverse">
+                                  <option th:selected="${company==-1}" value="-1">是否支持订座</option>
+                                  <option th:selected="${supportReverse=='1'}" value="1">否</option>
+                                  <option th:selected="${supportReverse=='0'}" value="0">是</option>
+                                </select>
+                              </div>
+                              <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" name="sales" data-live-search="true">
+                                  <option th:selected="${sales==-1}" value="-1">维护销售</option>
+                                  <option th:each="x : ${salesList}" th:text="${x.salesName}" th:value="${x.salesName}" th:selected="${sales==x.salesName}"></option>
+                                </select>
+                              </div>
+                              <div class="col-md-4">
+                                 <div class="input-daterange input-group"  >
+                                    <input type="text" class="form-control data-time" name="inStoreDateStart" th:value="${inStoreDateStart}" placeholder="入库时间"/>
+                                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                                    <span class="input-group-addon bg-info b-0 text-white"> - </span>
+                                    <input type="text" class="form-control data-time" name="inStoreDateEnd" th:value="${inStoreDateEnd}" placeholder="入库时间"/>
+                                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                                  </div>
+                              </div>
+                              <div class="col-md-4">
+                                 <div class="input-daterange input-group"  >
+                                    <input type="text" class="form-control data-time" name="shelfTimeStart" th:value="${shelfTimeStart}" placeholder="下线时间"/>
+                                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                                    <span class="input-group-addon bg-info b-0 text-white"> - </span>
+                                    <input type="text" class="form-control data-time" name="shelfTimeEnd" th:value="${shelfTimeEnd}" placeholder="下线时间"/>
+                                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                                  </div>
+                              </div>
+	                          <div class="col-md-2">
+	                              <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">搜索</button>
+	                          </div>
+                          </form>
+                        </div><!-- /.row -->
+            
+                     </div>
+                  </div>
+                
+                  <div class="col-md-12">
+                    <div class="white-box">
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                              <tr>
+                                <th>餐厅名称 </th>   
+								<th>城市</th>
+								<th>行政区</th>
+								<th>餐厅地址</th>
+								<th >所属企业</th>
+								<th>所属商户</th>
+								<th>餐厅状态</th>
+								<th>公海状态</th>
+								<th>餐厅来源</th>
+								<th>餐厅ID</th>
+								<th>公海任务ID</th>
+								<th>公海任务名</th>
+								<th>推荐人邮箱</th>
+								<th>开拓优先级</th>
+								<th>项目名</th>
+								<th>入库时间</th>
+								<th>创建时间</th>
+								<th>上线时间</th>
+								<th>下线时间</th>
+								<th>下线原因</th>
+								<th>餐厅人均</th>
+								<th>餐厅实际人均</th>
+								<th>餐厅人均偏差</th>
+								<th>是否支持外卖</th>
+								<th>外卖种类</th>
+								<th>是否支持订座</th>
+								<th>餐厅菜系</th>
+								<th>结算类型</th>
+								<th>累计培训次数</th>
+								<th>累计拜访次数</th>
+								<th>餐厅返点</th>
+								<th>订单总数</th>
+								<th>订单总额</th>
+								<th>飞检异常次数</th>
+								<th>用户集中度</th>
+								<th>维护销售</th>
+								<th>返点</th>
+                                <th class="text-nowrap" style="display: none">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr th:each="item : ${page.content}">
+								<td th:text="${item.storeName}"></td> 
+								<td th:text="${item.cityDisplay}"></td>  
+								<td th:text="${item.areaDisplay}"></td>  
+								<td th:text="${item.address}"></td>  
+								<td ><div style="width: 150px;" th:text="${item.ownCompanys}"></div></td>  
+								<td th:text="${item.ownMerchants}"></td>  
+								<td th:text="${item.restaurantState=='0'?'正常':'禁用'}"></td>  
+								<td th:text="${gonghaiStatusList[item.gonghaiStatus] ==null ? item.gonghaiStatus:gonghaiStatusList[item.gonghaiStatus]}"></td> 
+								<td th:text="${item.restaurantSources}"></td>
+                                <td th:text="${item.olRestaurantId}"></td> 
+                                <td th:text="${item.ghRestaurantId}"></td>    
+								<td th:text="${item.ghTaskName}"></td>  
+								<td ><div style="width: 200px;word-break:break-all" th:text="${item.recommendsEmails}"></div></td>  
+								<td th:text="${restPriorityList[item.priority]}"></td>  
+								<td th:text="${item.projectNames}"></td> 
+								<td th:text="${item.inStoreAt}"></td>  
+								<td th:text="${item.createdAt}"></td>  
+								<td th:text="${item.olTime}"></td> 
+								<td th:text="${item.shelfTime}"></td> 
+								<td th:text="${item.reason}"></td> 
+								<td th:text="${item.consume}"></td>  
+								<td th:text="${item.consumeActual}"></td> 
+								<td th:text="${item.consumeDeviation}"></td> 
+								<td th:text="${item.supportTakeoutOfFood=='0' ?'是':'否'}"></td>
+								<td th:text="${item.categorys}"></td>
+								<td th:text="${item.supportReserve=='0' ?'是':'否'}"></td>  
+								<td th:text="${item.cookStyle}"></td>  
+								<td th:text="${restManageTypeList[item.manageType]}"></td>  
+<!-- <td th:text="${item.manageType}"></td>  -->
+								<td th:text="${item.countTrain}"></td> 
+								<td th:text="${item.countVisit}"></td> 
+								<td ></td> 
+								<td th:text="${item.countOrder}"></td> 
+								<td th:text="${item.countMoney}"></td> 
+								<td th:text="${item.errTimes}"></td>  
+								<td th:text="${item.userConcentration}"></td>  
+								<td th:text="${item.salesName}"></td>
+								<td th:text="${item.rebate}"></td>
+                                <td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
+                              </tr>
+                            </tbody>
+                            <tfoot>
+                              <tr>
+                                <td colspan="37" style="text-align: center;">
+	                                    <div th:replace="fragments/pageinfo :: pageinfo(${page})"></div>
+	                              </td>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      </div><!-- /.white-box -->
+                  </div><!-- /.col-md-12 -->
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+      <script type="text/javascript">
+      $(document).ready(function(){
+    	  $('.data-time').datepicker({
+              autoclose: true,
+              todayHighlight: true,
+              format: "yyyy-mm-dd"
+          });
+      });
+      </script>
+   </body>
+</html>

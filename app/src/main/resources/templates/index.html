@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">首页</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">仪表盘</a></li>
+                        <li class="active">首页</li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-12">
+                     <div class="white-box">
+                        <h3 class="box-title">更多功能，尽请期待</h3>
+                     </div>
+                  </div>
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+      
+   </body>
+</html>

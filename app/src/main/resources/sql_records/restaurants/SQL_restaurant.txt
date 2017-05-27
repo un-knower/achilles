@@ -1,0 +1,191 @@
+SELECT
+  ol.id as olid,
+  gh.id as ghid,
+    gh.store_name,
+  gh.city,
+  gh.area,
+    ali.address,
+    res_com.own_companys,
+    amc.`name` as rest_merchant,
+  CASE when ol.`status`='0' then '正常' else '禁用' END AS rest_status,
+  arms.rest_resources,
+  gh.`name`,
+  armti.recommends_email,
+  gh.priority,
+  rest_proj.prj_names,
+  gh.created_at as in_store_at,
+  ol.created_at as created_at,
+  gh.online_time,
+  arr.reason,
+  arr.shelf_time,
+  ol.consume,
+  ROUND(order_info.count_money/order_info.count_peops,2) AS  avg_actual,
+  ol.consume-ROUND(order_info.count_money/order_info.count_peops,2),
+  awrd.categorys,
+  ol.cook_style,
+  aa.manage_type,
+  train_times.count_train,
+  visit_log.count_visit,
+  order_info.count_money,
+  order_info.count_order,
+  qua_ck_err_times.err_times,
+  ROUND(rest_user_max.rest_user_max_cost/order_info.count_money,2) AS user_concentration,
+  restaurant_sales.sales_name
+FROM api_restaurants_master gh
+LEFT JOIN api_restaurants ol ON gh.id = ol.gonghai_id
+LEFT JOIN api_lbs_infos ali ON ol.lbs_id=ali.id /*地址*/
+LEFT JOIN (
+  /*餐厅所属企业*/
+    SELECT rc.restaurant_id,GROUP_CONCAT(c.title) AS own_companys FROM 16860_restaurant_client rc 
+    LEFT JOIN 16860_client c on rc.client_id=c.id
+    GROUP BY rc.restaurant_id 
+  ) res_com on ol.id=res_com.restaurant_id
+LEFT JOIN api_merchants amc on ol.merchant_id=amc.id /* 商户*/
+LEFT JOIN (
+    SELECT
+        restaurant_id, GROUP_CONCAT(DISTINCT type) as rest_resources
+    FROM api_restaurant_master_sources 
+    GROUP BY restaurant_id
+    ) arms on ol.id=arms.restaurant_id  /*餐厅来源*/
+LEFT JOIN (
+select restaurant_id,GROUP_CONCAT(DISTINCT user_email) as recommends_email from api_restaurant_master_tuijian_info  
+GROUP BY restaurant_id
+) armti on ol.id=armti.restaurant_id /*推荐人邮箱*/
+LEFT JOIN (
+select armp.restaurant_master_id,GROUP_CONCAT(ap.`name`) as prj_names from api_restaurant_master_project armp LEFT JOIN
+api_project ap on armp.project_id=ap.id
+GROUP BY armp.restaurant_master_id
+) rest_proj on gh.id=rest_proj.restaurant_master_id /*项目名 */
+LEFT JOIN (
+select pid, updated_at as shelf_time,reason from api_apply_recodes 
+    where 
+    id in (select  max(aars.id)  from api_apply_recodes aars where aars.`status`=1 
+   and aars.table_name='restaurant' 
+   and aars.type=2 
+   and aars.pid is not null GROUP BY pid )
+) arr on arr.pid=ol.id /* 下线原因和下线时间*/
+LEFT JOIN (select restaurant_id,SUM(count_money) as count_money,SUM(count_peops) AS count_peops ,SUM(count_order) as count_order from v_inn_restaurant_avg_cost
+GROUP BY restaurant_id
+) order_info on ol.id=order_info.restaurant_id /*实际人均*/
+LEFT JOIN (SELECT  restaurant_id, GROUP_CONCAT(DISTINCT  category_id) as categorys 
+    FROM api_waimai_restaurant_detail   GROUP BY  restaurant_id
+) awrd on awrd.restaurant_id=ol.id
+LEFT JOIN api_assets aa on ol.asset_id=aa.id
+LEFT JOIN ( select restaurant_id,COUNT(1) as count_train from api_train_tasks GROUP BY restaurant_id ) train_times on train_times.restaurant_id=ol.id
+LEFT JOIN ( SELECT restaurant_id,COUNT(1) as count_visit from api_sales_visit_logs  GROUP BY restaurant_id ) visit_log on visit_log.restaurant_id=gh.id
+LEFT JOIN ( SELECT restaurant_id,SUM(err_times) AS err_times FROM v_inn_quanlity_error_times  GROUP BY restaurant_id) qua_ck_err_times ON qua_ck_err_times.restaurant_id=ol.id
+LEFT JOIN ( SELECT rest_user_cost_max.restaurant_id, MAX( rest_user_cost_max.count_money ) AS rest_user_max_cost
+                                        FROM ( SELECT user_cost_count.restaurant_id, user_cost_count.user_id, SUM(count_money) AS count_money
+                                                        FROM qc_restaurants_user_cost user_cost_count GROUP BY user_cost_count.restaurant_id, user_cost_count.user_id ) rest_user_cost_max 
+                                        GROUP BY rest_user_cost_max.restaurant_id) rest_user_max ON rest_user_max.restaurant_id=ol.id
+LEFT JOIN ( SELECT asr.restaurant_id, GROUP_CONCAT( sales.`name`) AS sales_name
+                        FROM api_sales_rest asr LEFT JOIN api_sales sales on asr.sales_id=sales.id
+                        WHERE asr.deleted_at IS NULL
+                    GROUP BY
+        asr.restaurant_id
+) restaurant_sales ON restaurant_sales.restaurant_id=ol.id
+;
+
+#select * from api_restaurants_master t where t.store_name is null
+/*
+
+select rc.restaurant_id,GROUP_CONCAT(c.title) FROM 16860_restaurant_client rc 
+LEFT JOIN 16860_client c on rc.client_id=c.id
+GROUP BY rc.restaurant_id
+*/
+#
+/*
+'类型 1000 => ''历史数据'',\n
+1005 => ''自行拓展'',\n
+1030 => ''云纵拓展'',\n
+9 => ''强生官方推荐'',\n
+4 => ''阿斯利康官方推荐'',\n
+1 => ''辉瑞官方推荐'',\n
+5 => ''惠氏官方推荐'',\n
+24 => ''罗氏官方推荐'',\n
+42 => ''优时比官方推荐'',\n
+43 => ''艾尔建官方推荐'',\n
+2009 => ''强生APP推荐'',\n
+2004 => ''阿斯利康APP推荐'',\n
+2001 => ''辉瑞APP推荐'',\n
+2005 => ''惠氏APP推荐'',\n
+2024 => ''罗氏APP推荐'',\n
+2042 => ''优时比APP推荐'',\n
+2043 => ''艾尔建APP推荐',
+#
+*/
+/*
+
+SELECT
+    arms.restaurant_id,
+    GROUP_CONCAT(DISTINCT arms.type) as rest_resources
+FROM
+    api_restaurant_master_sources arms
+GROUP BY
+    arms.restaurant_id;
+SELECT * FROM
+    api_restaurants_master
+select restaurant_id,GROUP_CONCAT(DISTINCT user_email) from api_restaurant_master_tuijian_info armti 
+GROUP BY restaurant_id;
+select * from api_restaurant_master_tuijian_info armti ;
+select armp.restaurant_master_id,GROUP_CONCAT(ap.`name`) as prj_name from api_restaurant_master_project armp LEFT JOIN
+api_project ap on armp.project_id=ap.id
+GROUP BY armp.restaurant_master_id;
+
+select pid,  updated_at  as shelf_time,reason from api_apply_recodes aar where aar.`status`=1 and aar.table_name='restaurant' and type=2 and pid is not null GROUP BY pid HAVING count(1)>1;
+select * from api_apply_recodes aar where aar.`status`=1 and pid=70;
+select pid,  updated_at  as shelf_time,reason from api_apply_recodes aar 
+    where 
+    id in (select  max(aars.id)  from api_apply_recodes aars where aars.`status`=1 
+   and aars.table_name='restaurant' 
+   and aars.type=2 
+   and aars.pid is not null GROUP BY pid );
+SELECT * FROM
+    api_restaurants_master where id=70;
+SELECT * FROM
+    api_restaurants where id=70
+*/
+
+
+################人均消费#########################
+
+/*
+SELECT
+     awod.actual_cost ,
+     awod.actual_people ,
+    ao.restaurant_id,
+  ao.`status`
+FROM
+    api_orders ao,
+    api_waimai_order_detail awod
+WHERE
+    ao.id = awod.order_id
+ and    `status`='2002';
+*/
+/*
+CREATE VIEW qc_restaurant_avg_cost as 
+
+SELECT
+    sum(16or.predict_cost) AS cost_money,
+    sum(16or.actual_people) AS cost_peops,
+    16or.restaurant_id
+FROM
+    16860_order 16or
+WHERE
+    actual_people IS NOT NULL
+and actual_people <> 0
+GROUP BY
+    restaurant_id
+UNION ALL
+SELECT
+    SUM(awod.actual_cost) AS cost_money,
+    SUM(awod.actual_people) AS cost_peops,
+    ao.restaurant_id
+FROM
+    api_orders ao,
+    api_waimai_order_detail awod
+WHERE
+    ao.id = awod.order_id and `status`='2002'
+GROUP BY
+    ao.restaurant_id
+;*/

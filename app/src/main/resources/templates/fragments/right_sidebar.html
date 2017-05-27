@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <body class="no-skin">
+    
+        <div class="right-sidebar" th:fragment="rightsidebar">
+          <div class="slimscrollright">
+             <div class="rpanel-title"> 申请导出历史记录 <span><i class="ti-close right-side-toggle"></i></span> </div>
+             <div class="r-panel-body">
+                <ul class="m-t-20 chatonline" id="download_records">
+                   <li><b>最新导出</b></li>
+                   <li style="display: none;">
+	                   <a href='javascript:void(0)' target="_blank">
+	                       <img src='/elite/plugins/images/users/varun.jpg' alt='user-img' class='img-circle'/> 
+	                       <span>
+	                           <label style="cursor: auto;">订单</label>
+	                           <small class='text-success'> 2016-09-22 18:58</small>
+	                       </span>
+                        </a>
+                    </li>
+                    <li th:each="ossFileInfo : ${session.ossFileInfoList}">
+                        <a th:href='${ossFileInfo.ossUrl}' target="_blank">
+                            <img src='/elite/plugins/images/users/varun.jpg' alt='user-img' class='img-circle'/>
+                            <span th:if="${#strings.equals(ossFileInfo.ossStatus,'2')}">
+	                           <label style="cursor: auto;" th:text="${ossFileInfo.downModel+'(已过期)'}"></label>
+	                           <small class='' th:text="${ossFileInfo.createdAt}"> 2016-09-22 18:58</small>
+	                       </span>
+                            <span th:if="${!#strings.equals(ossFileInfo.ossStatus,'2')}">
+	                           <label style="cursor: auto;" th:text="${ossFileInfo.downModel}"></label>
+	                           <small class='text-success' th:text="${ossFileInfo.createdAt}"> 2016-09-22 18:58</small>
+	                       </span>
+                        </a>
+                    </li>
+                </ul>
+                <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px;margin-top: 10px;display: none" id="allDownLoadBtn">所有历史记录</button>
+             </div>
+          </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="userCostMap" >
+	<resultMap id="sjFlyCheckMonthStasticMap" type="com.quancheng.achilles.dao.model.SJFlyCheckMonthStastic" >
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+	    <result column="client_id" property="clientId" jdbcType="INTEGER" />
+	    <result column="happen_date" property="happenDate" jdbcType="VARCHAR" />
+	    	<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="order_count" property="orderCount" jdbcType="INTEGER" />
+		<result column="check_count" property="checkCount" jdbcType="INTEGER" />
+		<result column="ing_count_correct" property="ingCountCorrect" jdbcType="INTEGER" />
+		<result column="ing_count_incorrect" property="ingCountIncorrect" jdbcType="INTEGER" />
+		<result column="ing_check_rate" property="ingCheckRate" jdbcType="DECIMAL" />
+		<result column="ing_count_reason" property="ingCountReason" jdbcType="INTEGER" />
+		<result column="after_count_correct" property="afterCountCorrect" jdbcType="INTEGER" />
+		<result column="after_count_incorrect" property="afterCountIncorrect" jdbcType="INTEGER" />
+		<result column="after_check_rate" property="afterCheckRate" jdbcType="DECIMAL" />
+		<result column="after_count_reason" property="afterCountReason" jdbcType="VARCHAR" />
+	  </resultMap>
+	  <resultMap id="sjOrderScoreMonthStasticMap" type="com.quancheng.achilles.dao.model.SJOrderScoreMonth" >
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+	    <result column="client_id" property="clientId" jdbcType="INTEGER" />
+	    <result column="happen_date" property="happenDate" jdbcType="VARCHAR" />
+		<result column="score" property="score" jdbcType="VARCHAR" />
+		<result column="order_count" property="orderCount" jdbcType="INTEGER" />
+	  </resultMap>
+  <sql id="sjFlyCheckMonthStasticQuerySql">
+  			SELECT 
+			uuid() as id,
+		    o.client_id,
+		    #{data_current_date}  as happen_date,
+		    reg.`name` AS city,
+		    COUNT(o.order_num) AS order_count,
+		    COUNT(`168check`.order_num) AS check_count,
+		    COUNT(case when `168check`.`status` = 5 and `168check`.check_mode='事中' then 1 else null end) as ing_count_correct,
+		    COUNT(case when `168check`.`status`in (25,10) and `168check`.check_mode='事中' then 1 else null end) as ing_count_incorrect,
+		    ROUND(COUNT(case when `168check`.check_mode='事中' then 1 else null end)*100/COUNT(o.order_num),2) as ing_check_rate,
+		     GROUP_CONCAT(case when `168check`.`status` in (25,10)  and `168check`.check_mode='事中' then 
+				concat(`168check`.order_num,':',
+                case when fn_parseJson(r.check_item,'illegal_entertain')='1' then "有进行娱乐活动;" else '' end,
+                case when fn_parseJson(r.check_item,'illegal_falseConsumption')='1' then "虚假消费;" else '' end,
+                case when fn_parseJson(r.check_item,'illegal_overBudget')='1' then "超过人均餐标300;" else '' end,
+                case when fn_parseJson(r.check_item,'illegal_tokenCard')='1' then "购买储值卡;" else '' end,
+                case when fn_parseJson(r.check_item,'illegal_split')='1' then "拆分消费开发票;" else '' end,
+                case when fn_parseJson(r.check_item,'illegal_purchaseGift')='1' then "购买烟酒及带走礼品;" else '' end,
+                case when fn_parseJson(r.check_item,'other_risks')='1' then "" else '' end,
+                case when fn_parseJson(r.check_item,'is_same_money')='1' then "发票金额与订单金额不一致;" else '' end,
+                case when fn_parseJson(r.check_item,'money_diff_reason')='1' then "" else '' end,
+                case when fn_parseJson(r.check_item,'is_same_peopleNum')='1' then "用户消费人数与观察到的人数不统一;" else '' end,
+                case when fn_parseJson(r.check_item,'peopleNum_diff_reason')='1' then "有进行娱乐活动;" else '' end,
+                case when fn_parseJson(r.check_item,'is_in_oneHour')='1' then "用户未在预约用餐时间前后1h内用餐;" else '' end,
+                case when fn_parseJson(r.check_item,'oneHour_reason')='1' then "有进行娱乐活动;" else '' end
+                ) else null end) 
+                as ing_count_reason,
+		    COUNT(case when `168check`.`status`=5 and `168check`.check_mode='事后' then 1 else null end) as after_count_correct,
+		    COUNT(case when `168check`.`status`in (25,10) and `168check`.check_mode='事后' then 1 else null end) as after_count_incorrect,
+		    ROUND(COUNT(case when `168check`.check_mode='事后' then 1 else null end)*100/COUNT(o.order_num),2) as after_check_rate,
+			GROUP_CONCAT(case when `168check`.`status` in (25,10)  and `168check`.check_mode='事后' then  
+            concat(`168check`.order_num,':',
+                case when fn_parseJson(r.check_item,'illegal_entertain')='1' then "有进行娱乐活动;" else '' end,
+                case when fn_parseJson(r.check_item,'illegal_falseConsumption')='1' then "虚假消费;" else '' end,
+                case when fn_parseJson(r.check_item,'illegal_overBudget')='1' then "超过人均餐标300;" else '' end,
+                case when fn_parseJson(r.check_item,'illegal_tokenCard')='1' then "购买储值卡;" else '' end,
+                case when fn_parseJson(r.check_item,'illegal_split')='1' then "拆分消费开发票;" else '' end,
+                case when fn_parseJson(r.check_item,'illegal_purchaseGift')='1' then "购买烟酒及带走礼品;" else '' end,
+                case when fn_parseJson(r.check_item,'other_risks')='1' then "" else '' end,
+                case when fn_parseJson(r.check_item,'is_same_money')='1' then "发票金额与订单金额不一致;" else '' end,
+                case when fn_parseJson(r.check_item,'money_diff_reason')='1' then "" else '' end,
+                case when fn_parseJson(r.check_item,'is_same_peopleNum')='1' then "用户消费人数与观察到的人数不统一;" else '' end,
+                case when fn_parseJson(r.check_item,'peopleNum_diff_reason')='1' then "有进行娱乐活动;" else '' end,
+                case when fn_parseJson(r.check_item,'is_in_oneHour')='1' then "用户未在预约用餐时间前后1h内用餐;" else '' end,
+                case when fn_parseJson(r.check_item,'oneHour_reason')='1' then "有进行娱乐活动;" else '' end
+                ) else null end) 
+            as after_count_reason 
+		    FROM
+		    `v_inn_sj_order_had_payment` `o`
+		        LEFT JOIN
+		    16860_region reg ON o.city_id = reg.id
+		        LEFT JOIN
+		    16860_quality_check `168check` ON o.order_num = `168check`.order_num
+		    left join 16860_quality_check_result r on `168check`.id=r.quality_check_id
+		WHERE
+		    `o`.`pay_at` BETWEEN STR_TO_DATE(#{date_begin}, '%Y-%m-%d') AND STR_TO_DATE(#{date_end}, '%Y-%m-%d')
+		      <if test="clientId !=null and clientId !=''">
+                and o.client_id = #{clientId}
+            </if>
+		GROUP BY o.client_id , reg.`name` 
+  </sql>
+  <select id="sjFlyCheckMonthStasticQuery" parameterType="map" resultMap="sjFlyCheckMonthStasticMap">
+  		select * from sj_fly_check_month_stastic o where  1=1 
+	   	  <if test="clientId !=null and clientId !=''">
+	            and  o.client_id = #{clientId}
+		</if>
+		<if test="happenDate !=null and happenDate !=''">
+	            and  o.happen_date = #{happenDate}
+		</if>	
+  </select>
+  <update id="sjFlyCheckMonthStastic" parameterType="map">
+      INSERT into sj_fly_check_month_stastic( 
+      	  id , client_id , happen_date, city, order_count, check_count,        
+		  ing_count_correct, ing_count_incorrect, ing_check_rate, ing_count_reason,
+		  after_count_correct, after_count_incorrect, after_check_rate, after_count_reason)
+	   <include refid="sjFlyCheckMonthStasticQuerySql"/>	
+  </update>
+  
+  <sql id="sjOrderScoreMonthStasticQuerySql">
+  	SELECT 
+			UUID() as id,
+			score_info.client_id,
+			#{data_current_date} as happen_date,
+			concat(score_info.score,'星') as score,
+			count(1) as order_count
+		FROM (
+			SELECT
+				order_rate.client_id,
+				ROUND((dish_score + restaurant_score + syt_service_score )/ 3) as score
+			FROM v_inn_sj_order_had_payment payment_order
+			LEFT JOIN 16860_order_rating order_rate ON payment_order.order_num = order_rate.order_num
+			WHERE payment_order.pay_at  BETWEEN STR_TO_DATE(#{date_begin}, '%Y-%m-%d') AND STR_TO_DATE(#{date_end}, '%Y-%m-%d')
+				AND order_rate.id is not null) score_info
+		WHERE score_info.score &lt;&gt; 0
+		GROUP BY score_info.client_id,score_info.score
+  </sql>
+  <select id="sjOrderScoreMonthStasticQuery" parameterType="map" resultMap="sjOrderScoreMonthStasticMap">
+   			select * from sj_order_score_month o  where  1=1 
+	   	  <if test="clientId !=null and clientId !=''">
+	            and  o.client_id = #{clientId}
+		</if>
+		<if test="happenDate !=null and happenDate !=''">
+	            and  o.happen_date = #{happenDate}
+		</if>	
+  </select>
+  <update id="sjOrderScoreMonthStastic" parameterType="map">
+  		INSERT INTO sj_order_score_month(id,client_id,happen_date,score,order_count)  
+		 <include refid="sjOrderScoreMonthStasticQuerySql"/>	
+  </update>
+</mapper>

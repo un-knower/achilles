@@ -27,4 +27,6 @@ public class ODPSQueryService extends AbstractOdpsQuery{
         paramaters.put("happen_date", happenDate);
         return query(paramaters,InnConstantODPSTables.outSjFlyCheckMonth );
     }
+    
+    
 }
