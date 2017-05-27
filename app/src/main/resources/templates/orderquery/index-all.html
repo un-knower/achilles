@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">订单记录</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">订单记录</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-12">
+                     <div class="white-box">
+                        <h3 class="box-title">订单记录 <a class="pull-right" href="#">编辑报表</a><a class="pull-right qc-download" href="#" th:attr="data-url=@{/ops/orderquery/download/all}">导出</a></h3>
+                        
+                        <div class="row">
+                          <form id="query-form" th:action="@{/ops/orderquery/all}" method="get">
+                          <input type="hidden" name="pageNum" th:value="${page.number}" />
+                          <input type="hidden" name="pageSize" th:value="${page.size}" />
+                          <div class="col-md-4">
+                            <select class="selectpicker"  data-style="form-control" name="company" data-live-search="true">
+                              <option th:selected="${company==-1}" value="-1">所属企业</option>
+                              <option th:each="x : ${companyList}" th:text="${x.title}" th:selected="${company==x.id}" th:value="${x.id}"></option>
+                            </select>
+                          </div>
+                          
+                          <div class="col-md-2">
+                            <select class="selectpicker"  data-style="form-control" name="sales" data-live-search="true">
+                              <option th:selected="${sales==-1}" value="-1">维护销售</option>
+                               <option th:each="x : ${salesList}" th:text="${x.salesName}" th:selected="${sales==x.id}" th:value="${x.id}"></option>
+                            </select>
+                          </div>
+                          <div class="col-md-2">
+                                <select class="selectpicker" multiple="multiple"  data-style="form-control" name="city" title="全部城市"  data-live-search="true">
+                                  <option th:each="x : ${cityList}" th:text="${x}" th:value="${x}" th:selected="${#arrays.contains(city, x)}"></option>
+                                </select>
+                              </div>
+                           <div class="col-md-2">
+                            <select class="selectpicker"  data-style="form-control" name="serviceType">
+                              <option th:selected="${serviceType=='-1'}" value="-1">业务类型</option>
+                              <option  th:text="订座" th:selected="${serviceType=='1'}" value="1"></option>
+                              <option  th:text="外卖" th:selected="${serviceType=='2'}" value="2" ></option>
+                            </select>
+                          </div>
+                           <div class="col-md-2">
+                            <select class="selectpicker"  data-style="form-control" name="orderType">
+                              <option th:selected="${orderType==-1}" value="-1">订单类型</option>
+                              <option  th:text="编内" th:selected="${orderType=='编内'}" value="编内" ></option>
+                              <option  th:text="编外" th:selected="${orderType=='编外'}" value="编外"></option>
+                            </select>
+                          </div>
+                          <div class="col-md-2">
+                            <select class="selectpicker"  data-style="form-control" title="全部状态"  name="orderStatus" multiple="multiple"  data-live-search="true">
+                                <option  th:each="x : ${orderStatusMap}" th:text="${x.value}" th:selected="${#arrays.contains(orderStatus,x.key)}" th:value="${x.key}" ></option>
+<!--                                 <option  th:text="预订成功" th:selected="${#arrays.contains(orderStatus,'5')}" value="5"></option> -->
+<!--                                 <option  th:text="商户拒绝" th:selected="${#arrays.contains(orderStatus,'6')}" value="6"></option> -->
+<!--                                 <option  th:text="客服拒绝" th:selected="${#arrays.contains(orderStatus,'7')}" value="7"></option> -->
+<!--                                 <option  th:text="商户取消" th:selected="${#arrays.contains(orderStatus,'10')}" value="10"></option> -->
+<!--                                 <option  th:text="客服取消" th:selected="${#arrays.contains(orderStatus,'11')}" value="11"></option> -->
+<!--                                 <option  th:text="用户取消" th:selected="${#arrays.contains(orderStatus,'15')}" value="15"></option> -->
+<!--                                 <option  th:text="待支付" th:selected="${#arrays.contains(orderStatus,'30')}" value="30"></option> -->
+<!--                                 <option  th:text="已支付（线上）"   th:selected="${#arrays.contains(orderStatus,'35')}" value="35"></option> -->
+<!--                                 <option  th:text="已支付（线下）"  th:selected="${#arrays.contains(orderStatus,'36')}" value="36"></option> -->
+<!--                                 <option  th:text="已送达" th:selected="${#arrays.contains(orderStatus,'2002')}" value="2002"></option> -->
+<!--                                 <option  th:text="待报销" th:selected="${#arrays.contains(orderStatus,'40')}" value="40"></option> -->
+<!--                                 <option  th:text="已报销" th:selected="${#arrays.contains(orderStatus,'45')}" value="45"></option> -->
+                            </select>
+                            <!-- 1：待确认，5：预订成功（接受订单），6：商户拒绝，7：客服拒绝，10：商户取消（订单超时），11：客服取消(代替商户取消），15：用户取消（付款前），30：待支付，35：已支付，40：待报销，45：已报销） -->
+                          </div>
+                           <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" name="timeType">
+                                  <option th:selected="${timeType=='-1'}" value="-1">时间筛选类型</option>
+                                  <option th:selected="${timeType=='create'}" value="create">下单时间</option>
+                                  <option th:selected="${timeType=='yuyue'}" value="yuyue">预约时间</option>
+                                  <option th:selected="${timeType=='payTimes'}" value="payTimes">支付时间</option>
+                                </select>
+                              </div>
+                          <div class="col-md-4">
+                             <div class="input-daterange input-group" id="date-range">
+                                <input type="text" class="form-control" name="startTime" th:value="${startTime}" placeholder="起始时间"/>
+                                <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                                <span class="input-group-addon bg-info b-0 text-white"> - </span>
+                                <input type="text" class="form-control" name="endTime" th:value="${endTime}" placeholder="结束时间"/>
+                                <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                              </div>
+                          </div>
+                          <div class="col-md-11">
+                          <input name="searchKey" class="form-control" th:value="${searchKey}" placeholder= "订单号、下单人手机、餐厅名"/>
+                          </div>
+                          <div class="col-md-1">
+                              <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">搜索</button>
+                          </div>
+                          </form>
+                        </div><!-- /.row -->
+            
+                     </div>
+                  </div>
+                
+                  <div class="col-md-12">
+                    <div class="white-box">
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover">
+                            <thead>
+
+                              <tr>
+                              	<th width="8%">餐厅id</th>
+                                <th width="8%">订单号</th>
+                                <th width="8%">所属企业</th>
+								<th width="8%">下单人姓名</th>
+								<th width="8%">下单人工号</th>
+								<th width="8%">下单人邮箱</th>
+								<th width="8%">下单人手机</th>
+								<th width="5%">子公司</th>
+                                <th width="8%">事业部</th>
+                                <th width="8%">部门</th>
+                                <th width="5%">产品组</th>
+                                <th width="5%">大区</th>
+                                <th width="5%">成本中心</th>
+								<th width="8%">餐厅名</th>
+								<th width="8%">所属商户</th>
+								<th width="8%">维护销售</th>
+								<th width="8%">城市</th>
+								<th width="8%">业务类型</th>
+								<th width="8%">订单类型</th>
+								<th width="8%">支付类型</th>
+								<th width="8%">报备原因</th>
+								<th width="8%">是否需要包厢 </th>
+								<th width="8%">下单时间</th>
+								<th width="8%">接单时间</th>
+								<th width="8%">预约时间</th>
+								<th width="8%">是否立即配送 </th>
+								<th width="8%">消费确认时间 </th>
+								<th width="8%">支付时间</th>
+								<th width="8%">报备时间</th>
+								<th width="8%">订单状态</th>
+								<th width="8%">预计消费人数</th>
+								<th width="8%">预计消费金额</th>
+								<th width="8%">实际用餐人数</th>
+								<th width="8%">实际消费金额</th>
+								<th width="8%">人均消费</th>
+								<th width="8%">收货地址</th>
+								<th width="8%">是否餐厅首单</th>
+								<th width="8%">结算类型</th>
+								<th width="8%">是否有评价</th>
+								<th width="8%">评价日期</th>
+								<th width="8%">菜品口味评分</th>
+								<th width="8%">送达时间评分</th>
+								<th width="8%">餐厅环境评分</th>
+								<th width="8%">商品包装评分</th>
+								<th width="8%">商宴通服务评分</th>
+								<th width="8%">评论</th>
+								<th width="8%">回访日期</th>
+								<th width="8%">回访结果</th>
+								<th width="8%">返点</th>
+								<th width="8%">返点金额</th>
+								<th width="8%">提前预订时间</th>
+								<th width="8%">订单响应时间</th>
+								<th width="8%">code</th>
+								<th width="8%">刷卡卡号</th>
+								<th width="8%">餐厅地址</th>
+								<th width="8%">无包间是否接受大厅</th>
+								<th width="8%">用餐人备注</th>
+                                <th class="text-nowrap" style="display: none">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr th:each="item : ${page.content}">
+                              	<td th:text="${item.restaurantId}"></td>
+                                <td th:text="${item.orderNum}"></td>
+								<td th:text="${item.company}"></td>    
+								<td th:text="${item.realname}"></td>    
+								<td th:text="${item.jobNum}"></td>  
+								<td th:text="${item.email}"></td>
+								<td th:text="${item.mobile}"></td>        
+								     
+								<td th:text="${item.branch}"></td>
+                                <td th:text="${item.businessunit}"></td>
+                                <td th:text="${item.sector}"></td>
+                                <td th:text="${item.productgroup}"></td>
+                                <td th:text="${item.region}"></td>
+                                <td th:text="${item.costcenter}"></td>
+								
+								<td th:text="${item.restaurantName}"></td>       
+								<td th:text="${item.merchantName}"></td>         
+								<td th:text="${item.salesName}"></td>         
+								<td th:text="${item.cityName}"></td>               
+								<td th:text="${item.serviceType}"></td>          
+								<td th:text="${item.orderType}"></td>            
+								<td th:text="${item.payType}"></td>              
+								<td th:text="${item.reportReason}"></td>         
+								<td th:text="${item.isRoom}"></td>               
+								<td th:text="${item.createTime}"></td>           
+								<td th:text="${item.receiveTime}"></td>          
+								<td th:text="${item.yuyueTime}"></td>            
+								<td th:text="${item.isDelivery}"></td>           
+								<td th:text="${item.confirmTime}"></td>          
+								<td th:text="${item.payTime}"></td>              
+								<td th:text="${item.reportTime}"></td>           
+								<td th:text="${item.orderSatus}"></td>               
+								<td th:text="${item.peopleNum}"></td>            
+								<td th:text="${item.predictCost}"></td>          
+								<td th:text="${item.actualPeople}"></td>         
+								<td th:text="${item.money}"></td>
+								<td th:text="${item.averageMoney}"></td>         
+								<td th:text="${item.address}"></td>              
+								<td th:text="${item.isRestaurantFirst}"></td>    
+								<td th:text="${item.manageType}"></td>           
+								<td th:text="${item.isScore}"></td>              
+								<td th:text="${item.orderRateCreateTime}"></td>  
+								<td th:text="${item.dishScore}"></td>            
+								<td th:text="${item.deliveryTimeScore}"></td>    
+								<td th:text="${item.restaurantScore}"></td>      
+								<td th:text="${item.packagingScore}"></td>       
+								<td th:text="${item.sytServiceScore}"></td>      
+								<td th:text="${item.reason}"></td>               
+								<td th:text="${item.replyTime}"></td>            
+								<td th:text="${item.replyContent}"></td>         
+								<td th:text="${item.rates}"></td>
+								<td th:text="${item.rateMoney}"></td>            
+								<td th:text="${item.preOrderTime}"></td>         
+								<td th:text="${item.responseOrderTime}"></td>  
+								<td th:text="${item.approvalCode}"></td>         
+								<td th:text="${item.cardNumber}"></td>   
+								<td th:text="${item.restaurantAddress}"></td>   
+								<td th:text="${item.isHall}"></td>   
+								<td th:text="${item.userComment}"></td>   
+                                <td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
+                              </tr>
+                            </tbody>
+                            <tfoot>
+                              <tr><td colspan="54" style="text-align: center;">
+                                <div th:replace="fragments/pageinfo :: pageinfo(${page})"></div>
+                              </td></tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      </div><!-- /.white-box -->
+                  </div><!-- /.col-md-12 -->
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+      <script type="text/javascript">
+      $(document).ready(function(){
+    	  $('#date-range').datepicker({
+              autoclose: true,
+              todayHighlight: true,
+              format: "yyyy-mm-dd"
+          });
+      });
+      
+      </script>
+   </body>
+</html>

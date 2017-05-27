@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CompanyRestaurantsStatisticsMapper" >
+  <resultMap id="BaseResultMap" type="com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="region_id" property="regionId" jdbcType="INTEGER" />
+    <result column="region_name" property="regionName" jdbcType="VARCHAR" />
+    <result column="restaurants_num" property="restaurantsNum" jdbcType="INTEGER" />
+    <result column="all_restaurants_num" property="allRestaurantsNum" jdbcType="INTEGER" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="deleted_at" property="deletedAt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, time, company_id, company_name, region_id, region_name, restaurants_num, created_at, 
+    updated_at, deleted_at
+  </sql>
+  <select id="queryCompanyStatisticsBy" resultMap="BaseResultMap" parameterType="com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics" >
+    select  id, time, company_id, company_name, region_id, region_name, restaurants_num, created_at, updated_at, deleted_at
+    from sj_company_restaurants_statistics
+    <where>
+      <if test="id != null" >
+       id= #{id,jdbcType=INTEGER}  
+      </if>
+      <if test="time != null" >
+      and  time = #{time,jdbcType=VARCHAR}  
+      </if>
+      <if test="companyId != null" >
+       and company_id = #{companyId,jdbcType=INTEGER}  
+      </if>
+      <if test="companyName != null" >
+       and company_name = #{companyName,jdbcType=VARCHAR}  
+      </if>
+      <if test="regionId != null" >
+       and region_id = #{regionId,jdbcType=INTEGER}  
+      </if>
+      <if test="regionName != null" >
+       and region_name = #{regionName,jdbcType=VARCHAR}  
+      </if>
+      <if test="restaurantsNum != null" >
+       and restaurants_num = #{restaurantsNum,jdbcType=INTEGER}  
+      </if>
+       <if test="updatedAt != null" >
+       and updated_at = #{updatedAt,jdbcType=TIMESTAMP}   
+       </if>
+      <if test="deletedAt != null" >
+       and deleted_at = #{deletedAt,jdbcType=TIMESTAMP} 
+      </if>
+    </where>
+  </select>
+    <select id="queryCompanyStatisticsByTime" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select  time, company_id, company_name, sum(restaurants_num)  all_restaurants_num
+    from sj_company_restaurants_statistics
+    where time = #{time,jdbcType=VARCHAR} and company_id=#{companyId,jdbcType=INTEGER} 
+    group by company_id
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sj_company_restaurants_statistics
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+ <insert id="batchInsert" parameterType="java.util.List" >
+    insert into sj_company_restaurants_statistics (id, time, company_id,company_name, region_id, region_name,restaurants_num, created_at, updated_at)
+    values 
+      <foreach collection="list" item="item"  separator="," >
+        (#{item.id,jdbcType=INTEGER}, #{item.time,jdbcType=VARCHAR}, #{item.companyId,jdbcType=INTEGER}, #{item.companyName,jdbcType=VARCHAR}, #{item.regionId,jdbcType=INTEGER}, #{item.regionName,jdbcType=VARCHAR}, 
+      #{item.restaurantsNum,jdbcType=INTEGER}, now(), now())
+    </foreach>
+  </insert>
+       
+  <insert id="insertSelective" parameterType="com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics" >
+    insert into sj_company_restaurants_statistics
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="regionId != null" >
+        region_id,
+      </if>
+      <if test="regionName != null" >
+        region_name,
+      </if>
+      <if test="restaurantsNum != null" >
+        restaurants_num,
+      </if>
+        created_at,
+        updated_at,
+      <if test="deletedAt != null" >
+        deleted_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="regionId != null" >
+        #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="regionName != null" >
+        #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="restaurantsNum != null" >
+        #{restaurantsNum,jdbcType=INTEGER},
+      </if>
+      now(),
+      now(),
+      <if test="deletedAt != null" >
+        #{deletedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics" >
+    update sj_company_restaurants_statistics
+    <set >
+      <if test="time != null" >
+        time = #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="regionId != null" >
+        region_id = #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="regionName != null" >
+        region_name = #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="restaurantsNum != null" >
+        restaurants_num = #{restaurantsNum,jdbcType=INTEGER},
+      </if>
+        updated_at = now(),
+      <if test="deletedAt != null" >
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+ 
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrderMapper">
+    <select id="queryPageOrders" parameterType="map"
+        resultType="com.quancheng.achilles.dao.model.OrderRecordVo">
+        SELECT  
+        		o.* , 
+        		sa.`name` salesName,
+        		op.bank_card AS cardNumber
+        FROM `tmp_order_query` o
+        		LEFT JOIN api_sales sa ON sa.id=o.salesId
+        		LEFT JOIN 16860_order_payment op ON  op.order_num=o.orderNum
+        where 1=1
+            <if test="serviceType !=null and serviceType !=''">
+               AND o.serviceType in 
+                <foreach item="item" collection="serviceType"  separator="," open="(" close=")" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="orderType !=null and orderType !=''">
+                and o.orderType = #{orderType}
+            </if>
+            <if test="payTypes !=null">
+                and o.payType in 
+                <foreach item="item" collection="payTypes"  separator="," open="(" close=")" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="sales !=null ">
+                and o.salesId = #{sales}
+            </if>
+            <if test="startCreateTime !=null">
+                AND o.createTime BETWEEN #{startCreateTime} AND #{endCreateTime}
+            </if>
+            <if test="startYuyueTime !=null">
+                AND o.yuyueTime BETWEEN #{startYuyueTime} and #{endYuyueTime}
+            </if>
+             <if test="payTimesCreateTime !=null">
+                AND o.payTime BETWEEN #{payTimesCreateTime} and #{payTimesEndTime}
+            </if>
+            <if test="startReportTime !=null">
+                AND o.reportTime BETWEEN #{startReportTime} and #{endReportTime}
+            </if>
+            <if test="company !=null and company !=''">
+                AND o.company = #{company}
+            </if>
+            <if test="cityNames !=null">
+                AND o.cityName in
+                <foreach item="item" collection="cityNames"
+                    separator="," open="(" close=")" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="status !=null and status !='' ">
+                AND o.status in  
+                 <foreach item="item" collection="status"  separator="," open="(" close=")" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="searchKey!=null and searchKey !=''">
+                AND o.orderNum LIKE '%${searchKey}%' or o.restaurantName LIKE
+                '%${searchKey}%' OR o.realname like '%${searchKey}%' OR
+                o.mobile LIKE '%${searchKey}%'
+            </if>
+        order by o.yuyueTime desc
+        <if test="startNum != null"> limit #{startNum},#{pageSize} </if>
+    </select>
+     <select id="queryPageOrdersCounts" parameterType="map"
+        resultType="long">
+        SELECT count(o.orderNum)
+        FROM `tmp_order_query` o
+        where 1=1 
+            <if test="serviceType !=null and serviceType !=''">
+               AND o.serviceType in    
+               <foreach item="item" collection="serviceType"  separator="," open="(" close=")" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="orderType !=null and orderType !=''">
+               AND o.orderType = #{orderType}
+            </if>
+            <if test="payTypes !=null">
+               AND o.payType in 
+               <foreach item="item" collection="payTypes" separator="," open="(" close=")" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="sales !=null ">
+                AND o.salesId = #{sales}
+            </if>
+            <if test="startCreateTime !=null">
+                AND o.createTime BETWEEN #{startCreateTime} AND #{endCreateTime}
+            </if>
+            <if test="startYuyueTime !=null">
+                AND o.yuyueTime BETWEEN #{startYuyueTime} and #{endYuyueTime}
+            </if>
+             <if test="payTimesCreateTime !=null">
+                AND o.payTime BETWEEN #{payTimesCreateTime} and #{payTimesEndTime}
+            </if>
+            <if test="startReportTime !=null">
+                AND o.reportTime BETWEEN #{startReportTime} and #{endReportTime}
+            </if>
+            <if test="company !=null and company !=''">
+                AND o.company = #{company}
+            </if>
+            <if test="cityNames !=null">
+                AND o.cityName in
+                <foreach item="item" collection="cityNames"
+                    separator="," open="(" close=")" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="status !=null and status !='' ">
+                 AND o.status in  
+                 <foreach item="item" collection="status"  separator="," open="(" close=")" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="searchKey!=null and searchKey !=''">
+                AND o.orderNum LIKE concat('%',#{searchKey},'%') or o.restaurantName LIKE
+                concat('%',#{searchKey},'%') OR o.realname like concat('%',#{searchKey},'%') OR
+                o.mobile LIKE concat('%',#{searchKey},'%')
+            </if>
+    </select>
+</mapper>

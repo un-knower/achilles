@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+      <meta charset="utf-8"></meta>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>
+      <!-- Tell the browser to be responsive to screen width -->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"></meta>
+      <meta name="description" content="全程客栈"></meta>
+      <meta name="author" content=""></meta>
+      <!-- Favicon icon -->
+      <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+      <title>全程客栈</title>
+      <!-- Bootstrap Core CSS -->
+      <link href="/elite/eliteadmin/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+      <!-- This is Sidebar menu CSS -->
+      <link href="/elite/plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.css" rel="stylesheet" />
+      
+      <link href="/elite/plugins/bower_components/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" />
+      <!-- Date picker plugins css -->
+      <link href="/elite/plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
+      <!-- Daterange picker plugins css -->
+      <link href="/elite/plugins/bower_components/timepicker/bootstrap-timepicker.min.css" rel="stylesheet" />
+      <link href="/elite/plugins/bower_components/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
+      
+      <!-- This is a Animation CSS -->
+      <link href="/elite/eliteadmin/css/animate.css" rel="stylesheet" />
+      <!-- This is a Custom CSS -->
+      <link href="/elite/eliteadmin/css/style.css" rel="stylesheet" />
+
+      <link href="/elite/eliteadmin/css/colors/blue.css" id="theme"  rel="stylesheet" />
+      
+      <link href="/elite/eliteadmin/css/fonts.css"  rel="stylesheet" />
+      <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+      <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+      <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <![endif]-->
+      
+      <!-- page specific css -->
+      <th:block th:if="${#strings.contains(#httpServletRequest.requestURI,'/ops')}">
+      <link href="/css/ops.css" rel="stylesheet" />
+      </th:block>
+</head>
+</html>

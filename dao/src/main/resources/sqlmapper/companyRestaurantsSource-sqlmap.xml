@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CompanyRestaurantsSourceMapper" >
+  <sql id="Base_Column_List" >
+    id, time, company_id, company_name, source_type, source_num, created_at, updated_at, 
+    deleted_at
+  </sql>
+  <select id="queryBy" resultType="java.util.Map" parameterType="java.util.Map" >
+    select  <include refid="Base_Column_List" /> from sj_company_restaurant_source
+    <where>
+     <if test="id != null" >
+       id= #{id,jdbcType=INTEGER}  
+      </if>
+      <if test="time != null" >
+      and  time = #{time,jdbcType=VARCHAR}  
+      </if>
+      <if test="companyId != null" >
+       and company_id = #{companyId,jdbcType=INTEGER}  
+      </if>
+      <if test="companyName != null" >
+       and company_name = #{companyName,jdbcType=VARCHAR}  
+      </if>
+   </where>
+  </select>
+  <select id="queryAllSourceNumByTime" resultType="java.lang.Integer" parameterType="java.util.Map" >
+    select sum(source_num) all_source_num from sj_company_restaurant_source
+    <where>
+     <if test="id != null" >
+       id= #{id,jdbcType=INTEGER}  
+      </if>
+      <if test="time != null" >
+      and  time = #{time,jdbcType=VARCHAR}  
+      </if>
+      <if test="companyId != null" >
+       and company_id = #{companyId,jdbcType=INTEGER}  
+      </if>
+      <if test="companyName != null" >
+       and company_name = #{companyName,jdbcType=VARCHAR}  
+      </if>
+   </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sj_company_restaurant_source
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="batchInsert" parameterType="java.util.List" >
+    insert into sj_company_restaurant_source (id, time, company_id,company_name, source_type, source_num,created_at, updated_at)
+    values 
+     <foreach collection="list" item="item"  separator="," >
+     (#{item.id,jdbcType=INTEGER}, #{item.time,jdbcType=VARCHAR}, #{item.companyId,jdbcType=INTEGER}, 
+      #{item.companyName,jdbcType=VARCHAR}, #{item.sourceType,jdbcType=VARCHAR}, #{item.sourceNum,jdbcType=INTEGER}, now(), now())
+    </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="java.util.Map" >
+    insert into sj_company_restaurant_source
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="sourceType != null" >
+        source_type,
+      </if>
+      <if test="sourceNum != null" >
+        source_num,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="updatedAt != null" >
+        updated_at,
+      </if>
+      <if test="deletedAt != null" >
+        deleted_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceNum != null" >
+        #{sourceNum,jdbcType=INTEGER},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null" >
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedAt != null" >
+        #{deletedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="java.util.Map" >
+    update sj_company_restaurant_source
+    <set >
+      <if test="time != null" >
+        time = #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        source_type = #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceNum != null" >
+        source_num = #{sourceNum,jdbcType=INTEGER},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null" >
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedAt != null" >
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

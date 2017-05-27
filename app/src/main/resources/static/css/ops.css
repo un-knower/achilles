@@ -1,0 +1,9 @@
+#ops-page .table>thead>tr>td, #ops-page .table>thead>tr>th {
+    padding: 0 0;
+}
+.table>thead>tr>th {
+    white-space:nowrap;
+}
+.qc-download {
+    margin-right: 20px;
+}

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CompanyReportMapper">
+<resultMap id="CompanyRestaurantsStatisticsResultMap" type="com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="region_id" property="regionId" jdbcType="INTEGER" />
+    <result column="region_name" property="regionName" jdbcType="VARCHAR" />
+    <result column="restaurants_num" property="restaurantsNum" jdbcType="INTEGER" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="deleted_at" property="deletedAt" jdbcType="TIMESTAMP" />
+  </resultMap>
+    <!--查询公司城市餐厅统计信息  -->
+    <select id="queryCompanyCityRestaurantByTime" resultMap="CompanyRestaurantsStatisticsResultMap" parameterType="java.util.Map">
+        select distinct c.id company_id,c.title company_name,
+        <if test="time != null">
+         date_format(#{time,jdbcType=VARCHAR},'%Y-%m') time,
+        </if>
+        arm.city region_id,r.name region_name,count(*) restaurants_num 
+		from 16860_client c
+		left join 16860_restaurant_client rc on c.id=rc.client_id 
+		left join api_restaurants ar on ar.id=rc.restaurant_id 
+		inner join api_restaurants_master arm on arm.id=ar.gonghai_id
+		inner join 16860_region r on r.id=arm.city and r.id in (select city_id from 16860_client_region cr where cr.client_id=c.id and cr.status=1 and cr.business="syt")
+		where  rc.deleted_at is null and ar.status=0 
+		<if test="time != null"> <![CDATA[ and ar.created_at <= #{time,jdbcType=VARCHAR} ]]></if>
+		group by c.id,r.name
+    </select>
+    <!-- 查询公司餐厅下架原因统计信息 -->
+      <select id="queryCompanyShelfRestaurantByTime" resultType="java.util.Map" parameterType="java.util.Map">
+      select b.companyId,b.companyName, 
+       <if test="time != null">
+         #{time,jdbcType=VARCHAR} time,
+        </if>
+        b.reason,sum(b.shelfNum) shelfNum from (
+		select a.companyId,a.companyName,
+		case when a.reason in ("人均超出300元餐标","外送菜单不符合要求","提供娱乐设施","证件不齐","发票不规范","有过违规记录") then "合规风险" 
+		when a.reason in ("合同到期不再续约","合同期内无订单或订单量较少")  then "合同到期/订单少" 
+		when a.reason in ("内部系统或财务调整")  then "内部系统或财务调整" 
+		when a.reason in ("服务质量问题")  then "服务质量问题" 
+       -- when a.reason in ("歇业倒闭","门店装修","暂时无法开具发票","暂时无法提供机打小票")  then '餐厅其他原因' 
+		else "餐厅其他原因" end reason,
+		a.shelfNum  from (
+      
+			select distinct c.id companyId,c.title companyName,
+			aar.text reason,count(*) shelfNum 
+			from 16860_client c
+			left join 16860_restaurant_client rc on c.id=rc.client_id
+			left join api_restaurants ar on ar.id=rc.restaurant_id
+			left join api_apply_recodes aar on aar.pid=ar.id
+			where aar.id in ( 
+			select max(aars.id) from api_apply_recodes aars where aars.status = 1 and aars.table_name = 'restaurant' and aars.type = 2 and aars.pid is not null  group by  aars.pid
+			)  and rc.deleted_at is null and ar.status=0 
+			<if test="time != null">
+			and date_format(aar.updated_at,'%Y-%m')=#{time,jdbcType=VARCHAR} 
+			</if>
+			group by c.id,c.title,aar.text
+		
+		) a 
+	union  
+	( 
+		select f.companyId,f.companyName,f.reason,f.shelfNum from (
+			select distinct c.id companyId,c.title companyName,"合规风险" reason ,0 shelfNum from 16860_client c
+			left join 16860_restaurant_client rc on c.id=rc.client_id
+			left join api_restaurants ar on ar.id=rc.restaurant_id
+			where rc.deleted_at is null and ar.status=0 
+		union 
+			select distinct c.id companyId,c.title companyName,"合同到期/订单少" reason ,0 shelfNum from 16860_client c
+			left join 16860_restaurant_client rc on c.id=rc.client_id
+			left join api_restaurants ar on ar.id=rc.restaurant_id
+			where rc.deleted_at is null and ar.status=0 
+		union 
+			select distinct c.id companyId,c.title companyName,"内部系统或财务调整" reason ,0 shelfNum from 16860_client c
+			left join 16860_restaurant_client rc on c.id=rc.client_id
+			left join api_restaurants ar on ar.id=rc.restaurant_id
+			where rc.deleted_at is null and ar.status=0 
+		union 
+			select distinct c.id companyId,c.title companyName,"服务质量问题" reason ,0 shelfNum from 16860_client c
+			left join 16860_restaurant_client rc on c.id=rc.client_id
+			left join api_restaurants ar on ar.id=rc.restaurant_id
+			where rc.deleted_at is null and ar.status=0 
+		union 
+			select distinct c.id companyId,c.title companyName,"餐厅其他原因" reason ,0 shelfNum from 16860_client c
+			left join 16860_restaurant_client rc on c.id=rc.client_id
+			left join api_restaurants ar on ar.id=rc.restaurant_id
+			where rc.deleted_at is null and ar.status=0 
+		) f 
+	)
+) b group by b.companyId,b.companyName,b.reason
+     </select>
+    <!-- 查询公司餐厅推荐信息 -->
+      <select id="queryCompanyRestaurantSourceByTime" resultType="java.util.Map" parameterType="java.util.Map">
+       select b.companyId,b.companyName,b.time,b.sourceType,sum(sourceNum) sourceNum  from (
+      
+        select distinct b.company_id companyId,b.company_name companyName,b.time,b.source_type sourceType,count(*) sourceNum from (
+		select a.company_id,a.company_name,a.time,a.code,a.source,a.id,a.name,scrp.company_id cid, 
+		case when a.company_id=scrp.company_id then a.source 
+		when a.company_id!=scrp.company_id and a.company_id!=2 then '其他公司推荐' 
+		else '商宴通自行拓展' end source_type 
+		from (
+		select c.id company_id,c.title company_name,
+		<if test="endTime != null">
+         date_format(#{endTime,jdbcType=VARCHAR},'%Y-%m') time,
+        </if>
+        <if test="time != null">
+         #{time,jdbcType=VARCHAR} time,
+        </if>
+		trs.code,trs.code_view source,ar.id,ar.name 
+		from 16860_client c
+		left join 16860_restaurant_client rc on c.id=rc.client_id
+		left join api_restaurants ar on ar.id=rc.restaurant_id
+		left join api_restaurant_master_sources arms on ar.id=arms.restaurant_id 
+		and arms.id in(
+		select min(id) from api_restaurant_master_sources group by restaurant_id
+		)
+		inner join tmp_restaurant_sources trs on trs.code=arms.type
+		where rc.deleted_at is null and ar.status=0
+		<if test="time != null">
+		and date_format(ar.created_at,'%Y-%m')=#{time,jdbcType=VARCHAR} 
+		</if>
+		<if test="endTime != null"> <![CDATA[ and ar.created_at <= #{endTime,jdbcType=VARCHAR} ]]></if>
+		<if test="startTime != null"> <![CDATA[ and ar.created_at >= #{startTime,jdbcType=VARCHAR} ]]></if>
+		) a
+		left join sj_company_restaurant_sources_map scrp on scrp.sources_code=a.code
+		 order by a.company_id
+		 ) b group by b.company_id,b.time,b.source_type
+		 
+    union  (
+	   select b.company_id,b.company_name,
+       <if test="endTime != null">
+         date_format(#{endTime,jdbcType=VARCHAR},'%Y-%m') time,
+        </if>
+        <if test="time != null">
+         #{time,jdbcType=VARCHAR} time,
+        </if>
+         b.sourceType,b.sourceNum  from 
+		(select distinct a.company_id,a.company_name,
+		case when a.company_id=scrp.company_id then concat(scrp.company_name,"推荐")  
+		else '' end sourceType ,0 sourceNum
+		from (
+		        select c.id company_id,c.title company_name,
+		        trs.code,trs.code_view  source 
+		        from 16860_client c
+				left join 16860_restaurant_client rc on c.id=rc.client_id
+				left join api_restaurants ar on ar.id=rc.restaurant_id
+				left join api_restaurant_master_sources arms on ar.id=arms.restaurant_id 
+				inner join tmp_restaurant_sources trs on trs.code=arms.type
+				) a
+				left join sj_company_restaurant_sources_map scrp on scrp.sources_code=a.code
+			union
+				select distinct c.id company_id,c.title company_name,
+		        trs.code_view sourceType,trs.num sourceNum from 16860_client c
+				left join 16860_restaurant_client rc on c.id=rc.client_id
+				left join api_restaurants ar on ar.id=rc.restaurant_id
+				left join api_restaurant_master_sources arms on ar.id=arms.restaurant_id 
+				inner join ( 
+				select  code,'其他公司推荐' as code_view,0 as num from tmp_restaurant_sources
+				union 
+				select  code,'商宴通自行拓展' as code_view,0 as num from tmp_restaurant_sources
+				) trs on trs.code=arms.type
+		) b where b.sourceType !='' )
+	 ) b group by b.companyId ,b.companyName,b.time,b.sourceType
+    </select>
+    <!--查询公司订餐和外卖餐厅信息  -->
+    <select id="queryCompanyRestaurantInfoByCompanyIdAndTime" resultType="java.util.Map" parameterType="java.util.Map">
+		select distinct c.id company_id,c.title company_name,
+		<if test="time != null">
+         date_format(#{time,jdbcType=VARCHAR},'%Y-%m') time,
+        </if>
+		ar.id restaurant_id,ar.name restaurant_name,ali.lng,ali.lat,ali.city_id,r.name city_name,ali.address
+		,case when awrd.restaurant_id is null then '0' else '1' end as support_takeout_of_food,
+		 case when sup_reserve.restaurant_id is null then '0' else '1' end support_reserve
+		 ,ar.cook_style,ar.consume,awrd.shipping_fee_min,awrd.polygon,awrd.shipping_dis
+		from 16860_client c
+		left join 16860_restaurant_client rc on c.id=rc.client_id
+		left join api_restaurants ar on ar.id=rc.restaurant_id
+		left join (select restaurant_id from api_yuding group by restaurant_id) sup_reserve on sup_reserve.restaurant_id=ar.id
+		left join (select awrd.restaurant_id,group_concat(awrc.name) as category_name
+		,awrd.shipping_fee_min,awrd.polygon,awrd.shipping_dis
+		from api_waimai_restaurant_detail awrd
+		left join api_waimai_restaurant_category awrc on awrd.category_id = awrc.id
+		group by awrd.restaurant_id) awrd on awrd.restaurant_id=ar.id
+		left join api_lbs_infos ali on ar.lbs_id=ali.id
+		inner join 16860_region r on r.id=ali.city_id
+		where rc.deleted_at is null and ar.status=0 
+		<if test="time != null"> <![CDATA[ and ar.created_at <= #{time,jdbcType=VARCHAR} ]]></if>
+		<if test="endTime != null"> <![CDATA[ and ar.created_at <= #{endTime,jdbcType=VARCHAR} ]]></if>
+		<if test="startTime != null"> <![CDATA[ and ar.created_at >= #{startTime,jdbcType=VARCHAR} ]]></if>
+		<if test="companyId != null"> 
+		and c.id= #{companyId,jdbcType=VARCHAR} 
+		</if>
+		<if test="companyIds != null"> 
+		and c.id in ( ${companyIds,jdbcType=VARCHAR} ) 
+		</if>
+		<if test="cityId != null"> 
+		and ali.city_id= #{cityId,jdbcType=INTEGER} 
+		</if>
+		<if test="cityName != null"> 
+		and r.name= #{cityName,jdbcType=VARCHAR} 
+		</if>
+    </select>
+   <sql id="queryCompanyHospitalInfoByCompanyIdAndTime_sql" >
+    	select distinct c.id company_id,c.title company_name,
+		<if test="time != null">
+         date_format(#{time,jdbcType=VARCHAR},'%Y-%m') time,
+        </if>
+		h.id hospital_id, h.name hospital_name,h.address,h.city city_id,r.name city_name,h.lng,h.lat
+		from 16860_client c
+		left join 16860_hospital_clients hc on c.id=hc.client_id
+		left join  16860_hospitals h on h.id=hc.hospital_id
+		inner join 16860_region r on r.id=h.city
+		where h.status='1'  
+		<if test="time != null"> <![CDATA[ and hc.created_at <= #{time,jdbcType=VARCHAR} ]]></if>
+		<if test="endTime != null"> <![CDATA[ and hc.created_at <= #{endTime,jdbcType=VARCHAR} ]]></if>
+		<if test="startTime != null"> <![CDATA[ and hc.created_at >= #{startTime,jdbcType=VARCHAR} ]]></if>
+		<if test="companyId != null"> 
+		and c.id= #{companyId,jdbcType=VARCHAR} 
+		</if>
+		<if test="companyIds != null"> 
+		and c.id in ( ${companyIds,jdbcType=VARCHAR} ) 
+		</if>
+		<if test="cityId != null"> 
+		and h.city = #{cityId,jdbcType=INTEGER} 
+		</if>
+		<if test="cityName != null"> 
+		and r.name= #{cityName,jdbcType=VARCHAR} 
+		</if>
+  </sql>
+    <!--查询公司医院信息  -->
+    <select id="queryCompanyHospitalInfoByCompanyIdAndTime" resultType="java.util.Map" parameterType="java.util.Map">
+    <include refid="queryCompanyHospitalInfoByCompanyIdAndTime_sql" />
+    </select>
+    <!--选择查询公司医院信息  -->
+    <select id="queryHospitalContentBy" resultType="java.util.Map" parameterType="java.util.Map">
+		select  ${selectContent} 
+		from (
+		<include refid="queryCompanyHospitalInfoByCompanyIdAndTime_sql" />
+		) c
+    </select>
+</mapper>

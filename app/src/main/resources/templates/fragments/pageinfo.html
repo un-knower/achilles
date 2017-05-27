@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<body class="no-skin" th:fragment="pageinfo(page)"  >
+        <ul class="pagination m-b-0 pull-left" >
+            <li><a href="#" th:text="${'总计:'+page.getTotalElements()}"><i class="fa fa-angle-double-left"></i></a> </li>
+	        <li><a href="#" th:attr="data-page=0"><i class="fa fa-angle-double-left"></i> 首页</a> </li>
+			<li th:if="${!page.hasPrevious()}" class="disabled"> <a href="#"><i class="fa fa-angle-left"></i> 上一页</a> </li>
+			<li th:if="${page.hasPrevious()}"> <a href="#"  th:attr="data-page=${page.number-1}"><i class="fa fa-angle-left"></i> 上一页</a> </li>
+			<li class="active"> <a href="#" th:attr="data-page=${page.number}" th:text="${page.number+1} + ' / ' + ${page.totalPages}">2</a> </li>
+			<li th:if="${page.hasNext()}"> <a href="#"  th:attr="data-page=${page.number+1}">下一页 <i class="fa fa-angle-right"></i> </a> </li>
+			<li th:if="${!page.hasNext()}" class="disabled"> <a href="#">下一页 <i class="fa fa-angle-right"></i> </a> </li>
+			<li> <a href="#" th:attr="data-page=${page.totalPages-1}">尾页 <i class="fa fa-angle-double-right"></i></a> </li>
+        </ul>
+	</body>
+</html>

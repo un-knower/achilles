@@ -94,4 +94,6 @@ class TempIntegerObject {
     public void setAllNum(int allNum) {
         this.allNum = allNum;
     }
+    
+    
 }

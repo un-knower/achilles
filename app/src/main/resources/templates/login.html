@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head th:replace="fragments/head :: head"></head>
+<body>
+
+<section id="wrapper" class="login-register" style="background: url(/elite/plugins/images/login-register.png) no-repeat center center / cover !important;">
+  <div class="login-box">
+    <div class="white-box">
+      <form class="form-horizontal form-material" id="loginform" th:action="@{/login}" method="post">
+        <div th:if="${param.error}" class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            Invalid username and password.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-info" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            You have been logged out.
+        </div>
+        <h3 class="box-title m-b-20">登录</h3>
+        <div class="form-group ">
+          <div class="col-xs-12">
+            <input class="form-control" type="text" required="required" name="username" placeholder="Username"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-12">
+            <input class="form-control" type="password" required="required" name="password" placeholder="Password"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-12">
+            <div class="checkbox checkbox-primary pull-left p-t-0">
+              <input id="checkbox-signup" type="checkbox"/>
+              <label for="checkbox-signup"> 记住我 </label>
+            </div>
+            <a href="javascript:void(0)" id="to-recover" class="text-dark pull-right"><i class="fa fa-lock m-r-5"></i> 忘记密码?</a> </div>
+        </div>
+        <div class="form-group text-center m-t-20">
+          <div class="col-xs-12">
+            <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">登录</button>
+          </div>
+        </div>
+        <div class="form-group m-b-0" style="display: none;">
+          <div class="col-sm-12 text-center">
+            <p>Don't have an account? <a href="register.html" class="text-primary m-l-5"><b>注册</b></a></p>
+          </div>
+        </div>
+      </form>
+      <form class="form-horizontal" id="recoverform" action="#">
+        <div class="form-group ">
+          <div class="col-xs-12">
+            <h3>恢复密码</h3>
+            <p class="text-muted">请输入您的邮箱，我们会发送密码恢复链接! </p>
+          </div>
+        </div>
+        <div class="form-group ">
+          <div class="col-xs-12">
+            <input class="form-control" type="text" required="required" placeholder="Email"/>
+          </div>
+        </div>
+        <div class="form-group text-center m-t-20">
+          <div class="col-xs-12">
+            <button class="btn btn-primary btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">重置密码</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+  <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+     
+
+</body>
+</html>
+

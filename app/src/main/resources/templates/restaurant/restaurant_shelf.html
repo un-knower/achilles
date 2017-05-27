@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">餐厅下架</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">餐厅下架</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-12">
+                     <div class="white-box">
+                        <h3 class="box-title">餐厅下架<a class="pull-right" href="#">编辑报表</a><a class="pull-right qc-download" href="#" th:attr="data-url=@{/ops/restaurant/shelf/export}">导出</a></h3>
+                        <div class="row">
+                          <form id="query-form" th:action="@{/ops/restaurant/shelf}" method="get">
+                              <input type="hidden" name="pageNum" th:value="${page.number}" />
+                              <input type="hidden" name="pageSize" th:value="${page.size}" />
+                              <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" name="ownCompany">
+                                  <option th:selected="${company==-1}" value="-1">所属企业</option>
+                                  <option th:each="x : ${companyList}" th:text="${x.title}" th:value="${x.id}" th:selected="${ownCompany==x.id}"></option>
+                                </select>
+                              </div>
+                              <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" name="columnTime">
+                                  <option value="olTime" th:selected="${columnTime=='olTime'}">上线时间</option>
+                                  <option value="shelfTime" th:selected="${columnTime=='shelfTime'}">下线时间</option>
+                                  <option value="createdAt" th:selected="${columnTime=='createdAt'}">录入时间</option>
+                                </select>
+                              </div>
+                              <div class="col-md-4">
+                                 <div class="input-daterange input-group"  >
+                                    <input type="text" class="form-control data-time" name="start" th:value="${start}" placeholder="开始时间"/>
+                                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                                    <span class="input-group-addon bg-info b-0 text-white"> - </span>
+                                    <input type="text" class="form-control data-time" name="end" th:value="${end}" placeholder="结束时间"/>
+                                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                                  </div>
+                              </div>
+                              <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" name="supportTakeout">
+                                  <option th:selected="${supportTakeout==-1}" value="-1">是否支持外卖</option>
+                                  <option th:selected="${supportTakeout=='1'}" value="1">否</option>
+                                  <option th:selected="${supportTakeout=='0'}" value="0">是</option>
+                                </select>
+                              </div>
+                              <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" name="supportReverse">
+                                  <option th:selected="${company==-1}" value="-1">是否支持订座</option>
+                                  <option th:selected="${supportReverse=='1'}" value="1">否</option>
+                                  <option th:selected="${supportReverse=='0'}" value="0">是</option>
+                                </select>
+                              </div>
+                              <div class="col-md-2">
+                                  <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">搜索</button>
+                              </div>
+                          </form>
+                        </div><!-- /.row -->
+                     </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="white-box">
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                              <tr>
+                                <th>城市</th>
+                                <th>所属企业</th>
+                                <th>餐厅ID</th>
+                                <th>餐厅名称 </th>   
+                                <th>餐厅地址</th>
+                                <th>录入时间</th>
+                                <th>上线时间</th>
+                                <th>下线时间</th>
+                                <th>下线理由</th>
+                                <th>订单数</th>
+                                <th>订单金额</th>
+                                <th>餐厅人均</th>
+                                <th>实际人均</th>
+                                <th>推荐企业</th>
+                                 <th>支持外卖</th>
+                                <th>支持订座</th>
+                                <th>返点</th>
+                                <th class="text-nowrap" style="display: none">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr th:each="item : ${page.content}">
+                                <td th:text="${item.cityDisplay}"></td>
+                                <td th:text="${item.ownCompanys}"></td>  
+                                <td th:text="${item.olRestaurantId}"></td>   
+                                <td th:text="${item.storeName}"></td> 
+                                <td th:text="${item.address}"></td>  
+                                <td th:text="${item.createdAt}"></td>  
+                                <td th:text="${item.olTime}"></td> 
+                                <td th:text="${item.shelfTime}"></td> 
+                                <td th:text="${item.reason}"></td> 
+                                <td th:text="${item.countOrder}"></td> 
+                                <td th:text="${item.countMoney}"></td>
+                                <td th:text="${item.consume}"></td>  
+                                <td th:text="${item.consumeActual}"></td> 
+                                <td th:text="${item.recommendsCompany}"></td>
+                                <td th:text="${item.supportTakeoutOfFood=='0' ?'是':'否'}"></td>
+                                <td th:text="${item.supportReserve=='0' ?'是':'否'}"></td>
+                                <td th:text="${item.rebate}"></td>
+                                <td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
+                              </tr>
+                            </tbody>
+                            <tfoot>
+                              <tr><td colspan="17" style="text-align: center;">
+                                <div th:replace="fragments/pageinfo :: pageinfo(${page})"></div>
+                              </td></tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      </div><!-- /.white-box -->
+                  </div><!-- /.col-md-12 -->
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+      <script type="text/javascript">
+      $(document).ready(function(){
+          $('.data-time').datepicker({
+              autoclose: true,
+              todayHighlight: true,
+              format: "yyyy-mm-dd"
+          });
+      });
+      
+      </script>
+   </body>
+</html>

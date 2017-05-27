@@ -3,8 +3,13 @@ package com.quancheng.application;
 import java.net.InetAddress;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.web.filter.CharacterEncodingFilter;
+import org.thymeleaf.dialect.springdata.SpringDataDialect;
 
 /**
  * 主入口
@@ -13,6 +18,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 @ComponentScan({"com.quancheng.application", "com.quancheng.application.api", "com.quancheng.*.service",
         "com.quancheng.*.service.view", "com.quancheng.*.service.api", "com.quancheng.service.*",
+        "com.quancheng.achilles.dao.repository", "com.quancheng.achilles.dao.write",
         "com.quancheng.shared.*", "com.quancheng.saluki.monitor.web"})
 @ImportResource({"classpath*:quancheng-app-*.xml"})
 @SpringBootApplication
@@ -44,5 +50,19 @@ public class MainApplication {
         }
         System.out.println("start server in " + name);
         return name;
+    }
+    @Bean
+    public FilterRegistrationBean filterRegistrationBean() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        registrationBean.setFilter(characterEncodingFilter);
+        return registrationBean;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public SpringDataDialect springDataDialect() {
+        return new SpringDataDialect();
     }
 }

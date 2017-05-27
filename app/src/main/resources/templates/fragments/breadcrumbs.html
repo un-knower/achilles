@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- ============================================================================ -->
+<!-- This <head> is only used for static prototyping purposes (natural templates) -->
+<!-- and is therefore entirely optionl, as this markup fragment will be included  -->
+<!-- from "fragments.html" at runtime.                                            -->
+<!-- ============================================================================ -->
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Template</title>
+
+</head>
+
+  
+ <body class="no-skin">
+   
+		<!-- #section:basics/content.breadcrumbs -->
+		<div class="breadcrumbs" id="breadcrumbs" th:fragment="breadcrumbs">
+			<script type="text/javascript">
+				try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+			</script>
+
+			<ul class="breadcrumb">
+				<li>
+					<i class="ace-icon fa fa-home home-icon"></i>
+					<a href="#" th:href="@{/}">首页</a>
+				</li>
+                <th:block th:if="${#httpServletRequest.requestURI == '/edm/crawldb/list'}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">爬虫商机数据</a>
+                    </li>
+                </th:block>
+                
+                <th:block th:if="${#strings.startsWith(#httpServletRequest.requestURI,'/edm/crawldb/showtable/edm_plan_')}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/crawldb/list}">爬虫商机数据</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}" th:text="${table}">详情</a>
+                    </li>
+                </th:block>
+                <th:block th:if="${#strings.startsWith(#httpServletRequest.requestURI,'/edm/crawldb/showtable/detail/edit/edm_plan_')}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/crawldb/list}">爬虫商机数据</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/crawldb/showtable/{table}(table=${table})}" th:text="${table}">详情</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">详情</a>
+                    </li>
+                </th:block>
+                
+                 <th:block th:if="${#strings.startsWith(#httpServletRequest.requestURI,'/edm/crawldb/showtable/detail/new/edm_plan_')}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/crawldb/list}">爬虫商机数据</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/crawldb/showtable/{table}(table=${table})}" th:text="${table}">详情</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">新增</a>
+                    </li>
+                </th:block>
+                
+                <th:block th:if="${#httpServletRequest.requestURI == '/edm/email-template/list'}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">邮件营销模板</a>
+                    </li>
+                </th:block>
+                
+                <th:block th:if="${#httpServletRequest.requestURI == '/edm/email-template/new'}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/email-template/list}">邮件营销模板</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/email-template/new}">新增模板</a>
+                    </li>
+                </th:block>
+                
+                <th:block th:if="${#strings.startsWith(#httpServletRequest.requestURI,'/edm/email-template/edit/')}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/email-template/list}">邮件营销模板</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">编辑模板</a>
+                    </li>
+                </th:block>
+                
+               <th:block th:if="${#strings.startsWith(#httpServletRequest.requestURI,'/edm/market-plan/new')}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/email-template/list}">邮件营销模板</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">开始邮件营销</a>
+                    </li>
+                </th:block> 
+                
+               <th:block th:if="${#strings.startsWith(#httpServletRequest.requestURI,'/edm/market-plan/show')}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/market-plan/list}">营销结果统计</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">详情</a>
+                    </li>
+                </th:block>  
+                
+               <th:block th:if="${#strings.startsWith(#httpServletRequest.requestURI,'/edm/market-plan/search')}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="@{/edm/market-plan/list}">营销结果统计</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">详情</a>
+                    </li>
+                </th:block> 
+                
+                <th:block th:if="${#httpServletRequest.requestURI == '/edm/market-plan/list'}">
+                    <li>
+                        <a href="#">邮件营销</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">营销结果统计</a>
+                    </li>
+                </th:block> 
+                
+               <th:block th:if="${#httpServletRequest.requestURI == '/flights/list'}">
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">机票价格比对</a>
+                    </li>
+               </th:block> 
+                 
+               <th:block th:if="${#httpServletRequest.requestURI == '/qccost-trial/list'}">
+                    <li>
+                        <a href="#">自主统计</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">费控官网访问</a>
+                    </li>
+               </th:block>  
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/summary/list'}">
+                    <li>
+                        <a href="#">自主统计</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">客户使用情况</a>
+                    </li>
+               </th:block> 
+
+               <th:block th:if="${#httpServletRequest.requestURI == '/data-statistic/list'}">
+                    <li>
+                        <a href="#">自主统计</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">(客户/订单/交易额)</a>
+                    </li>
+               </th:block> 
+                               
+               <th:block th:if="${#httpServletRequest.requestURI == '/company-portrait/list'}">
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">企业画像</a>
+                    </li>
+               </th:block>
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/regist/list'}">
+                    <li>
+                        <a href="#">用户行为分析</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">新增人数</a>
+                    </li>
+               </th:block>
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/general-active/list'}">
+                    <li>
+                        <a href="#">用户行为分析</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">广义活跃</a>
+                    </li>
+               </th:block>
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/core-active/list'}">
+                    <li>
+                        <a href="#">用户行为分析</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">核心活跃</a>
+                    </li>
+               </th:block>
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/checkin/list'}">
+                    <li>
+                        <a href="#">用户行为分析</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">签到</a>
+                    </li>
+               </th:block>
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/daily-report/list'}">
+                    <li>
+                        <a href="#">用户行为分析</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">日报</a>
+                    </li>
+               </th:block>
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/update-approve/list'}">
+                    <li>
+                        <a href="#">用户行为分析</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">审批</a>
+                    </li>
+               </th:block>
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/submit-request/list'}">
+                    <li>
+                        <a href="#">用户行为分析</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">提交申请单</a>
+                    </li>
+               </th:block>
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/submit-expense/list'}">
+                    <li>
+                        <a href="#">用户行为分析</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">提交报销单</a>
+                    </li>
+               </th:block>
+                
+               <th:block th:if="${#httpServletRequest.requestURI == '/create-cost/list'}">
+                    <li>
+                        <a href="#">用户行为分析</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">费用记录</a>
+                    </li>
+               </th:block>
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/storm/list'}">
+                    <li>
+                        <a href="#">实时计算</a>
+                    </li>
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">线上访问日志错误码实时查询</a>
+                    </li>
+               </th:block>  
+               
+               <th:block th:if="${#httpServletRequest.requestURI == '/service/list'}">
+                    <li>
+                        <a href="#" th:href="${#httpServletRequest.requestURI}">平台依赖服务状态</a>
+                    </li>
+               </th:block> 
+                
+                
+			</ul><!-- /.breadcrumb -->
+			<!-- #section:basics/content.searchbox -->
+			<div class="nav-search" id="nav-search" style="display:none;">
+				<form class="form-search">
+					<span class="input-icon">
+						<input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+						<i class="ace-icon fa fa-search nav-search-icon"></i>
+					</span>
+				</form>
+			</div><!-- /.nav-search -->
+
+			<!-- /section:basics/content.searchbox -->
+		</div>
+    
+</body>
+</html>

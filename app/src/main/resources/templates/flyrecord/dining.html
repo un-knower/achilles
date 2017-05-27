@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+                  <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">重点检查餐厅</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">重点检查餐厅服务</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+                  
+                  
+               <!-- .row -->
+               <div class="row">
+                     <div class="col-md-12">
+                     <div class="white-box">
+                        <h3 class="box-title">飞检重点餐厅 <a class="pull-right" href="#">编辑报表</a><a class="pull-right qc-download" href="#" th:attr="data-url=@{/ops/checkdining/download}">导出</a></h3>
+                        
+                        <div class="row">
+                          <form id="query-form" th:action="@{/ops/checkdining}" method="get">
+                          <input type="hidden" name="pageNum" th:value="${page.number}" />
+                          <input type="hidden" name="pageSize" th:value="${page.size}" />
+                          </form>
+                        </div><!-- /.row -->
+            
+                     </div>
+                  </div>
+                
+                  <div class="col-md-12">
+                    <div class="white-box">
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                              <tr>
+                                <th>企业</th>
+                                <th width="8%">城市</th>
+                                <th>上线时间</th>
+                                <th>相关订单号</th>
+                                <th>检查对象</th>
+                                <th width="8%">餐厅状态</th>
+                                <th width="8%">订单日期</th>
+                                <th width="5%">存档次数</th>
+                                <th width="8%">关注起始日期</th>
+                                <th width="8%">关注结束日期</th>
+                                <th width="5%">关注状态</th>
+                                <th width="5%">检查情况</th>
+                                <th class="text-nowrap" style="display: none">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                             <tr th:each="item : ${page.content}">
+                                <td th:text="${item.company}"></td>
+                                <td th:text="${item.cityName}"></td>
+                                <td width="4%" th:text="${item.onlineTime}"></td>
+                                <td th:text="${item.feiCase}"></td>
+                                <td th:text="${item.targetVal}"></td>
+                                <td th:text="${item.status==0?'正常':'禁用'}"></td>
+                                <td th:text="${item.createTime}"></td>
+                                <td th:text="${item.fileNumber}"></td>
+                                <td th:text="${item.createdAt}"></td>
+                                <td th:text="${item.expire}"></td>
+                                <td th:text="${item.attentionStatus}"></td>
+                                <td th:text="${item.checkItem}"></td>
+                                <td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
+                              </tr>
+                            </tbody>
+                            <tfoot>
+                              <tr><td colspan="13" style="text-align: center;">
+                                <div th:replace="fragments/pageinfo :: pageinfo(${page})"></div>
+                              </td></tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      </div><!-- /.white-box -->
+                  </div><!-- /.col-md-12 -->
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+      <script type="text/javascript">
+    	   $(document).ready(function(){
+    	   });
+      </script>
+   </body>
+</html>
