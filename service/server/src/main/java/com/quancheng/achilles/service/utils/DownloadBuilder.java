@@ -223,6 +223,7 @@ public class DownloadBuilder<T> {
                 }
             }
         }
+        datas = null;
     }
 
     private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
