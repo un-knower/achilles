@@ -52,7 +52,7 @@ public class RestaurantGhController {
     @Autowired
     RecommandResServiceImpl recommandService;
 
-    private final static int EXPORTLIMIT = 50000;
+    private final static int EXPORTLIMIT = 5000;
 //    @Value("${achilles.restaurant.sources}")
 //    String restaurantSources;
 

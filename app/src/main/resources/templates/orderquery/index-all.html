@@ -101,9 +101,11 @@
                            <div class="col-md-2">
                                 <select class="selectpicker"  data-style="form-control" name="timeType">
                                   <option th:selected="${timeType=='-1'}" value="-1">时间筛选类型</option>
-                                  <option th:selected="${timeType=='create'}" value="create">下单时间</option>
-                                  <option th:selected="${timeType=='yuyue'}" value="yuyue">预约时间</option>
-                                  <option th:selected="${timeType=='payTimes'}" value="payTimes">支付时间</option>
+                                  <option th:selected="${timeType=='createTime'}" value="createTime">下单时间</option>
+                                  <option th:selected="${timeType=='yuyueTime'}" value="yuyueTime">预约时间</option>
+                                  <option th:selected="${timeType=='payTime'}" value="payTime">支付时间</option>
+                                  <option th:selected="${timeType=='reportTime'}" value="reportTime">报备时间</option>
+                                  <option th:selected="${timeType=='confirmTime'}" value="confirmTime">确认时间</option>
                                 </select>
                               </div>
                           <div class="col-md-4">
