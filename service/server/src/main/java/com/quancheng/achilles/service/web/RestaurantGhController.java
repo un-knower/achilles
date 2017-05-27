@@ -151,6 +151,7 @@ public class RestaurantGhController {
                 }
                 String filePath = eb.saveOnServer();
                 ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath, "公海餐厅", username);
+                eb=null;
             }
         }
         EXECUTOR_SERVICE.submit(new AsyncUploadToOSS(mv, request.getRemoteUser()));
