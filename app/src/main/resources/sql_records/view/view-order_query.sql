@@ -12,7 +12,12 @@ FROM quancheng_db.api_finance_order sittlement
 where status =20
 group by sittlement.order_num;
 
-create or replace view  `v_inn_order_query` AS  
+create or replace view v_inn_order_rating as 
+select max(id) as id, ora.order_num  from 16860_order_rating ora
+where ora.is_new=1
+ group by ora.order_num;
+
+ create or replace view  `v_inn_order_query` AS  
  (SELECT
         `o`.`order_num` AS `orderNum`,
         `o`.`client_id` AS `company`,
@@ -91,7 +96,8 @@ FROM `16860_order` `o`
     LEFT JOIN `api_sales_rest` `sal` ON `sal`.`restaurant_id` = `rants`.`id`and sal.deleted_at is NULL
     LEFT JOIN `api_merchants` `mer` ON `rants`.`merchant_id` = `mer`.`id`
     LEFT JOIN `v_inn_order_restaurant_yuding` `restmin` ON `o`.`restaurant_id` = `restmin`.`resid`
-    LEFT JOIN `16860_order_rating` `ora` ON `o`.`id` = `ora`.`order_id`and o.order_num=ora.order_num  AND ora.is_new=1
+    left join `v_inn_order_rating` oraa on oraa.order_num = o.order_num
+    LEFT JOIN `16860_order_rating` `ora` ON oraa.id=ora.id
     LEFT JOIN `api_assets` `asset` ON `asset`.`id` = `rants`.`asset_id`
     LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`)
 UNION ALL
@@ -176,7 +182,8 @@ FROM `api_orders` `o`
     LEFT JOIN `api_waimai_order_detail` `detail` ON `detail`.`order_id` = `o`.`id`
     LEFT JOIN `v_inn_order_restaurant_waimai` `restmin` ON `o`.`restaurant_id` = `restmin`.`resid` 
     LEFT JOIN `api_assets` `asset` ON `asset`.`id` = `rants`.`asset_id`
-    LEFT JOIN `16860_order_rating` `ora` ON `o`.`id` = `ora`.`order_id`  and o.order_num=ora.order_num  AND ora.is_new=1
+    LEFT JOIN `v_inn_order_rating` oraa on oraa.order_num = o.order_num
+    LEFT JOIN `16860_order_rating` `ora` ON oraa.id=ora.id
     LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`)
 UNION ALL
    (
