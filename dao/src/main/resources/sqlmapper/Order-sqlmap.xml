@@ -31,18 +31,21 @@
             <if test="sales !=null ">
                 and o.salesId = #{sales}
             </if>
-            <if test="startCreateTime !=null">
-                AND o.createTime BETWEEN #{startCreateTime} AND #{endCreateTime}
+            <if test="conditionTime !=null">
+                AND o.`${conditionTime}` BETWEEN #{beginTime} AND #{endTime}
             </if>
-            <if test="startYuyueTime !=null">
-                AND o.yuyueTime BETWEEN #{startYuyueTime} and #{endYuyueTime}
-            </if>
-             <if test="payTimesCreateTime !=null">
-                AND o.payTime BETWEEN #{payTimesCreateTime} and #{payTimesEndTime}
-            </if>
-            <if test="startReportTime !=null">
-                AND o.reportTime BETWEEN #{startReportTime} and #{endReportTime}
-            </if>
+<!--             <if test="startYuyueTime !=null"> -->
+<!--                 AND o.yuyueTime BETWEEN #{beginTime} and #{endTime} -->
+<!--             </if> -->
+<!--              <if test="payTimesCreateTime !=null"> -->
+<!--                 AND o.payTime BETWEEN #{beginTime} and #{endTime} -->
+<!--             </if> -->
+<!--             <if test="startReportTime !=null"> -->
+<!--                 AND o.reportTime BETWEEN #{beginTime} and #{endTime} -->
+<!--             </if> -->
+<!--             <if test="confirmTime !=null"> -->
+<!--                 AND o.confirmTime BETWEEN #{beginTime} and #{endTime} -->
+<!--             </if> -->
             <if test="company !=null and company !=''">
                 AND o.company = #{company}
             </if>
@@ -90,17 +93,8 @@
             <if test="sales !=null ">
                 AND o.salesId = #{sales}
             </if>
-            <if test="startCreateTime !=null">
-                AND o.createTime BETWEEN #{startCreateTime} AND #{endCreateTime}
-            </if>
-            <if test="startYuyueTime !=null">
-                AND o.yuyueTime BETWEEN #{startYuyueTime} and #{endYuyueTime}
-            </if>
-             <if test="payTimesCreateTime !=null">
-                AND o.payTime BETWEEN #{payTimesCreateTime} and #{payTimesEndTime}
-            </if>
-            <if test="startReportTime !=null">
-                AND o.reportTime BETWEEN #{startReportTime} and #{endReportTime}
+            <if test="conditionTime !=null">
+                AND o.`${conditionTime}` BETWEEN #{beginTime} AND #{endTime}
             </if>
             <if test="company !=null and company !=''">
                 AND o.company = #{company}

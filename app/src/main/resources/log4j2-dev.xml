@@ -12,13 +12,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.quancheng.service.hyrbrid.DtsListenerApplication" level="info"/>
-        <Logger name="org.hibernate.validator.internal.util.Version" level="warn"/>
-        <Logger name="druid.sql.DataSource" level="info"/>
-        <Logger name="druid.sql.Connection" level="info"/>
-        <Logger name="druid.sql.Statement" level="warn"/>
-        <Logger name="druid.sql.ResultSet" level="warn"/>
-        <Root level="info">
+        <Logger name="log4j.logger.java.sql.PreparedStatement" level="DEBUG"/>
+        <Root level="error">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>

@@ -199,19 +199,22 @@ public class OrderQueryController {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            if ("yuyue".equalsIgnoreCase(timeType)) {
-                params.put("startYuyueTime", startDate );
-                params.put("endYuyueTime", endDate );
-            } else if ("payTimes".equalsIgnoreCase(timeType)) {
-                params.put("payTimesCreateTime", startDate );
-                params.put("payTimesEndTime", endDate );
-            } else if("reportTime".equalsIgnoreCase(timeType)){
-                params.put("startReportTime", startDate );
-                params.put("endReportTime", endDate );
-            } else if("create".equalsIgnoreCase(timeType)){
-                params.put("startCreateTime", startDate );
-                params.put("endCreateTime", endDate );
-            }
+//            if ("yuyue".equalsIgnoreCase(timeType)) {
+//                params.put("startYuyueTime", startDate );
+//                params.put("endYuyueTime", endDate );
+//            } else if ("payTimes".equalsIgnoreCase(timeType)) {
+//                params.put("payTimesCreateTime", startDate );
+//                params.put("payTimesEndTime", endDate );
+//            } else if("reportTime".equalsIgnoreCase(timeType)){
+//                params.put("startReportTime", startDate );
+//                params.put("endReportTime", endDate );
+//            } else if("create".equalsIgnoreCase(timeType)){
+//                params.put("startCreateTime", startDate );
+//                params.put("endCreateTime", endDate );
+//            }
+            params.put("conditionTime", timeType);
+            params.put("beginTime", startDate);
+            params.put("endTime", endDate);
         }
         params.put("serviceType", getServiceType(serviceType));
         if (!"-1".equals(orderType)) {

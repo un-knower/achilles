@@ -218,7 +218,7 @@ UNION ALL
             NULL AS `payTime`,
             NULL AS `reportTime`,
             concat('bw',`o`.`status`) AS `status`,
-            NULL AS `peopleNum`,
+            o.people_Num AS `peopleNum`,
             `o`.`predict_cost` AS `predictCost`,
             `o`.`actual_people` AS `actualPeople`,
             `o`.`money` AS `money`,
