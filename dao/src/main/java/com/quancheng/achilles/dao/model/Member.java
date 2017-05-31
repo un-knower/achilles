@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.quancheng.achilles.util.DateUtils;
+
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -251,10 +254,10 @@ public class Member implements Serializable {
     public void setSuperiorEmail(String superiorEmail) {
         this.superiorEmail = superiorEmail;
     }
-//
-//    public String getRegTime() {
-//        return regTime==null||regTime.isEmpty()?null:DateUtils.format(regTime, DateUtils.SDF_DATE);
-//    }
+
+    public String getRegTime() {
+        return regTime==null||regTime.isEmpty()?null:DateUtils.format(regTime, DateUtils.SDF_DATE);
+    }
 
     public void setRegTime(String regTime) {
         this.regTime = regTime;
