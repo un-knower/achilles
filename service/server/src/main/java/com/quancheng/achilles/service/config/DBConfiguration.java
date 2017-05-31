@@ -25,14 +25,15 @@ public class DBConfiguration {
 
 	@Bean(name="quanchengDBReadDataSource")
 	@Primary
-	@ConfigurationProperties(prefix = "spring.datasource")
+	@ConfigurationProperties(prefix = "spring.datasource.ro")
 	public DataSource quanchengDBReadDataSource() {
-		return DataSourceBuilder.create().build();
+	    DataSource ds = DataSourceBuilder.create().build();
+		return ds;
 	}
 	
 	@Bean
 	@Primary
-	public SqlSessionFactoryBean readSqlSessionFactoryBean(DataSource dataSource) {
+	public SqlSessionFactoryBean readSqlSessionFactoryBean(@Qualifier("quanchengDBReadDataSource")DataSource dataSource) {
 		SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
 		sqlSessionFactory.setDataSource(dataSource);
 		sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-read-config.xml"));
