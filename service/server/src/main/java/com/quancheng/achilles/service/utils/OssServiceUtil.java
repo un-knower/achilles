@@ -109,7 +109,8 @@ public class OssServiceUtil {
             log.info("Caught an ClientException, which means the client encountered a serious internal problem while trying to communicate with OSS,such as not being able to access the network.erroeMessage is{}", ce.getErrorCode());
             throw ce;
         } finally {
-            // client.shutdown();
+//            client.shutdown();
+            file.delete();
         }
         if (putObject != null && putObject.getETag()!=null && !"".equals(putObject.getETag())) {
             url = getUrl(fileName);
