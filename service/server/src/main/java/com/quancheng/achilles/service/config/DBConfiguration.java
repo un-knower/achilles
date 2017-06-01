@@ -1,5 +1,6 @@
 package com.quancheng.achilles.service.config;
 
+import javax.persistence.SharedCacheMode;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSession;
@@ -93,7 +94,9 @@ public class DBConfiguration {
     public LocalContainerEntityManagerFactoryBean jpaReaderManagerFactory(
             @Qualifier("quanchengDBReadDataSource") DataSource dataSource,
             EntityManagerFactoryBuilder builder) {
-        return builder.dataSource(dataSource).packages( CallRecord.class).persistenceUnit("qc_read_db").build();
+	    LocalContainerEntityManagerFactoryBean loefb =   builder.dataSource(dataSource).packages( CallRecord.class).persistenceUnit("qc_read_db").build();
+	    loefb.setSharedCacheMode(SharedCacheMode.NONE);
+	    return loefb;
     }
 	@Primary
     @Bean(name="qcReaderTransactionManager")

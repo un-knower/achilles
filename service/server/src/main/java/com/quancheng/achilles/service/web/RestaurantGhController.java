@@ -155,7 +155,8 @@ public class RestaurantGhController {
                 
             }
         }
-        EXECUTOR_SERVICE.submit(new AsyncUploadToOSS(mv, request.getRemoteUser()));
+        new Thread(new AsyncUploadToOSS(mv, request.getRemoteUser())).start();
+//        EXECUTOR_SERVICE.submit();
         return new BaseResponse();
     }
 
