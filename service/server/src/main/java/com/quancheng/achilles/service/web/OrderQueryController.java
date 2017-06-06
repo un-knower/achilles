@@ -188,7 +188,7 @@ public class OrderQueryController {
         // pageSize, pageNum, company, city
         Map<String, Object> params = new HashMap<>();
         
-        if(startDate!=null && endDate != null && !endDate.isEmpty() && !startDate.isEmpty()){
+        if(startDate!=null && endDate != null && !endDate.isEmpty() && !startDate.isEmpty() && !"-1".equals(timeType)){
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 Date dt = df.parse(endDate);
