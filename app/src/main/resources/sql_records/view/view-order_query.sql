@@ -73,7 +73,8 @@ where ora.is_new=1
         o.approval_code   AS  approvalCode,
         ali.address AS restaurantAddress,
         `o`.is_hall AS isHall,
-        `o`.message AS userComment
+        `o`.message AS userComment,
+        opc.bank_card as cardNumber
 FROM `16860_order` `o`
     LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
     LEFT JOIN v_inn_order_rate_money rate_money ON rate_money.order_num= o.order_num
@@ -99,7 +100,8 @@ FROM `16860_order` `o`
     left join `v_inn_order_rating` oraa on oraa.order_num = o.order_num
     LEFT JOIN `16860_order_rating` `ora` ON oraa.id=ora.id
     LEFT JOIN `api_assets` `asset` ON `asset`.`id` = `rants`.`asset_id`
-    LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`)
+    LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`
+    LEFT JOIN v_inn_order_pay_card opc ON   o.order_num = opc.order_num)
 UNION ALL
    (
       SELECT
@@ -157,7 +159,8 @@ UNION ALL
                 detail.approval_code   AS  approvalCode,
                 ali.address AS restaurantAddress,
                 NULL AS isHall,
-                CONVERT (`o`.comment USING utf8) as userComment
+                CONVERT (`o`.comment USING utf8) as userComment,
+                opc.bank_card as cardNumber
 FROM `api_orders` `o`
     LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
     LEFT JOIN v_inn_order_rate_money rate_money ON rate_money.order_num= o.order_num
@@ -184,7 +187,8 @@ FROM `api_orders` `o`
     LEFT JOIN `api_assets` `asset` ON `asset`.`id` = `rants`.`asset_id`
     LEFT JOIN `v_inn_order_rating` oraa on oraa.order_num = o.order_num
     LEFT JOIN `16860_order_rating` `ora` ON oraa.id=ora.id
-    LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`)
+    LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`
+    LEFT JOIN v_inn_order_pay_card opc ON   o.order_num = opc.order_num)
 UNION ALL
    (
       SELECT
@@ -242,7 +246,8 @@ UNION ALL
 			`o`.approval_code AS  approvalCode,
 			NULL AS restaurantAddress,
 			NULL AS isHall,
-			NULL AS userComment
+			NULL AS userComment,
+			NULL as  cardNumber
    FROM
         `16860_offstaff_order` `o`
         LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
