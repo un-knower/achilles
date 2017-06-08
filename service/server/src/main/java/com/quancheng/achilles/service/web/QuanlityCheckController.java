@@ -2,6 +2,7 @@ package com.quancheng.achilles.service.web;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +12,6 @@ import java.util.concurrent.Executors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +28,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.druid.util.StringUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.quancheng.achilles.service.constants.FlyCheckErrorReason;
+import com.quancheng.achilles.dao.model.BaseResponse;
+import com.quancheng.achilles.dao.model.QuanlityCheckRecord;
 import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.constants.InnConstantsQualityState;
 import com.quancheng.achilles.service.services.QuanlityCheckService;
-import com.quancheng.achilles.dao.model.BaseResponse;
-import com.quancheng.achilles.dao.model.QuanlityCheckRecord;
 import com.quancheng.achilles.service.utils.DateUtils;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
@@ -130,6 +126,10 @@ public class QuanlityCheckController {
         }
         if(end != null && !end.isEmpty()){
             endDate =DateUtils.toDate(end, DateUtils.SDF_DATE);
+            Calendar cl = Calendar.getInstance();
+            cl.setTime(endDate);
+            cl.add(Calendar.DAY_OF_YEAR, 1);
+            endDate=cl.getTime();
         }
         Pageable pageable = new PageRequest(pageNum, pageSize, Sort.Direction.DESC, "checkDate");
         Page<QuanlityCheckRecord> page = new PageImpl<QuanlityCheckRecord>(new ArrayList<QuanlityCheckRecord>());
