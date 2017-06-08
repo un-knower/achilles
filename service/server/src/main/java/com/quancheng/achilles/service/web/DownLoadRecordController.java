@@ -1,8 +1,6 @@
 package com.quancheng.achilles.service.web;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

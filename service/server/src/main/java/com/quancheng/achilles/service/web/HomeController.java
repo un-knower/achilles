@@ -1,5 +1,6 @@
 package com.quancheng.achilles.service.web;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ public class HomeController {
         Map<String, String> mv = new HashMap<String, String>();
         // Random r = new Random();
         // String refreshResult = r.nextLong() + "";
+        logger.info("begin fresh :"+Arrays.toString(ids));
         for (Integer integer : ids) {
             String refreshResult;
             try {

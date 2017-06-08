@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.druid.util.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.quancheng.achilles.service.constants.FlyCheckErrorReason;
 import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.constants.InnConstantsQualityState;
 import com.quancheng.achilles.service.services.QuanlityCheckService;
@@ -37,6 +40,7 @@ import com.quancheng.achilles.dao.model.QuanlityCheckRecord;
 import com.quancheng.achilles.service.utils.DateUtils;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
+import com.quancheng.achilles.util.CheckReasonUtil;
 
 import io.swagger.annotations.ApiParam;
 
@@ -138,7 +142,8 @@ public class QuanlityCheckController {
         for (QuanlityCheckRecord flyCheckRecord : page) {
             String vl = map.get(flyCheckRecord.getStatus());
             flyCheckRecord.setStatus(vl == null ?"未定义交易状态":vl);
-            convert(flyCheckRecord);
+            flyCheckRecord.setAbnormalType(CheckReasonUtil.getReasonType(flyCheckRecord.getCheckItem()) );
+            flyCheckRecord.setCheckItem(CheckReasonUtil.convertReasonContent(flyCheckRecord.getCheckItem()) );
         }
         mv.addObject("start", start);
         mv.addObject("end", end);
@@ -158,27 +163,4 @@ public class QuanlityCheckController {
         return mv;
     }
     private final static Logger LOGGER = LoggerFactory.getLogger(QuanlityCheckController.class);
-    private void convert(QuanlityCheckRecord flyCheckRecord){
-        if(flyCheckRecord.getCheckItem() == null){
-            return ;
-        }
-        ObjectMapper om = new ObjectMapper();
-        JsonNode jn = null;
-        try {
-            jn = om.readTree(flyCheckRecord.getCheckItem());
-        } catch ( Exception e) {
-            LOGGER.error("PARSE RATE ERROR:{}", flyCheckRecord.getCheckItem());
-            LOGGER.error("PARSE RATE EXCEPTIONS:{}",e);
-        }
-         if(jn  != null && jn.get("abnormal_content") != null){
-            flyCheckRecord.setCheckItem(jn.get("abnormal_content").asText());
-        } else{
-            flyCheckRecord.setCheckItem(null);
-        }
-         if(jn  != null && jn.get("abnormal_type") != null && !jn.get("abnormal_type").asText().isEmpty()){
-             flyCheckRecord.setAbnormalType(jn.get("abnormal_type").asText());
-         } else{
-             flyCheckRecord.setAbnormalType(null);
-         }
-    }
 }
