@@ -11,7 +11,7 @@ FROM 16860_restaurant_client 168client_rest
     LEFT JOIN api_restaurant_master_sources rest_res ON rest_res.restaurant_id=master_rest.id AND rest_res.type NOT IN (1000,1005,1030)
 GROUP BY
     168client_rest.client_id, master_rest.city;
-    
+--企业组织架构    
 CREATE OR REPLACE VIEW v_inn_org_for_company AS 
 SELECT
     mem.cid,
@@ -32,7 +32,7 @@ FROM 16860_member mem
     LEFT JOIN 16860_organizational_structure os5  ON mem.cost_center_id = os5.id
     LEFT JOIN 16860_organizational_structure os6  ON mem.region_id = os6.id;    
 
-
+--线上支付订单
 CREATE OR REPLACE VIEW v_inn_client_city_user_order_info AS
 SELECT
   CONCAT('yd',168order.id) as or_id,

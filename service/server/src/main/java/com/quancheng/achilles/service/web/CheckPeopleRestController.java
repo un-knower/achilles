@@ -35,6 +35,7 @@ import com.quancheng.achilles.dao.model.BaseResponse;
 import com.quancheng.achilles.dao.model.CheckEmphasisPeople;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
+import com.quancheng.achilles.util.CheckReasonUtil;
 
 import io.swagger.annotations.ApiParam;
 
@@ -120,29 +121,11 @@ public class CheckPeopleRestController {
                 
             } catch (ParseException e) {
             }
-            convert(checkEmphasisPeople);
+            checkEmphasisPeople.setCheckItem(CheckReasonUtil.convertReasonContent(checkEmphasisPeople.getCheckItem()) );
         }
         mv.addObject("page", page);
         mv.setViewName("flyrecord/people");
         return mv;
     }
     private final static Logger LOGGER = LoggerFactory.getLogger(CheckPeopleRestController.class);
-    private void convert(CheckEmphasisPeople flyCheckRecord){
-        if(flyCheckRecord.getCheckItem() == null){
-            return ;
-        }
-        ObjectMapper om = new ObjectMapper();
-        JsonNode jn = null;
-        try {
-            jn = om.readTree(flyCheckRecord.getCheckItem());
-        } catch ( Exception e) {
-            LOGGER.error("PARSE RATE ERROR:{}", flyCheckRecord.getCheckItem());
-            LOGGER.error("PARSE RATE EXCEPTIONS:{}",e);
-        }
-        if(jn  != null && jn.get("abnormal_content") != null){
-            flyCheckRecord.setCheckItem(jn.get("abnormal_content").asText());
-        } else{
-            flyCheckRecord.setCheckItem(null);
-        }
-    }
 }

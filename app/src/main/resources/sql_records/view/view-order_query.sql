@@ -17,6 +17,14 @@ select max(id) as id, ora.order_num  from 16860_order_rating ora
 where ora.is_new=1
  group by ora.order_num;
 
+ -- 订单支付卡号
+create or replace view v_inn_order_pay_card as 
+SELECT 
+    order_num, GROUP_CONCAT(distinct bank_card) as bank_card
+FROM
+    16860_order_payment
+GROUP BY order_num;
+
  create or replace view  `v_inn_order_query` AS  
  (SELECT
         `o`.`order_num` AS `orderNum`,
