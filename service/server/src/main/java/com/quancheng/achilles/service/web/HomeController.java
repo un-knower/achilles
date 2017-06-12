@@ -51,10 +51,11 @@ public class HomeController {
         Map<String, String> mv = new HashMap<String, String>();
         // Random r = new Random();
         // String refreshResult = r.nextLong() + "";
-        logger.info("begin fresh :"+Arrays.toString(ids));
+        logger.info("fresh ids :"+Arrays.toString(ids));
         for (Integer integer : ids) {
             String refreshResult;
             try {
+                logger.info("begin fresh :"+integer);
                 refreshResult = cacheLogService.doRefresh(integer);
                 mv.put("date", refreshResult);
             } catch (Exception e) {
