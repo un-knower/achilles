@@ -252,7 +252,7 @@ UNION ALL
 			setment.rates,
 			rate_money.rate_money as rateMoney,
 			`o`.approval_code AS  approvalCode,
-			NULL AS restaurantAddress,
+			`o`.restaurant_address AS restaurantAddress,
 			NULL AS isHall,
 			NULL AS userComment,
 			NULL as  cardNumber

@@ -60,7 +60,10 @@ public class QuanlityCheckRecord implements Serializable {
     @Column(name = "job_num")
     @ApiModelProperty(value = "订单人工号")
     private String            jobNum;
-
+    /** 订单人工号 */
+    @Column(name = "order_money")
+    @ApiModelProperty(value = "订单金额")
+    private String orderMoney;
     /** 检查方式 */
     @Column(name = "check_mode")
     @ApiModelProperty(value = "检查方式")
@@ -228,6 +231,13 @@ public class QuanlityCheckRecord implements Serializable {
         this.company = company;
     }
 
-    /** 异常原因子啊异常内容里面:abnormal_type */
+    public String getOrderMoney() {
+        return orderMoney;
+    }
 
+    public void setOrderMoney(String orderMoney) {
+        this.orderMoney = orderMoney;
+    }
+
+    /** 异常原因子啊异常内容里面:abnormal_type */
 }
