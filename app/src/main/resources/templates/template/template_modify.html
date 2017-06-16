@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="fragments/head :: head"></head>
+<body class="fix-sidebar fix-header">
+	<!-- Preloader -->
+	<div class="preloader">
+		<div class="cssload-speeding-wheel"></div>
+	</div>
+	<div id="wrapper">
+		<!-- Top Navigation -->
+		<nav th:replace="fragments/top_navbar :: navbar"></nav>
+		<!-- End Top Navigation -->
+		<!-- Left navbar-sidebar -->
+		<div th:replace="fragments/left_sidebar :: sidebar"></div>
+		<!-- Left navbar-sidebar end -->
+		<!-- Page Content -->
+		<div id="page-wrapper">
+			<div class="container-fluid">
+				<div class="row bg-title">
+					<!-- .page title -->
+					<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+						<h4 class="page-title">模版管理-编辑</h4>
+					</div>
+					<!-- /.page title -->
+					<!-- .breadcrumb -->
+					<div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+						<ol class="breadcrumb">
+							<li><a th:href="@{/}">首页</a></li>
+							<li><a th:href="@{/ops}">模版管理</a></li>
+							<li class="active"><a th:href="@{#}">编辑</a></li>
+						</ol>
+					</div>
+					<!-- /.breadcrumb -->
+				</div>
+				<!-- .row -->
+				<div class="row">
+					<div class="col-sm-6 col-xs-12">
+						<div class="white-box">
+							<div  class="table-responsive"> 
+								<form class="form-horizontal" id="template-edit-form" th:action="@{/template/save}" 
+									role="form"  method="post">
+									<div>
+										<table class="table table-bordered table-hover">
+											<thead>
+											     <tr>
+											         <td colspan="2">
+                                                         <input name="tableName"  th:value="${templateInfo.tableName}" hidden="true"/>
+                                                         <input name="templateId" th:value="${templateInfo.id}" hidden="true"/>
+                                                         <input name="templateName" th:value="${templateInfo.templateName}" class="form-control" placeholder="模版名称" />
+                                                     </td>
+											     </tr>
+												<tr>
+												    <th>列</th>
+<!-- 													<th>列</th> -->
+													<th>导出/显示</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr th:each="item:${allColumns}">
+													<td th:text="${item.columnComment==null||item.columnComment==''?item.columnName:item.columnComment}"></td>
+<!-- 													<td > 
+													   <input th:value="${colTitles.containsKey(item.columnName)?colTitles.get(item.columnName):item.columnComment}" name="columnComment"/>
+ 													</td> -->
+													<td>
+														<input type="checkbox" name="columnName" class="js-switch" th:checked="${selectedColumns.contains(item.columnName)}" th:value="${item.columnName}" data-color="#13dafe"/>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div class="row"></div>
+									<!-- /.row -->
+									<div class="clearfix form-actions">
+										<div class="col-md-offset-3 col-md-9">
+											<button class="btn btn-info" type="submit">
+												<i class="ace-icon fa fa-check bigger-110"></i> 提交
+											</button>
+											&nbsp; &nbsp; &nbsp;
+											<a th:href="@{/template/list}">
+												<button class="btn"  >
+													    <i class="ace-icon fa fa-undo bigger-110"></i> 取消
+												</button>
+											</a>
+										</div>
+									</div>
+								</form>
+							</div>
+							<!-- /.col-md-12 -->
+						</div>
+						<!-- /.row -->
+						<!-- .right-sidebar -->
+						<div th:replace="fragments/right_sidebar :: rightsidebar"></div>
+						<!-- /.right-sidebar -->
+					</div>
+					<!-- /.container-fluid -->
+					<footer th:replace="fragments/footer :: footer"></footer>
+				</div>
+			</div>
+		</div>
+		<!-- /#page-wrapper -->
+	</div>
+	<!-- /#wrapper -->
+	<div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+	  <script type="text/javascript">
+	  $(document).ready(function(){
+		  var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
+		  elems.forEach(function(html) {
+		    var switchery = new Switchery(html,{ color: '#13dafe'  ,size: 'small'} );
+		  });
+	  });
+	  </script>
+</body>
+</html>

@@ -10,35 +10,35 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
 public abstract class RestaurantServiceAbstract<T> {
-    Specification<T> like(String field,String fieldValue) {
+    protected Specification<T> like(String field,String fieldValue) {
         return new Specification<T>() {
             public Predicate toPredicate(Root<T>  root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 return isEmpty(fieldValue)? null:cb.like(root.get(field), "%"+fieldValue+"%");
             }
         };
     }
-     Specification<T> in(String field,Object[] fieldValue) {
+    protected Specification<T> in(String field,Object[] fieldValue) {
         return new Specification<T>() {
             public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 return isEmpty(fieldValue)? null:root.get(field).in(fieldValue);
             }
         };
     }
-     Specification<T> equal(String field,String fieldValue) {
+    protected Specification<T> equal(String field,String fieldValue) {
         return new Specification<T>() {
             public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 return isEmpty(fieldValue)? null:cb.equal(root.get(field), fieldValue);
             }
         };
     }
-    Specification<T> between(String field,Comparable  begin,Comparable  end) {
+     public Specification<T> between(String field,Comparable  begin,Comparable  end) {
         return new Specification<T>() {
             public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 return begin==null ||end==null ?null : cb.between(root.get(field), begin, end);
             }
         };
     }
-     Specification<T> notNull(String field ) {
+     protected  Specification<T> notNull(String field ) {
         return new Specification<T>() {
             public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 return  cb.isNotNull(root.get(field));
@@ -46,11 +46,11 @@ public abstract class RestaurantServiceAbstract<T> {
         };
     }
      
-    boolean isEmpty(String str){
+     protected  boolean isEmpty(String str){
         return str==null || "".equals(str);
     }
     
-    boolean isEmpty(Object ... str){
+     protected  boolean isEmpty(Object ... str){
         return str==null || str.length==0||Arrays.asList(str).contains("-1");
     }
 }

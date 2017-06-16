@@ -212,4 +212,14 @@ public final class DateUtils {
 
         return format.format(new Date(dateLong * 1000L));
     }
+    
+    public static String format(Date date , DateFormat format) {
+
+
+        return format.format(date);
+    }
+    
+    public static String format(Date date  ) {
+        return SDF_DATETIME.format(date);
+    }
 }
