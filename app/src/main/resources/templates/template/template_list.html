@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+  <head th:replace="fragments/head :: head"></head>
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">模版管理</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">模版管理</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-12">
+                    <div class="white-box">
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                              <tr>
+                                <th>模版id</th>
+                                <th>模版名</th>
+                                <th>创建时间</th>
+                                <th>创建人</th>
+                                <th>操作</th>
+                                <th class="text-nowrap" style="display: none">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr th:each="item : ${page.content}">
+                                <td th:text="${item.id}"></td>
+                                <td >
+                                    <a  th:text="${item.templateName}" th:href="@{${urlconfig.get(item.tableName).templateUrl}(templateId=${item.id},tableName=${item.tableName})}" 
+                                    data-toggle="tooltip" data-original-title="Edit"> 
+                                    </a> 
+                                </td>
+                                <td th:text="${item.createdAt}"></td>
+                                <td th:text="${item.createdUser}"></td>
+                                <td class="text-nowrap"   >
+                                    <a th:if="${username==item.createdUser}" th:href="@{/template/edit(templateId=${item.id},tableName=${item.tableName})}" data-toggle="tooltip" data-original-title="Edit"> 
+		                                <i class="fa fa-pencil text-inverse m-r-10">
+		                                </i> 
+	                                </a> 
+<!--                                     <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> 
+                                     </a>  -->
+                                </td>
+                              </tr>
+                            </tbody>
+                            <tfoot>
+                              <tr><td colspan="13" style="text-align: center;">
+                                    <div th:replace="fragments/pageinfo :: pageinfo(${page})"></div>
+                              </td></tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      </div><!-- /.white-box -->
+                  </div><!-- /.col-md-12 -->
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+   </body>
+</html>

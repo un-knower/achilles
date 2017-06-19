@@ -26,6 +26,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import com.quancheng.achilles.service.config.SpringBeanUtil;
 import com.quancheng.achilles.service.services.OssFileInfoService;
+import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -41,13 +42,19 @@ public class DownloadBuilder<T> {
     /** 转换参数 */
     Map<String, Map<Object, Object>> convert = new HashMap<>();
 
+    List<AchillesDiyTemplateColumns> tempcols;
+    boolean isInit = false ;
     /**
      * 
      * @param clazz
      * @param strings 文件前缀
      */
-    public DownloadBuilder(Class<T> clazz ) {
+    public DownloadBuilder(Class<T> clazz  ) {
         this.cls = clazz;
+        init();
+    }
+    
+    private void init(){
         file = new File( EXCEL_PATH + DateUtils.getToday() + "_" + UUID.randomUUID() + fileType);
         if (Files.notExists(Paths.get(file.getParent()))) {
             try {
@@ -68,6 +75,13 @@ public class DownloadBuilder<T> {
     public DownloadBuilder(Class<T> clazz, Map<String, Map<Object, Object>> convert) {
         this(clazz);
         this.convert = convert;
+    }
+    
+    public DownloadBuilder(Class<T> clazz, Map<String, Map<Object, Object>> convert, List<AchillesDiyTemplateColumns> tempcols ) {
+        this.convert = convert;
+        this.tempcols=tempcols;
+        this.cls=clazz;
+        init();        
     }
     /**
      * normal download <br>
@@ -154,6 +168,7 @@ public class DownloadBuilder<T> {
     /**
      * 构建表头
      */
+    Map<String , AchillesDiyTemplateColumns> columns ;
     private void createHeader() {
 
         SXSSFRow headrow = sheet.createRow(getRow());
@@ -163,16 +178,32 @@ public class DownloadBuilder<T> {
         String title = null;
         Field field = null;
         fieldList = new ArrayList<>(fields.length);
+        if(tempcols != null && !tempcols.isEmpty() ){
+            columns = new HashMap<>(tempcols.size());
+            for (AchillesDiyTemplateColumns adtc : tempcols) {
+                columns.put(adtc.getTableCol(), adtc);
+            }
+        } 
         for (int i = 0; i < fields.length; i++) {
             field = fields[i];
-            if (field.isAnnotationPresent(ApiModelProperty.class)) {
-                title = field.getAnnotation(ApiModelProperty.class).value();
-                cell = headrow.createCell(currColumn);
+            if(columns != null){
+                if(columns.containsKey(field.getName())){
+                    cell = headrow.createCell(currColumn);
+                    title = columns.get(field.getName()).getColTitile();
+                }
+            }else {
+                if (field.isAnnotationPresent(ApiModelProperty.class) ) {
+                    cell = headrow.createCell(currColumn);
+                    title = field.getAnnotation(ApiModelProperty.class).value();
+                }
+            }
+            if(cell != null){
                 cell.setCellValue(title);
                 field.setAccessible(true);
                 fieldList.add(field);
                 currColumn++;
             }
+            cell = null;
         }
     }
 
@@ -208,7 +239,7 @@ public class DownloadBuilder<T> {
                         fieldValue = field.get(object);
                     }
                     /** 数据转换 */
-                    if (convert.containsKey(field.getName()) && fieldValue != null) {
+                    if (convert != null&& convert.containsKey(field.getName()) && fieldValue != null) {
                     		Object convertobj=convert.get(field.getName()).get(fieldValue);
                     		if(convertobj !=null){
                     			setValue(row.createCell(i), convertobj);

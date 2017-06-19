@@ -83,7 +83,20 @@
                           <div class="col-md-2">
                             <select class="selectpicker"  data-style="form-control" title="全部状态"  name="orderStatus" multiple="multiple"  data-live-search="true">
                                 <option  th:each="x : ${orderStatusMap}" th:text="${x.value}" th:selected="${#arrays.contains(orderStatus,x.key)}" th:value="${x.key}" ></option>
+<!--                                 <option  th:text="预订成功" th:selected="${#arrays.contains(orderStatus,'5')}" value="5"></option> -->
+<!--                                 <option  th:text="商户拒绝" th:selected="${#arrays.contains(orderStatus,'6')}" value="6"></option> -->
+<!--                                 <option  th:text="客服拒绝" th:selected="${#arrays.contains(orderStatus,'7')}" value="7"></option> -->
+<!--                                 <option  th:text="商户取消" th:selected="${#arrays.contains(orderStatus,'10')}" value="10"></option> -->
+<!--                                 <option  th:text="客服取消" th:selected="${#arrays.contains(orderStatus,'11')}" value="11"></option> -->
+<!--                                 <option  th:text="用户取消" th:selected="${#arrays.contains(orderStatus,'15')}" value="15"></option> -->
+<!--                                 <option  th:text="待支付" th:selected="${#arrays.contains(orderStatus,'30')}" value="30"></option> -->
+<!--                                 <option  th:text="已支付（线上）"   th:selected="${#arrays.contains(orderStatus,'35')}" value="35"></option> -->
+<!--                                 <option  th:text="已支付（线下）"  th:selected="${#arrays.contains(orderStatus,'36')}" value="36"></option> -->
+<!--                                 <option  th:text="已送达" th:selected="${#arrays.contains(orderStatus,'2002')}" value="2002"></option> -->
+<!--                                 <option  th:text="待报销" th:selected="${#arrays.contains(orderStatus,'40')}" value="40"></option> -->
+<!--                                 <option  th:text="已报销" th:selected="${#arrays.contains(orderStatus,'45')}" value="45"></option> -->
                             </select>
+                            <!-- 1：待确认，5：预订成功（接受订单），6：商户拒绝，7：客服拒绝，10：商户取消（订单超时），11：客服取消(代替商户取消），15：用户取消（付款前），30：待支付，35：已支付，40：待报销，45：已报销） -->
                           </div>
                            <div class="col-md-2">
                                 <select class="selectpicker"  data-style="form-control" name="timeType">
@@ -121,16 +134,130 @@
                         <div class="table-responsive">
                           <table class="table table-bordered table-hover">
                             <thead>
+
                               <tr>
-                              	<th th:each="item:${templateColumns}" th:text="${item.colTitile}" width="8%">
-                              	</th>
+                              	<th width="8%">餐厅id</th>
+                                <th width="8%">订单号</th>
+                                <th width="8%">所属企业</th>
+								<th width="8%">下单人姓名</th>
+								<th width="8%">下单人工号</th>
+								<th width="8%">下单人邮箱</th>
+								<th width="8%">下单人手机</th>
+								<th width="5%">子公司</th>
+                                <th width="8%">事业部</th>
+                                <th width="8%">部门</th>
+                                <th width="5%">产品组</th>
+                                <th width="5%">大区</th>
+                                <th width="5%">成本中心</th>
+								<th width="8%">餐厅名</th>
+								<th width="8%">所属商户</th>
+								<th width="8%">维护销售</th>
+								<th width="8%">城市</th>
+								<th width="8%">业务类型</th>
+								<th width="8%">订单类型</th>
+								<th width="8%">支付类型</th>
+								<th width="8%">报备原因</th>
+								<th width="8%">是否需要包厢 </th>
+								<th width="8%">下单时间</th>
+								<th width="8%">接单时间</th>
+								<th width="8%">预约时间</th>
+								<th width="8%">是否立即配送 </th>
+								<th width="8%">消费确认时间 </th>
+								<th width="8%">支付时间</th>
+								<th width="8%">报备时间</th>
+								<th width="8%">订单状态</th>
+								<th width="8%">预计消费人数</th>
+								<th width="8%">预计消费金额</th>
+								<th width="8%">实际用餐人数</th>
+								<th width="8%">实际消费金额</th>
+								<th width="8%">人均消费</th>
+								<th width="8%">收货地址</th>
+								<th width="8%">是否餐厅首单</th>
+								<th width="8%">结算类型</th>
+								<th width="8%">是否有评价</th>
+								<th width="8%">评价日期</th>
+								<th width="8%">菜品口味评分</th>
+								<th width="8%">送达时间评分</th>
+								<th width="8%">餐厅环境评分</th>
+								<th width="8%">商品包装评分</th>
+								<th width="8%">商宴通服务评分</th>
+								<th width="8%">评论</th>
+								<th width="8%">回访日期</th>
+								<th width="8%">回访结果</th>
+								<th width="8%">返点</th>
+								<th width="8%">返点金额</th>
+								<th width="8%">提前预订时间</th>
+								<th width="8%">订单响应时间</th>
+								<th width="8%">code</th>
+								<th width="8%">刷卡卡号</th>
+								<th width="8%">餐厅地址</th>
+								<th width="8%">无包间是否接受大厅</th>
+								<th width="8%">用餐人备注</th>
                                 <th class="text-nowrap" style="display: none">Action</th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr th:each="item : ${page.content}">
-                           	    <td th:each="col : ${templateColumnKeys}" th:text="*{item[col]}"></td>
-								<td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
+                              	<td th:text="${item.restaurantId}"></td>
+                                <td th:text="${item.orderNum}"></td>
+								<td th:text="${item.company}"></td>    
+								<td th:text="${item.realname}"></td>    
+								<td th:text="${item.jobNum}"></td>  
+								<td th:text="${item.email}"></td>
+								<td th:text="${item.mobile}"></td>        
+								     
+								<td th:text="${item.branch}"></td>
+                                <td th:text="${item.businessunit}"></td>
+                                <td th:text="${item.sector}"></td>
+                                <td th:text="${item.productgroup}"></td>
+                                <td th:text="${item.region}"></td>
+                                <td th:text="${item.costcenter}"></td>
+								
+								<td th:text="${item.restaurantName}"></td>       
+								<td th:text="${item.merchantName}"></td>         
+								<td th:text="${item.salesName}"></td>         
+								<td th:text="${item.cityName}"></td>               
+								<td th:text="${item.serviceType}"></td>          
+								<td th:text="${item.orderType}"></td>            
+								<td th:text="${item.payType}"></td>              
+								<td th:text="${item.reportReason}"></td>         
+								<td th:text="${item.isRoom}"></td>               
+								<td th:text="${item.createTime}"></td>           
+								<td th:text="${item.receiveTime}"></td>          
+								<td th:text="${item.yuyueTime}"></td>            
+								<td th:text="${item.isDelivery}"></td>           
+								<td th:text="${item.confirmTime}"></td>          
+								<td th:text="${item.payTime}"></td>              
+								<td th:text="${item.reportTime}"></td>           
+								<td th:text="${item.orderSatus}"></td>               
+								<td th:text="${item.peopleNum}"></td>            
+								<td th:text="${item.predictCost}"></td>          
+								<td th:text="${item.actualPeople}"></td>         
+								<td th:text="${item.money}"></td>
+								<td th:text="${item.averageMoney}"></td>         
+								<td th:text="${item.address}"></td>              
+								<td th:text="${item.isRestaurantFirst}"></td>    
+								<td th:text="${item.manageType}"></td>           
+								<td th:text="${item.isScore}"></td>              
+								<td th:text="${item.orderRateCreateTime}"></td>  
+								<td th:text="${item.dishScore}"></td>            
+								<td th:text="${item.deliveryTimeScore}"></td>    
+								<td th:text="${item.restaurantScore}"></td>      
+								<td th:text="${item.packagingScore}"></td>       
+								<td th:text="${item.sytServiceScore}"></td>      
+								<td th:text="${item.reason}"></td>               
+								<td th:text="${item.replyTime}"></td>            
+								<td th:text="${item.replyContent}"></td>         
+								<td th:text="${item.rates}"></td>
+								<td th:text="${item.rateMoney}"></td>            
+								<td th:text="${item.preOrderTime}"></td>         
+								<td th:text="${item.responseOrderTime}"></td>  
+								<td th:text="${item.approvalCode}"></td>         
+								<td th:text="${item.cardNumber}"></td>   
+								<td th:text="${item.restaurantAddress}"></td>   
+								<td th:text="${item.isHall}"></td>   
+								<td th:text="${item.userComment}"></td>   
+                                <td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
                               </tr>
                             </tbody>
                             <tfoot>

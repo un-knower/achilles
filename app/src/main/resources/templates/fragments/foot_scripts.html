@@ -31,7 +31,7 @@
     <!-- Date range Plugin JavaScript -->
     <script src="/elite/plugins/bower_components/timepicker/bootstrap-timepicker.min.js"></script>
     <script src="/elite/plugins/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
-    
+    <script src="/elite/plugins/bower_components/switchery/dist/switchery.min.js"></script>
     <script type="text/javascript">
     /*<![CDATA[*/
 	    $(document).ready(function(){
@@ -95,8 +95,13 @@
                 }
               });
             },8000);
+            //初始化日期选择框
+            $('.data-time').datepicker({
+                autoclose: true,
+                todayHighlight: true,
+                format: "yyyy-mm-dd"
+            });
 	    });
-
        /*]]>*/
     </script>
   </div>

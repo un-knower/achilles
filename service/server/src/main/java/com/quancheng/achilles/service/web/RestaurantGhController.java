@@ -3,6 +3,7 @@ package com.quancheng.achilles.service.web;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -32,6 +33,7 @@ import com.quancheng.achilles.service.services.RestaurantServiceImpl;
 import com.quancheng.achilles.dao.model.BaseResponse;
 import com.quancheng.achilles.dao.model.RestaurantGonghai;
 import com.quancheng.achilles.dao.model.RestaurantRecommender;
+import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.EnumDownLoadModel;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
@@ -41,7 +43,7 @@ import io.swagger.annotations.ApiParam;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringCodegen", date = "2016-09-05T09:42:08.356Z")
 @Controller
-public class RestaurantGhController {
+public class RestaurantGhController extends ControllerAbstract{
 
     @Autowired
     OssServiceDBUtil ossServiceDBUtil;
@@ -68,13 +70,27 @@ public class RestaurantGhController {
     public ModelAndView callRecordListGet(
             @ApiParam(value = "每页记录数") @RequestParam(value = "pageSize", required = false, defaultValue = InnConstantPage.PAGE_SIZE_STRING) int pageSize,
             @ApiParam(value = "页码") @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
+            Long templateId,
             ModelAndView mv) {
         mv.setViewName("restaurant/restaurant_gh");
         RestaurantGonghai rg = new RestaurantGonghai();
         Pageable pageable = new PageRequest(pageNum, pageSize);
         Page<RestaurantGonghai> list = restService.pageGhRest(rg, null, null, null, null, pageable);
+        Map<Object, Object> manageTypes = parseManageType();
+        Map<Object, Object> mapstate = InnConstantRestStateEnum.parseSources();
+        Map<Object, Object> mapPriority = parsePriority();
+        for (RestaurantGonghai restaurantGonghai : list) {
+            restaurantGonghai.setRestaurantState("0".equals(restaurantGonghai.getRestaurantState())?"是":"否");
+            restaurantGonghai.setGonghaiStatus(mapstate.get(restaurantGonghai.getGonghaiStatus())==null?null:mapstate.get(restaurantGonghai.getGonghaiStatus()).toString());
+            restaurantGonghai.setSupportReserve("0".equals(restaurantGonghai.getSupportReserve())?"是":"否");
+            restaurantGonghai.setSupportTakeoutOfFood("0".equals(restaurantGonghai.getSupportTakeoutOfFood())?"是":"否");
+            restaurantGonghai.setManageType(manageTypes.get(restaurantGonghai.getManageType()) == null?null:manageTypes.get(restaurantGonghai.getManageType()).toString());
+            restaurantGonghai.setPriority(mapPriority.get(restaurantGonghai.getPriority()) == null?null:mapPriority.get(restaurantGonghai.getPriority()).toString());
+        }
+        configTemplate(templateId, mv);
         addCommonAttr(mv);
         mv.addObject("page", list);
+       
         return mv;
     }
 
@@ -104,6 +120,7 @@ public class RestaurantGhController {
             @ApiParam(value = "是否支持外卖") @RequestParam(value = "supportTakeout", required = false) String supportTakeout,
             @ApiParam(value = "是否支持订座") @RequestParam(value = "supportReverse", required = false) String supportReverse,
             @ApiParam(value = "维护销售") @RequestParam(value = "sales", required = false) String sales,
+            Long templateId,
             HttpServletRequest request, ModelAndView mv, HttpServletResponse response) throws IOException {
         class AsyncUploadToOSS implements Runnable {
             private ModelAndView mv;
@@ -118,24 +135,10 @@ public class RestaurantGhController {
             public void run() {
                 mv = restaurantGh(EXPORTLIMIT, 0, restName, city, ownCompany, restStatus, restResource, ghTaskName,
                         recommendersEmail, recommendersCompany, projectName, inStoreDateStart, inStoreDateEnd,
-                        shelfTimeStart, shelfTimeEnd, supportTakeout, supportReverse, sales, mv);
+                        shelfTimeStart, shelfTimeEnd, supportTakeout, supportReverse, sales,templateId, mv);
                 Page<RestaurantGonghai> page = (Page<RestaurantGonghai>) mv.getModel().get("page");
-                Map<String, Map<Object, Object>> convert = new HashMap<>();
-//                convert.put("restaurantSources", parseSources());
-                Map<Object, Object> restState = new HashMap<>();
-                restState.put("0", "正常");
-                restState.put("1", "禁用");
-                convert.put("restaurantState", restState);
-                convert.put("priority", parsePriority());
-                Map<Object, Object> ifelse = new HashMap<>();
-                ifelse.put("0", "是");
-                ifelse.put("1", "否");
-                convert.put("supportReserve", ifelse);
-                convert.put("supportTakeoutOfFood", ifelse);
-                convert.put("manageType", parseManageType());
-                convert.put("gonghaiStatus", InnConstantRestStateEnum.parseSources());
-//                convert.put("recommendsCompany", parseSources());
-                DownloadBuilder<RestaurantGonghai> eb = new DownloadBuilder<>(RestaurantGonghai.class, convert);
+                final List<AchillesDiyTemplateColumns> tempcols = templateId == null?null : achillesDiyColumnsServiceImpl.getTemplateColsByTemplate(templateId);
+                DownloadBuilder<RestaurantGonghai> eb = new DownloadBuilder<>(RestaurantGonghai.class,null, tempcols);
                 eb.append(page.getContent());
                 mv.clear();
                 Pageable pageables = null;
@@ -144,7 +147,7 @@ public class RestaurantGhController {
                     mv = restaurantGh(pageables.getPageSize(), pageables.getPageNumber(), restName, city, ownCompany,
                             restStatus, restResource, ghTaskName, recommendersEmail, recommendersCompany, projectName,
                             inStoreDateStart, inStoreDateEnd, shelfTimeStart, shelfTimeEnd, supportTakeout,
-                            supportReverse, sales, mv);
+                            supportReverse, sales, templateId,mv);
                     page = (Page<RestaurantGonghai>) mv.getModel().get("page");
                     eb.append(page.getContent());
                     mv.clear();
@@ -181,7 +184,9 @@ public class RestaurantGhController {
             @ApiParam(value = "下线时间") @RequestParam(value = "shelfTimeEnd", required = false) String shelfTimeEnd,
             @ApiParam(value = "是否支持外卖") @RequestParam(value = "supportTakeout", required = false) String supportTakeout,
             @ApiParam(value = "是否支持订座") @RequestParam(value = "supportReverse", required = false) String supportReverse,
-            @ApiParam(value = "维护销售") @RequestParam(value = "sales", required = false) String sales, ModelAndView mv) {
+            @ApiParam(value = "维护销售") @RequestParam(value = "sales", required = false) String sales, 
+            Long templateId,
+            ModelAndView mv) {
         RestaurantGonghai rg = new RestaurantGonghai();
         rg.setStoreName(restName);
         rg.setCity("-1".equals(city) ? null : city);
@@ -197,11 +202,22 @@ public class RestaurantGhController {
         rg.setSalesName("-1".equals(sales) ? null : sales);
         Page<RestaurantGonghai> page = restService.pageGhRest(rg, inStoreDateStart, inStoreDateEnd, shelfTimeStart,
                 shelfTimeEnd, new PageRequest(pageNum, pageSize));
+        Map<Object, Object> manageTypes = parseManageType();
+        Map<Object, Object> mapstate = InnConstantRestStateEnum.parseSources();
+        Map<Object, Object> mapPriority = parsePriority();
+        for (RestaurantGonghai restaurantGonghai : page) {
+            restaurantGonghai.setRestaurantState("0".equals(restaurantGonghai.getRestaurantState())?"是":"否");
+            restaurantGonghai.setGonghaiStatus(mapstate.get(restaurantGonghai.getGonghaiStatus())==null?null:mapstate.get(restaurantGonghai.getGonghaiStatus()).toString());
+            restaurantGonghai.setSupportReserve("0".equals(restaurantGonghai.getSupportReserve())?"是":"否");
+            restaurantGonghai.setSupportTakeoutOfFood("0".equals(restaurantGonghai.getSupportTakeoutOfFood())?"是":"否");
+            restaurantGonghai.setManageType(manageTypes.get(restaurantGonghai.getManageType()) == null?null:manageTypes.get(restaurantGonghai.getManageType()).toString());
+            restaurantGonghai.setPriority(mapPriority.get(restaurantGonghai.getPriority()) == null?null:mapPriority.get(restaurantGonghai.getPriority()).toString());
+        }
+        configTemplate(templateId, mv);
         mv.addObject("page", page);
         mv.addObject("restName", restName);
         mv.addObject("city", toSet(city));
         mv.addObject("ownCompany", ownCompany !=null?Long.parseLong(ownCompany):ownCompany);
-        mv.addObject("restStatus", restStatus);
         mv.addObject("restResource", restResource);
         mv.addObject("ghTaskName", ghTaskName);
         mv.addObject("recommendersEmail", recommendersEmail);
@@ -215,6 +231,7 @@ public class RestaurantGhController {
         mv.addObject("supportReverse", supportReverse);
         mv.addObject("sales", sales);
         addCommonAttr(mv);
+        configTemplate(templateId, mv);
         mv.setViewName("restaurant/restaurant_gh");
         return mv;
     }
@@ -566,19 +583,12 @@ public class RestaurantGhController {
     }
 
     private void addCommonAttr(ModelAndView mv) {
-        mv.addObject("restManageTypeList", parseManageType());
-//        mv.addObject("restResourceList", parseSources());
-        mv.addObject("restPriorityList", parsePriority());
         mv.addObject("cityList", restService.queryAllCitys());
         mv.addObject("salesList", restService.querySales());
         mv.addObject("companyList", restService.queryAllCompanys());
         Map<Object, Object> mapstate = InnConstantRestStateEnum.parseSources();
         mv.addObject("gonghaiStatusList", mapstate);
     }
-
-//    private Map<Object, Object> parseSources() {
-//        return InnConstantsRecommandRs.parseSources();
-//    }
 
     private Map<Object, Object> parsePriority() {
         return parse(restaurantPriority);
