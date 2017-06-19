@@ -2,6 +2,8 @@ package com.quancheng.achilles.dao.modelwrite;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -11,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
 @Table(name = "out_app_restaurant_reported_wrong")
 public class AppRestaurantReportedWrong {
     @Id
-    @ApiModelProperty(value = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private String uuid;
     @ApiModelProperty(value = "餐厅反馈表id")
     @Column(name = "id")

@@ -50,8 +50,9 @@ public class WhiteListRestaurantServiceImpl extends RestaurantServiceAbstract<Wh
                 .and(like("restaurantName",restaurantName))
                 .and(equal("jobNum",applyUserJobNum))
                 .and(between(timeType,begin,end))
-                .and(in("cityId",cityIds))
-                .and(in("cityId",cityIds));
+                .and(in("city",cityIds))
+                .and(in("approveMethod",approveTypes))
+                .and(in("title",applyCompanys));
         return whiteListRestaurantRepository.findAll(speci,pageable);
     }
     public List<String> getAllClients(){
