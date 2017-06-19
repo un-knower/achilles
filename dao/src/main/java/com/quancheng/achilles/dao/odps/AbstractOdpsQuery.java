@@ -9,9 +9,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,11 +156,12 @@ public abstract class AbstractOdpsQuery {
                 Column column = schema.getColumn(i);
                 String name = column.getName();
                 Object valO = m.get(name);
-                String val = valO.toString();
-                if (StringUtils.isEmpty(val)) {
+                if (StringUtils.isEmpty(valO)) {
                     // record.setString(i, val);
                     continue;
                 }
+                String val = valO.toString();
+
                 switch (column.getTypeInfo().getOdpsType()) {
                     case BIGINT:
                         record.setBigint(i, Long.valueOf(val));
@@ -192,28 +196,36 @@ public abstract class AbstractOdpsQuery {
     }
 
     private int             threadNum = 5;
-    private ExecutorService pool      = Executors.newFixedThreadPool(threadNum);
+    private ExecutorService pool      = Executors.newFixedThreadPool(threadNum + 1);
 
     protected boolean insert(String tableName, List<Map<String, Object>> datas) throws OdpsException, IOException,
-                                                                                ParseException {
+                                                                                ParseException, ExecutionException,
+                                                                                TimeoutException {
         boolean result = true;
         try {
             TableTunnel tunnel = new TableTunnel(getConfig());
             UploadSession uploadSession = tunnel.createUploadSession(getConfig().getDefaultProject(), tableName);
             System.out.println("Session Status is : " + uploadSession.getStatus().toString());
 
-            ArrayList<Callable<Boolean>> callers = new ArrayList<Callable<Boolean>>();
+            // ArrayList<Callable<Boolean>> callers = new ArrayList<Callable<Boolean>>();
+            List<Future<Boolean>> futureList = new ArrayList<>();
             for (int i = 0; i < threadNum; i++) {
-                RecordWriter recordWriter = uploadSession.openRecordWriter(i);
-                callers.add(new UploadOdpsThread(i, threadNum, recordWriter,
-                                                 listMapToListRecord(uploadSession, datas)));
+                RecordWriter recordWriter = uploadSession.openBufferedWriter();
+                // callers.add(new UploadOdpsThread(i, threadNum, recordWriter,
+                // listMapToListRecord(uploadSession, datas)));
+                futureList.add(pool.submit(new UploadOdpsThread(i, threadNum, recordWriter,
+                                                                listMapToListRecord(uploadSession, datas))));
             }
-            pool.invokeAll(callers);
-            pool.shutdown();
-            Long[] blockList = new Long[threadNum];
-            for (int i = 0; i < threadNum; i++)
-                blockList[i] = Long.valueOf(i);
-            uploadSession.commit(blockList);
+            for (Future<Boolean> future : futureList) {
+                future.get(5, TimeUnit.MINUTES);
+            }
+            // pool.invokeAll(callers);
+            // pool.shutdown();
+            // Long[] blockList = new Long[threadNum];
+            // for (int i = 0; i < threadNum; i++)
+            // blockList[i] = Long.valueOf(i);
+            // uploadSession.commit(blockList);
+            uploadSession.commit();
             System.out.println("upload success!");
         } catch (TunnelException e) {
             result = false;

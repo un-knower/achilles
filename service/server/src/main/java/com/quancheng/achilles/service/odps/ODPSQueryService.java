@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -83,7 +85,7 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         return allNum;
     }
 
-    public boolean taskHospatalRestaurantDistance(InnConstantODPSTables.TaskHospatalRestaurantDistance type,
+    public boolean taskHospitalRestaurantDistance(InnConstantODPSTables.TaskHospitalRestaurantDistance type,
                                                   double distances,
                                                   boolean compareCompany) throws OdpsException, IOException {
         String comapre = "";
@@ -109,11 +111,11 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                      + " when r.manage_type = 0 then 'T+n账期'  end AS manage_type , r.shipping_dis"
                      + ",round(6378.137*1000.0*2.0*asin(sqrt(abs(pow(sin((r.lat-h.lat)*(3.1415926/ 180.0)*0.5),2) + cos(r.lat) * cos(h.lat) * pow(sin((r.lng-h.lng)*(3.1415926/ 180.0)*0.5),2))))) as distances"
                      + "from %s " + "on h.city_id = r.city_id  %s ) a where a.distances<= %s";
-        if (InnConstantODPSTables.TaskHospatalRestaurantDistance.RestaurantHospatal == type) {
-            talle = " restaurant_info r  left OUTER join  hospital_info h ";
+        if (InnConstantODPSTables.TaskHospitalRestaurantDistance.RestaurantHospital == type) {
+            talle = " tmp_restaurant_info r  left OUTER join  tmp_hospital_info h ";
         }
 
-        List<Map> selectList = query(Map.class, sql, InnConstantODPSTables.outHospatalRestaurantDistance, talle,
+        List<Map> selectList = query(Map.class, sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle,
                                      comapre, distances);
         if (!CollectionUtils.isEmpty(selectList)) {
             System.err.println(JSON.toJSONString(selectList));
@@ -132,9 +134,15 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         return true;
     }
 
-    /** 插入内容到指定的表 */
+    /**
+     * 插入内容到指定的表
+     * 
+     * @throws TimeoutException
+     * @throws ExecutionException
+     */
     public boolean insertToOdps(String tableName, List<Map<String, Object>> datas) throws OdpsException, IOException,
-                                                                                   ParseException {
+                                                                                   ParseException, ExecutionException,
+                                                                                   TimeoutException {
         return insert(tableName, datas);
     }
 

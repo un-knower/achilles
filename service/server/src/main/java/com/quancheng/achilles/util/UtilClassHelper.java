@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -120,11 +121,30 @@ public class UtilClassHelper {
      * @return
      * @throws IOException
      */
+    public static List<Map<String, String>> getAttributeMapsFromExcel(MultipartFile file) throws IOException {
+        return getAttributeMapsFromExcel(file.getOriginalFilename(), file.getInputStream());
+    }
+
+    /**
+     * Excel数据转 Map列表
+     * 
+     * @param file
+     * @return
+     * @throws IOException
+     */
     public static List<Map<String, String>> getAttributeMapsFromExcel(File file) throws IOException {
-        List<Map<String, String>> hospitalList = new ArrayList<>();
         InputStream stream = new FileInputStream(file);
+        return getAttributeMapsFromExcel(file.getName(), stream);
+    }
+
+    /**
+     * Excel数据转 Map列表
+     */
+    public static List<Map<String, String>> getAttributeMapsFromExcel(String fileName,
+                                                                      InputStream stream) throws IOException {
+        List<Map<String, String>> hospitalList = new ArrayList<>();
         Workbook wb = null;
-        String fileType = file.getName().split("\\.")[1];
+        String fileType = fileName.split("\\.")[1];
         if (fileType.equals("xls")) {
             wb = new HSSFWorkbook(stream);
         } else if (fileType.equals("xlsx")) {
@@ -162,6 +182,27 @@ public class UtilClassHelper {
         wb.close();
         stream.close();
         return hospitalList;
+    }
+
+    /**
+     * 根据地址或者地名获取经纬度,当具体地址获取不到经纬度时，尝试通过地名获取。
+     * 
+     * @param map ：包括详细地址(address)、地名(name)和城市(cityName)
+     * @return Map<String, BigDecimal> 形如 {lng=119.3947439664622, lat=26.00910836345558}
+     */
+    public static Map<String, Double> getLatAndLngByAddressFromBaidu(Map<String, String> map) {
+        Map<String, Double> location = null;
+        String address = map.get("address");
+        if (address != null && !"".equals(address)) {
+            location = getLatAndLngByAddressFromBaidu(map.get("address"), map.get("cityName"));
+        }
+        if (location == null) {
+            String name = map.get("name");
+            if (name != null && !"".equals(name)) {
+                location = getLatAndLngByAddressFromBaidu(name, map.get("cityName"));
+            }
+        }
+        return location;
     }
 
     /**

@@ -1,23 +1,24 @@
 package com.quancheng.achilles.dao.odps.model;
 
 public class RestaurantInfo {
+
     private Integer id;
 
-    private String companyId;
+    private String  companyId;
 
-    private String companyName;
+    private String  companyName;
 
-    private String cityId;
+    private String  cityId;
 
-    private String cityName;
+    private String  cityName;
 
-    private String restaurantId;
+    private String  restaurantId;
 
-    private String restaurantName;
+    private String  restaurantName;
 
-    private Double lng;
+    private Double  lng;
 
-    private Double lat;
+    private Double  lat;
 
     private Integer settable;
 
@@ -25,21 +26,21 @@ public class RestaurantInfo {
 
     private Integer supportReserve;
 
-    private String cookStyle;
+    private String  cookStyle;
 
-    private Double consume;
+    private Double  consume;
 
     private Integer boxNum;
 
     private Integer period;
 
-    private String rateSettlementType;
+    private String  rateSettlementType;
 
-    private String manageType;
+    private String  manageType;
 
-    private Double shippingDis;
+    private Double  shippingDis;
 
-    private String address;
+    private String  address;
 
     public Integer getId() {
         return id;

@@ -1,6 +1,6 @@
 package com.quancheng.achilles.dao.odps.model;
 
-public class OutHospatalRestaurantDistance {
+public class OutHospitalRestaurantDistance {
 
     private Integer id;
 

@@ -145,7 +145,7 @@ public class AchillesServiceImpl implements AchillesService {
                                                                odpssytrequest.getClientId());
                 if (resp.getBaseResponse().getSuccess()) {
                     BoundValueOperations<String, String> boundValueOps = srt.boundValueOps(redisKey);
-                    String json = JsonUtil.toString(resp);
+                    String json = JsonUtil.objectToJson(resp);
                     boundValueOps.set(json);
                 }
             } else {
@@ -156,7 +156,7 @@ public class AchillesServiceImpl implements AchillesService {
                                                                    odpssytrequest.getClientId());
                     if (resp.getBaseResponse().getSuccess()) {
                         BoundValueOperations<String, String> boundValueOps = srt.boundValueOps(redisKey);
-                        boundValueOps.set(JsonUtil.toString(resp));
+                        boundValueOps.set(JsonUtil.objectToJson(resp));
                     }
                 }
             }

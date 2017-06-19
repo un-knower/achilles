@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="OutHospatalRestaurantDistanceMapper" >
-  <resultMap id="BaseResultMap" type="com.quancheng.achilles.dao.odps.model.OutHospatalRestaurantDistance" >
+<mapper namespace="OutHospitalRestaurantDistanceMapper" >
+  <resultMap id="BaseResultMap" type="com.quancheng.achilles.dao.odps.model.OutHospitalRestaurantDistance" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="company_id" property="companyId" jdbcType="VARCHAR" />
     <result column="company_name" property="companyName" jdbcType="VARCHAR" />
@@ -38,18 +38,30 @@
     consume, box_num, period, rate_settlement_type, manage_type, shipping_dis, distance, 
     is_within
   </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="queryCompanyInfo" resultType="Map" parameterType="Map" >
+    select id as companyId,title as companyName from quancheng_db.16860_client
+    <where>
+     <if test="companyId != null" >
+       id = ${companyId,jdbcType=VARCHAR} 
+    </if>
+    <if test="companyName  != null" >
+       and title = ${companyName ,jdbcType=VARCHAR} 
+    </if>
+    </where>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from out_hospatal_restaurant_distance
+    from out_hospital_restaurant_distance
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from out_hospatal_restaurant_distance
+    delete from out_hospital_restaurant_distance
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="batchInsert" parameterType="List" >
-    insert into out_hospatal_restaurant_distance (id, company_id, company_name, 
+    insert into out_hospital_restaurant_distance (id, company_id, company_name, 
       city_id, city_name, hospital_id, 
       hospital_name, hospital_lng, hospital_lat, 
       hospital_settable, restaurant_id, restaurant_name, 
@@ -74,8 +86,8 @@
       </foreach>
   </insert>
       
-  <insert id="insertSelective" parameterType="com.quancheng.achilles.dao.odps.model.OutHospatalRestaurantDistance" >
-    insert into out_hospatal_restaurant_distance
+  <insert id="insertSelective" parameterType="com.quancheng.achilles.dao.odps.model.OutHospitalRestaurantDistance" >
+    insert into out_hospital_restaurant_distance
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,

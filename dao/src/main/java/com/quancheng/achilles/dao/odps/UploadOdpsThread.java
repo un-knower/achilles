@@ -19,6 +19,7 @@ public class UploadOdpsThread implements Callable<Boolean> {
         this.id = id;
         this.recordWriter = recordWriter;
         this.recordList = recordList;
+        this.threadSize = threadSize;
         // this.tableSchema = tableSchema;
     }
 

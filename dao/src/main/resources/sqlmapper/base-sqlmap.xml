@@ -2,12 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="BaseMapper" >
   <select id="queryAll" resultType="Map" parameterType="Map" >
-    select  * from #{tableName,jdbcType=VARCHAR}  
+    select  * from ${tableName}
   </select>
   <select id="queryBySql" resultType="Map" parameterType="Map" >
-    #{sql,jdbcType=VARCHAR}  
+    ${sqlString,jdbcType=VARCHAR}
   </select>
   <update id="updateBySql" parameterType="Map">
-    #{sql,jdbcType=VARCHAR} 
+    ${sqlString}
+  </update>
+  <update id="truncateTable" parameterType="Map">
+   truncate table ${tableName}
   </update>
 </mapper>

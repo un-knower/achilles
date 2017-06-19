@@ -17,7 +17,7 @@
     <result column="cook_style" property="cookStyle" jdbcType="VARCHAR" />
     <result column="consume" property="consume" jdbcType="DOUBLE" />
     <result column="box_num" property="boxNum" jdbcType="INTEGER" />
-    <result column="period" property="period" jdbcType="INTEGER" />
+    <result column="period" property="period" jdbcType="DOUBLE" />
     <result column="rate_settlement_type" property="rateSettlementType" jdbcType="VARCHAR" />
     <result column="manage_type" property="manageType" jdbcType="VARCHAR" />
     <result column="shipping_dis" property="shippingDis" jdbcType="DOUBLE" />
@@ -34,7 +34,7 @@
     delete from restaurant_info
     where id = #{id,jdbcType=INTEGER}
   </delete>
-    <insert id="queryAndSaveToDB" parameterType="Map" >
+  <insert id="queryAndSaveToDB" parameterType="Map" >
     insert into restaurant_info (company_id,company_name,city_id,city_name,restaurant_id,restaurant_name,address,lng,lat,settable,support_waimai,support_reserve,cook_style,consume,box_num,period,rate_settlement_type,manage_type,shipping_dis) 
 	SELECT DISTINCT c.id AS company_id
 		, c.title AS company_name
@@ -66,7 +66,7 @@
 	LEFT OUTER JOIN quancheng_db.api_yuding qay on qay.restaurant_id = ar.id and qay.status=0 and qay.deleted_at is null
 	LEFT OUTER JOIN quancheng_db.api_assets qaa on qaa.id=ar.asset_id and qaa.deleted_at is null
 	LEFT OUTER JOIN (
-		SELECT awrd.restaurant_id #, group_concat(awrc.name) AS category_name
+		SELECT awrd.restaurant_id  
 			, awrc.name AS category_name
 			, awrd.shipping_fee_min
 			, awrd.polygon
@@ -111,7 +111,7 @@
       #{item.restaurantName,jdbcType=VARCHAR}, #{item.lng,jdbcType=DOUBLE}, #{item.lat,jdbcType=DOUBLE}, 
       #{item.settable,jdbcType=INTEGER}, #{item.supportWaimai,jdbcType=INTEGER}, #{item.supportReserve,jdbcType=INTEGER}, 
       #{item.cookStyle,jdbcType=VARCHAR}, #{item.consume,jdbcType=DOUBLE}, #{item.boxNum,jdbcType=INTEGER}, 
-      #{item.period,jdbcType=INTEGER}, #{item.rateSettlementType,jdbcType=VARCHAR}, #{item.manageType,jdbcType=VARCHAR}, 
+      #{item.period,jdbcType=DOUBLE}, #{item.rateSettlementType,jdbcType=VARCHAR}, #{item.manageType,jdbcType=VARCHAR}, 
       #{item.shippingDis,jdbcType=DOUBLE}, #{item.address,jdbcType=LONGVARCHAR})
      </foreach>
   </insert>
@@ -226,7 +226,7 @@
         #{boxNum,jdbcType=INTEGER},
       </if>
       <if test="period != null" >
-        #{period,jdbcType=INTEGER},
+        #{period,jdbcType=DOUBLE},
       </if>
       <if test="rateSettlementType != null" >
         #{rateSettlementType,jdbcType=VARCHAR},

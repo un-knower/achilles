@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import com.github.pagehelper.PageInfo;
 public class BaseServiceImpl implements BaseService {
 
     @Qualifier("statisticsSqlSessionTemplate")
+    @Resource(name = "statisticsSqlSessionTemplate")
     private SqlSessionTemplate sqlSession;
 
     @Override
@@ -50,7 +53,7 @@ public class BaseServiceImpl implements BaseService {
         }
 
         Map<String, String> sqlParam = new HashMap<>();
-        sqlParam.put("sql", sql);
+        sqlParam.put("sqlString", sql);
         PageHelper.startPage(pageNum, pageSize, true);
         List<Map<String, Object>> selectList = sqlSession.selectList("BaseMapper.queryBySql", sqlParam);
         return new PageInfo<Map<String, Object>>(selectList);
@@ -67,8 +70,8 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public Boolean clearTable(String tableName) {
         Map<String, String> sqlParam = new HashMap<>();
-        sqlParam.put("sql", "truncate table " + tableName);
-        int update = sqlSession.update("BaseMapper.updateBySql", sqlParam);
+        sqlParam.put("tableName", tableName);
+        int update = sqlSession.update("BaseMapper.truncateTable", sqlParam);
         return update > 0 ? true : false;
     }
 }

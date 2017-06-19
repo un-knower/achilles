@@ -1,27 +1,28 @@
 package com.quancheng.achilles.dao.odps.model;
 
 public class HospitalInfo {
+
     private Integer id;
 
-    private String companyId;
+    private String  companyId;
 
-    private String companyName;
+    private String  companyName;
 
-    private String cityId;
+    private String  cityId;
 
-    private String cityName;
+    private String  cityName;
 
-    private String hospitalId;
+    private String  hospitalId;
 
-    private String hospitalName;
+    private String  hospitalName;
 
-    private Double lng;
+    private Double  lng;
 
-    private Double lat;
+    private Double  lat;
 
     private Integer settable;
 
-    private String address;
+    private String  address;
 
     public Integer getId() {
         return id;

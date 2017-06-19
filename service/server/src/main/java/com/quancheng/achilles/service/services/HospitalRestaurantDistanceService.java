@@ -3,6 +3,10 @@ package com.quancheng.achilles.service.services;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.aliyun.odps.OdpsException;
 import com.quancheng.achilles.dao.constant.InnConstantODPSTables;
@@ -22,28 +26,30 @@ import com.quancheng.achilles.dao.constant.InnConstantODPSTables;
 public interface HospitalRestaurantDistanceService {
 
     /** 清空医院信息表 */
-    Boolean clearHospatalInfo();
+    Boolean clearHospitalInfo();
 
     /** Excel信息到DB */
-    Boolean saveExcelToDB(String tableName);
+    <T> Boolean saveExcelToDB(MultipartFile file, T type, String companyId) throws IOException;
 
     /** 清空餐厅信息表 */
     Boolean clearRestaurantInfo();
 
     /** 查询并且保存医院信息到DB */
-    Boolean queryAndSaveHospatalInfoToDB(Map<String, String> param);
+    Boolean queryAndSaveHospitalInfoToDB(Map<String, String> param);
 
     /** 查询并且保存餐厅信息到DB */
     Boolean queryAndSaveRestaurantInfoToDB(Map<String, String> param);
 
     /** 同步DB表信息到ODPS */
-    Boolean syncDBToODPS(String tableName) throws OdpsException, IOException, ParseException;
+    Boolean syncDBToODPS(String tableName) throws OdpsException, IOException, ParseException, ExecutionException,
+                                           TimeoutException;
 
     /** 同步DB表信息到ODPS */
-    Boolean syncDBToODPS(String dbTableName, String odpsTableName) throws OdpsException, IOException, ParseException;
+    Boolean syncDBToODPS(String dbTableName, String odpsTableName) throws OdpsException, IOException, ParseException,
+                                                                   ExecutionException, TimeoutException;
 
     /** 调用ODPS执行计算 */
-    Boolean invokeODPSTask(InnConstantODPSTables.TaskHospatalRestaurantDistance type, double distances,
+    Boolean invokeODPSTask(InnConstantODPSTables.TaskHospitalRestaurantDistance type, double distances,
                            boolean compareCompany) throws OdpsException, IOException;
 
     /** 从ODPS拿到结果保存到DB */
