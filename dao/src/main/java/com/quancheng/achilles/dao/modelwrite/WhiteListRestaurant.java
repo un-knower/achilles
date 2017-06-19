@@ -2,6 +2,8 @@ package com.quancheng.achilles.dao.modelwrite;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -10,7 +12,11 @@ import io.swagger.annotations.ApiModelProperty;
 @Table(name = "out_white_list_restaurant")
 public class WhiteListRestaurant {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
+    @ApiModelProperty(value = "餐厅id")
+    @Column(name = "rest_id")
+    private String restId;
     @ApiModelProperty(value = "申请人姓名")
     @Column(name = "realname")
     private String realname;
@@ -125,4 +131,11 @@ public class WhiteListRestaurant {
     public void setApproveStatus(String approveStatus) {
         this.approveStatus = approveStatus;
     }
+    public String getRestId() {
+        return restId;
+    }
+    public void setRestId(String restId) {
+        this.restId = restId;
+    }
+    
 }

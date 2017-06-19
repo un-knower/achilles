@@ -2,6 +2,8 @@ package com.quancheng.achilles.dao.modelwrite;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -11,6 +13,8 @@ import io.swagger.annotations.ApiModelProperty;
 @Table(name = "out_approve_time_detail")
 public class FranchiseRestApproveDetail {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String uuid;
     @ApiModelProperty(value = "餐厅id")
     @Column(name = "id")
     private String id;
