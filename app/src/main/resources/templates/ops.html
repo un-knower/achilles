@@ -51,66 +51,20 @@
                                 <thead><tr><td width="20%"></td><td width="20%"></td><td></td><td width="10%"></td></tr></thead>
                                 <tbody>
                                   <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
-                                    <td><a href="/ops/orderquery/all">订单统计</a></td>
+<!--                                     <td><a href="/ops/orderquery/all">订单统计</a></td> -->
+                                <td><a href="template/list?tableName=tmp_order_query">订单统计</a></td>
                                     <td></td>
                                     <td></td>
                                     <td align="center">
                                         <div class="btn-group m-r-10">
                                             <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
                                             <ul role="menu" class="dropdown-menu">
-                                              <li><a href="template/list?tableName=tmp_restaurant" class="waves-effect">编辑表格</a></li>
-                                              <li><a href="#">删除表格</a></li>
-                                              <li><a href="#">换个名字</a></li>
+<!--                                               <li><a href="template/list?tableName=tmp_restaurant" class="waves-effect">模版管理</a></li> -->
+                                              <li><a href="template/edit?tableName=tmp_order_query">新增模版</a></li>
                                             </ul>
                                         </div>
                                     </td>
                                   </tr>
-                                  <tr sec:authorize="hasRole('ADMIN') or hasRole('OPERATIVE')">
-                                    <td><a href="/ops/orderquery/operative">运营订单统计</a></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td align="center">
-                                        <div class="btn-group m-r-10">
-                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
-                                            <ul role="menu" class="dropdown-menu">
-                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
-                                              <li><a href="#">删除表格</a></li>
-                                              <li><a href="#">换个名字</a></li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                  </tr>
-                                  <tr sec:authorize="hasRole('ADMIN') or hasRole('KEYCUSTOMER')">
-                                    <td><a href="/ops/orderquery/bclient">大客户订单统计</a></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td align="center">
-                                        <div class="btn-group m-r-10">
-                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
-                                            <ul role="menu" class="dropdown-menu">
-                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
-                                              <li><a href="#">删除表格</a></li>
-                                              <li><a href="#">换个名字</a></li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                  </tr>
-                                  <tr sec:authorize="hasAnyRole('ADMIN')">
-                                    <td><a href="/ops/orderquery/finance">财务订单统计</a></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td align="center">
-                                        <div class="btn-group m-r-10">
-                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
-                                            <ul role="menu" class="dropdown-menu">
-                                              <li><a href="#" class="waves-effect" >编辑表格</a></li>
-                                              <li><a href="#">删除表格</a></li>
-                                              <li><a href="#">换个名字</a></li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                  </tr>
-                                  
                                 </tbody>
                               </table>
                            </div>
@@ -133,61 +87,53 @@
                                 <thead><tr><td width="20%"></td><td width="20%"></td><td></td><td width="10%"></td></tr></thead>
                                 <tbody>
                                   <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
-                                    <td><a th:href="@{/ops/restaurant/gh_index}" >公海餐厅</a></td>
+                                    <td><a href="template/list?tableName=tmp_restaurant" >餐厅</a></td>
                                     <td></td>
                                     <td></td>
                                     <td align="center">
                                         <div class="btn-group m-r-10">
                                             <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
                                             <ul role="menu" class="dropdown-menu">
-                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
-                                              <li><a href="#">删除表格</a></li>
-                                              <li><a href="#">换个名字</a></li>
+                                              <li><a href="template/edit?tableName=tmp_restaurant">添加模版</a></li>
                                             </ul>
                                         </div>
                                     </td>
                                   </tr>
-                                  <tr sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
-                                    <td><a th:href="@{/ops/restaurant/online}" >上架餐厅</a></td>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+                                    <td><a href="template/list?tableName=out_approve_time_detail" >特许餐厅</a></td>
                                     <td></td>
                                     <td></td>
                                     <td align="center">
                                         <div class="btn-group m-r-10">
                                             <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
                                             <ul role="menu" class="dropdown-menu">
-                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
-                                              <li><a href="#">删除表格</a></li>
-                                              <li><a href="#">换个名字</a></li>
+                                              <li><a href="template/edit?tableName=out_approve_time_detail">新增模版</a></li>
                                             </ul>
                                         </div>
                                     </td>
                                   </tr>
-                                  <tr sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
-                                    <td><a th:href="@{/ops/restaurant/ol}" >在线餐厅统计</a></td>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+                                    <td><a href="template/list?tableName=out_app_restaurant_reported_wrong" >App餐厅报错信息</a></td>
                                     <td></td>
                                     <td></td>
                                     <td align="center">
                                         <div class="btn-group m-r-10">
                                             <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
                                             <ul role="menu" class="dropdown-menu">
-                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
-                                              <li><a href="#">删除表格</a></li>
-                                              <li><a href="#">换个名字</a></li>
+                                              <li><a href="template/edit?tableName=out_app_restaurant_reported_wrong">新增模版</a></li>
                                             </ul>
                                         </div>
                                     </td>
                                   </tr>
-                                  <tr sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
-                                    <td><a th:href="@{/ops/restaurant/shelf}" >下架餐厅</a></td>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+                                    <td><a href="template/list?tableName=out_white_list_restaurant" >白名单餐厅</a></td>
                                     <td></td>
                                     <td></td>
                                     <td align="center">
                                         <div class="btn-group m-r-10">
                                             <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
                                             <ul role="menu" class="dropdown-menu">
-                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
-                                              <li><a href="#">删除表格</a></li>
-                                              <li><a href="#">换个名字</a></li>
+                                              <li><a href="template/edit?tableName=out_white_list_restaurant">新增模版</a></li>
                                             </ul>
                                         </div>
                                     </td>

@@ -48,7 +48,7 @@ public class RestaurantGonghai implements Serializable {
     private String  storeName;
 
     @Column(name = "city")
-    @ApiModelProperty(value = "城市")
+    @ApiModelProperty(value = "城市Id")
     private String  city;
 
     @Column(name = "city_display")
@@ -60,7 +60,7 @@ public class RestaurantGonghai implements Serializable {
     private String  areaDisplay;
 
     @Column(name = "area")
-    @ApiModelProperty(value = "行政区")
+    @ApiModelProperty(value = "行政区Id")
     private String  area;
 
     @Column(name = "address")

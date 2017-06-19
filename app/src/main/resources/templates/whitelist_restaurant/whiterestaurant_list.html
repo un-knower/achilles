@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">白名单餐厅</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">特许餐厅</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-12">
+                     <div class="white-box">
+                        <h3 class="box-title">白名单餐厅
+                            <a class="pull-right" href="#">编辑报表</a>
+                            <a class="pull-right qc-download" href="#" th:attr="data-url=@{/ops/whitelist/restaurant/export(templateId=${templateId})}">导出</a>
+                        </h3>
+                        <div class="row">
+                          <form id="query-form" th:action="@{/ops/whitelist/restaurant}" method="post">
+	                          <input type="hidden" name="pageNum" th:value="${page.number}" />
+	                          <input type="hidden" name="pageSize" th:value="${page.size}" />
+	                          <input type="hidden" name="templateId" th:value="${templateId}" />
+	                          <div class="col-md-2">
+                                    <input name="restaurantName" class="form-control" th:value="${restaurantName}" placeholder= "餐厅名"/>
+                              </div>
+                              <div class="col-md-2">
+                                  <input name="applyUserName" class="form-control search"  th:value="${applyUserName}" placeholder="申请人"/>
+                              </div>
+                              <div class="col-md-2">
+                                  <input name="applyUserJobNum" class="form-control search" th:value="${applyUserJobNum}"  placeholder="申请人工号"/>
+                              </div>
+                              <div class="col-md-2">
+                                <select class="selectpicker" data-style="form-control" name="cityIds" multiple="multiple" title="全部城市" data-live-search="true">
+                                  <option th:each="x : ${cityList}" th:text="${x.regionName}" th:value="${x.id}" th:selected="${cityIds!=null and #arrays.contains(cityIds,x.id)}"></option>
+                                </select>
+                              </div>
+	                          <div class="col-md-2">
+	                            <select class="selectpicker"  data-style="form-control" multiple="multiple" name="approveTypes" title="审批方式" >
+                                    <option   value="APP"    th:selected="${approveTypes!=null and #arrays.contains(approveTypes,'APP')}">APP</option>
+                                    <option   value="EMAIL"   th:selected="${approveTypes!=null and #arrays.contains(approveTypes,'EMAIL')}">EMAIL</option>
+	                            </select>
+	                          </div>
+	                          <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" multiple="multiple" name="applyCompanys" title="企业"  data-live-search="true">
+                                    <option th:each="x : ${companyList}" th:value="${x}" th:text="${x}" th:selected="${applyCompanys!=null and #arrays.contains(applyCompanys,x)}"></option>
+                                </select>
+                              </div>
+                               <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" name="timeType" title="时间筛选类型">
+                                  <option th:selected="${timeType=='createdAt'}" value="createdAt">申请时间</option>
+                                </select>
+                              </div>
+                              <div class="col-md-4">
+                                 <div class="input-daterange input-group" id="date-range">
+                                    <input type="text" class="form-control data-time" name="begin" th:value="${begin}" placeholder="起始时间"/>
+                                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                                    <span class="input-group-addon bg-info b-0 text-white"> - </span>
+                                    <input type="text" class="form-control data-time" name="end" th:value="${end}" placeholder="结束时间"/>
+                                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                                  </div>
+                              </div>
+	                          <div class="col-md-2">
+	                              <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">搜索</button>
+	                          </div>
+                          </form>
+                        </div><!-- /.row -->
+            
+                     </div>
+                  </div>
+                
+                  <div class="col-md-12">
+                    <div class="white-box">
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                              <tr>
+                                <th th:each="item:${templateColumns}" th:text="${item.colTitile}" width="8%">
+                                </th>
+                                <th class="text-nowrap" style="display: none">Action</th>
+                              </tr>
+                            </thead>
+                           <tbody>
+                              <tr th:each="item : ${page.content}">
+                                <td th:each="col : ${templateColumnKeys}" th:text="*{item[col]}"></td>
+                                <td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
+                              </tr>
+                            </tbody>
+                            <tfoot>
+                              <tr>
+                                <td colspan="37" style="text-align: center;">
+	                                    <div th:replace="fragments/pageinfo :: pageinfo(${page})"></div>
+	                              </td>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      </div><!-- /.white-box -->
+                  </div><!-- /.col-md-12 -->
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+   </body>
+</html>

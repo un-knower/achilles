@@ -27,7 +27,8 @@ public class AchillesDiyTemplate {
     private String dataBase;
     @Column(name = "created_at")
     private String createdAt;
-
+    @Column(name = "template_config_id")
+    private Long templateConfigId;
     /** 源表所在schema */
 
     public Long getId() {
@@ -85,5 +86,13 @@ public class AchillesDiyTemplate {
     }
     
     public AchillesDiyTemplate() {
+    }
+
+    public Long getTemplateConfigId() {
+        return templateConfigId;
+    }
+
+    public void setTemplateConfigId(Long templateConfigId) {
+        this.templateConfigId = templateConfigId;
     }
 }

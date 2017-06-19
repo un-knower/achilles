@@ -46,7 +46,7 @@
 											<thead>
 											     <tr>
 											         <td colspan="2">
-                                                         <input name="tableName"  th:value="${templateInfo.tableName}" hidden="true"/>
+                                                         <input name="tableName"  th:value="${tableName}" hidden="true"/>
                                                          <input name="templateId" th:value="${templateInfo.id}" hidden="true"/>
                                                          <input name="templateName" th:value="${templateInfo.templateName}" class="form-control" placeholder="模版名称" />
                                                      </td>
@@ -79,7 +79,7 @@
 											</button>
 											&nbsp; &nbsp; &nbsp;
 											<a th:href="@{/template/list}">
-												<button class="btn"  >
+												<button class="btn"  type="button">
 													    <i class="ace-icon fa fa-undo bigger-110"></i> 取消
 												</button>
 											</a>

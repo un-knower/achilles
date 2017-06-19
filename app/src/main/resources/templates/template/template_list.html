@@ -53,16 +53,20 @@
                             <tbody>
                               <tr th:each="item : ${page.content}">
                                 <td th:text="${item.id}"></td>
-                                <td th:text="${item.templateName}"></td>
+                                <td >
+                                    <a  th:text="${item.templateName}" th:href="@{${urlconfig.get(item.tableName).templateUrl}(templateId=${item.id},tableName=${item.tableName})}" 
+                                    data-toggle="tooltip" data-original-title="Edit"> 
+                                    </a> 
+                                </td>
                                 <td th:text="${item.createdAt}"></td>
                                 <td th:text="${item.createdUser}"></td>
-                                <td class="text-nowrap"  >
-                                    <a th:href="@{/template/edit(templateId=${item.id},tableName=${item.tableName})}" data-toggle="tooltip" data-original-title="Edit"> 
+                                <td class="text-nowrap"   >
+                                    <a th:if="${username==item.createdUser}" th:href="@{/template/edit(templateId=${item.id},tableName=${item.tableName})}" data-toggle="tooltip" data-original-title="Edit"> 
 		                                <i class="fa fa-pencil text-inverse m-r-10">
 		                                </i> 
 	                                </a> 
-                                    <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> 
-                                    </a> 
+<!--                                     <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> 
+                                     </a>  -->
                                 </td>
                               </tr>
                             </tbody>

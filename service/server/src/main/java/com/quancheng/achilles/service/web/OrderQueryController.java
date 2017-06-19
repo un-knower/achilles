@@ -54,7 +54,7 @@ import io.swagger.annotations.ApiParam;
  */
 @Controller
 @RequestMapping(path = "/ops")
-public class OrderQueryController {
+public class OrderQueryController extends ControllerAbstract{
 
     private final static Logger LOGGER = LoggerFactory.getLogger(OrderQueryController.class);
     
@@ -79,6 +79,7 @@ public class OrderQueryController {
             @ApiParam(value = "所属企业") @RequestParam(value = "company", required = false) Integer company,
             @ApiParam(value = "每页记录数") @RequestParam(value = "pageSize", required = false, defaultValue = InnConstantPage.PAGE_SIZE_STRING) Integer pageSize,
             @ApiParam(value = "页码") @RequestParam(value = "pageNum", required = false, defaultValue = "0") Integer pageNum,
+            Long templateId,
             ModelAndView mv) {
         // do some magic!
         BatisPage<OrderRecordVo> page = new BatisPage<OrderRecordVo>(pageNum, pageSize);
@@ -112,6 +113,7 @@ public class OrderQueryController {
         mv.addObject("sales", sales);
         mv.addObject("page", page);
         mv.addObject("city", city.split(","));
+        configTemplate(templateId, mv);
         return mv;
     }
 
@@ -304,6 +306,7 @@ public class OrderQueryController {
             @ApiParam(value = "所属企业") @RequestParam(value = "company", required = false) Integer company,
             @ApiParam(value = "每页记录数") @RequestParam(value = "pageSize", required = false, defaultValue = InnConstantPage.PAGE_SIZE_STRING) Integer pageSize,
             @ApiParam(value = "页码") @RequestParam(value = "pageNum", required = false, defaultValue = "0") Integer pageNum,
+            Long templateId,
             HttpServletRequest request, ModelAndView mv, HttpServletResponse response) throws IOException {
 
         class AsyncUploadToOSS implements Runnable {
@@ -329,14 +332,14 @@ public class OrderQueryController {
                 }
                 DownloadBuilder<OrderRecordVo> downloadBuilder = new DownloadBuilder<>(OrderRecordVo.class);
                 mv = queryPageOrders(scope, startTime, endTime, sevivceType, timeType, orderType, payType, city,
-                        orderStatus, sales, searchKey, company, 5000, pageNum, mv);
+                        orderStatus, sales, searchKey, company, 5000, pageNum,templateId, mv);
                 Page<OrderRecordVo> page = (Page<OrderRecordVo>) mv.getModel().get("page");
                 downloadBuilder.append(page.getContent());
 
                 while (page.hasNext()) {
                     Pageable pageable = page.nextPageable();
                     mv = queryPageOrders(scope, startTime, endTime, sevivceType, timeType, orderType, payType, city,
-                            orderStatus, sales, searchKey, company, 5000, pageable.getPageNumber(), mv);
+                            orderStatus, sales, searchKey, company, 5000, pageable.getPageNumber(),templateId, mv);
                     page = (Page<OrderRecordVo>) mv.getModel().get("page");
                     downloadBuilder.append(page.getContent());
                     mv.getModel().remove("page");

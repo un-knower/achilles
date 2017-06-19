@@ -47,4 +47,13 @@ public class AchillesTableInfo {
     public void setTableSchema(String tableSchema) {
         this.tableSchema = tableSchema;
     }
+
+    public AchillesTableInfo(String columnName, String columnComment) {
+        super();
+        this.columnName = columnName;
+        this.columnComment = columnComment;
+    }
+    public AchillesTableInfo() {
+        super();
+    }
 }
