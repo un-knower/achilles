@@ -13,8 +13,6 @@ import io.swagger.annotations.ApiModelProperty;
 @Table(name = "out_approve_time_detail")
 public class FranchiseRestApproveDetail {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String uuid;
     @ApiModelProperty(value = "餐厅id")
     @Column(name = "id")
     private String id;
