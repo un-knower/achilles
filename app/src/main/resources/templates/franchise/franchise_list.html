@@ -65,16 +65,16 @@
                                   <option th:each="x : ${cityList}" th:text="${x.regionName}" th:value="${x.regionName}" th:selected="${cityNames!=null and #arrays.contains(cityNames,x.regionName)}"></option>
                                 </select>
                               </div>
+                               <div class="col-md-2">
+                                <select class="selectpicker"  data-style="form-control" multiple="multiple"  name="refusedReasons" title="拒绝原因" data-live-search="true" >
+                                    <option th:each="x : ${refusedReasonList}" th:value="${x}" th:text="${x}" th:selected="${refusedReasons!=null and #arrays.contains(refusedReasons,x)}"></option>
+                                </select>
+                              </div>
 	                          <div class="col-md-2">
 	                            <select class="selectpicker"  data-style="form-control" multiple="multiple" name="applyTypes" title="通道" >
                                     <option th:each="x : ${applyTypeList}" th:value="${x}" th:text="${x}" th:selected="${applyTypes!=null and #arrays.contains(applyTypes,x)}"></option>
 	                            </select>
 	                          </div>
-	                          <div class="col-md-2">
-                                <select class="selectpicker"  data-style="form-control" name="refusedReasons" title="拒绝原因" data-live-search="true" >
-                                    <option th:each="x : ${refusedReasonList}" th:value="${x}" th:text="${x}" th:selected="${refusedReasons!=null and #arrays.contains(refusedReasons,x)}"></option>
-                                </select>
-                              </div>
                                <div class="col-md-2">
                                 <select class="selectpicker"  multiple="multiple" data-style="form-control" name="timeType" title="时间筛选类型">
                                   <option th:selected="${timeType=='createdAt'}" value="createdAt">申请时间</option>
