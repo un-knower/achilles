@@ -15,10 +15,15 @@ public class WhiteListRestaurant {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
     @ApiModelProperty(value = "餐厅id")
-    @Column(name = "rest_id")
+    @Column(name = "restaurant_library_id")
     private String restId;
+    
+    @ApiModelProperty(value = "申请人ID")
+    @Column(name = "member_id")
+    private String memberId;
+    
     @ApiModelProperty(value = "申请人姓名")
-    @Column(name = "realname")
+    @Column(name = "applicant_name")
     private String realname;
     @ApiModelProperty(value = "申请人邮箱")
     @Column(name = "email")
@@ -47,12 +52,21 @@ public class WhiteListRestaurant {
     @ApiModelProperty(value = "审批通过时间")
     @Column(name = "approve_time")
     private String approveTime;
+    
     @ApiModelProperty(value = "申请企业")
-    @Column(name = "title")
+    @Column(name = "apply_number")
+    private String applyNumber;
+    
+    @ApiModelProperty(value = "申请企业")
+    @Column(name = "apply_enterprise")
     private String title;
-    @ApiModelProperty(value = "申请状态")
+    @ApiModelProperty(value = "状态")
     @Column(name = "approve_status")
     private String approveStatus;
+    
+    @ApiModelProperty(value = "状态值")
+    @Column(name = "status")
+    private String status;
     public String getId() {
         return id;
     }
@@ -137,5 +151,22 @@ public class WhiteListRestaurant {
     public void setRestId(String restId) {
         this.restId = restId;
     }
-    
+    public String getMemberId() {
+        return memberId;
+    }
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
+    }
+    public String getApplyNumber() {
+        return applyNumber;
+    }
+    public void setApplyNumber(String applyNumber) {
+        this.applyNumber = applyNumber;
+    }
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

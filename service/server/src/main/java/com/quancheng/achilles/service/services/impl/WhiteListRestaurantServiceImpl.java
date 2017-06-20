@@ -23,7 +23,7 @@ public class WhiteListRestaurantServiceImpl extends RestaurantServiceAbstract<Wh
             String applyUserName,
             String applyUserJobNum,
             String restaurantName,
-            String[] cityIds,
+            String[] cityNames,
             String[] approveTypes,
             String timeType,
             String begin,
@@ -50,7 +50,7 @@ public class WhiteListRestaurantServiceImpl extends RestaurantServiceAbstract<Wh
                 .and(like("restaurantName",restaurantName))
                 .and(equal("jobNum",applyUserJobNum))
                 .and(between(timeType,begin,end))
-                .and(in("city",cityIds))
+                .and(in("city",cityNames))
                 .and(in("approveMethod",approveTypes))
                 .and(in("title",applyCompanys));
         return whiteListRestaurantRepository.findAll(speci,pageable);

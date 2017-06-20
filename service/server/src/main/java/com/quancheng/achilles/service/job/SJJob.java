@@ -20,8 +20,8 @@ import com.quancheng.achilles.service.utils.TimeUtil;
  * 
  * @author zhuzhong
  */
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class SJJob extends QuartzJobBean {
 
     private static final Logger  log = LoggerFactory.getLogger(SJJob.class);
