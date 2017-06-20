@@ -87,6 +87,7 @@
                                 <thead><tr><td width="20%"></td><td width="20%"></td><td></td><td width="10%"></td></tr></thead>
                                 <tbody>
                                   <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+                                   <!--<td><a th:href="@{/ops/restaurant/gh_index}" >公海餐厅</a></td>-->
                                     <td><a href="template/list?tableName=tmp_restaurant" >餐厅</a></td>
                                     <td></td>
                                     <td></td>
@@ -95,6 +96,36 @@
                                             <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
                                             <ul role="menu" class="dropdown-menu">
                                               <li><a href="template/edit?tableName=tmp_restaurant">添加模版</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
+                                    <td><a th:href="@{/ops/restaurant/online}" >上架餐厅</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
+                                    <td><a th:href="@{/ops/restaurant/ol}" >在线餐厅统计</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -139,7 +170,8 @@
                                     </td>
                                   </tr>
                                   <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
-                                    <td><a th:href="@{/ops/restaurant/visitlog}">餐厅拜访记录</a></td>
+<!--                                     <td><a th:href="@{/ops/restaurant/visitlog}">餐厅拜访记录</a></td> -->
+<td><a th:href="@{/ops/restaurant/visitlog}">餐厅拜访记录</a></td>
                                     <td></td>
                                     <td></td>
                                     <td align="center">

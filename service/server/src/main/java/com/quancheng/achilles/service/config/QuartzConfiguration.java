@@ -41,15 +41,15 @@ public class QuartzConfiguration {
 		return factory;
 	}
 	
-	@Bean(name="sjJobDetail")
-	public JobDetailFactoryBean sjJobDetail(){
-		JobDetailFactoryBean factory = new JobDetailFactoryBean();
-		factory.setJobClass(SJJob.class);
-		factory.setGroup("sj");
-		factory.setDurability(true);
-		factory.setRequestsRecovery(true);
-		return factory;
-	}
+//	@Bean(name="sjJobDetail")
+//	public JobDetailFactoryBean sjJobDetail(){
+//		JobDetailFactoryBean factory = new JobDetailFactoryBean();
+//		factory.setJobClass(SJJob.class);
+//		factory.setGroup("sj");
+//		factory.setDurability(true);
+//		factory.setRequestsRecovery(true);
+//		return factory;
+//	}
 	
 //<bean id="cacheSyncJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 //	    <property name="jobDetail" ref="cacheSyncJobDetail">
@@ -73,15 +73,15 @@ public class QuartzConfiguration {
 		return stFactory;
 	}
 	
-	@Bean(name="sjTrigger")
-	public CronTriggerFactoryBean sjTrigger(@Qualifier("sjJobDetail") JobDetailFactoryBean sjTrigger){
-		CronTriggerFactoryBean stFactory = new CronTriggerFactoryBean();
-		stFactory.setJobDetail(sjTrigger.getObject());
-		stFactory.setGroup("sj");
-		// every 5 minute test
-		stFactory.setCronExpression("0 15 03 1 * ?");
-		return stFactory;
-	}
+//	@Bean(name="sjTrigger")
+//	public CronTriggerFactoryBean sjTrigger(@Qualifier("sjJobDetail") JobDetailFactoryBean sjTrigger){
+//		CronTriggerFactoryBean stFactory = new CronTriggerFactoryBean();
+//		stFactory.setJobDetail(sjTrigger.getObject());
+//		stFactory.setGroup("sj");
+//		// every 5 minute test
+//		stFactory.setCronExpression("0 15 03 1 * ?");
+//		return stFactory;
+//	}
 	
 //	<bean id="innQuartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 //	    <property name="configLocation" value="classpath:application.properties" />
@@ -95,7 +95,7 @@ public class QuartzConfiguration {
 //  </bean>
 	@Bean(name="innQuartzScheduler")
 	public SchedulerFactoryBean schedulerFactoryBean(
-			@Qualifier("sjTrigger") CronTriggerFactoryBean ctfb,
+//			@Qualifier("sjTrigger") CronTriggerFactoryBean ctfb,
 			@Qualifier("cacheSyncJobTrigger") CronTriggerFactoryBean cacheSyncJobTrigger
 			) {
 		SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
@@ -103,7 +103,9 @@ public class QuartzConfiguration {
 		scheduler.setJobFactory(autoWiringSpringBeanJobFactory());
 		
 		scheduler.setConfigLocation(new ClassPathResource("application-quartz.properties"));
-		scheduler.setTriggers( cacheSyncJobTrigger.getObject(), ctfb.getObject());
+		scheduler.setTriggers( cacheSyncJobTrigger.getObject() 
+//		        ,ctfb.getObject()
+		        );
 		scheduler.setApplicationContextSchedulerContextKey("applicationContextKey");
 		scheduler.setAutoStartup(true);
 		

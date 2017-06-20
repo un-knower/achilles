@@ -14,21 +14,29 @@ import io.swagger.annotations.ApiModelProperty;
 public class AppRestaurantReportedWrong {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String uuid;
-    @ApiModelProperty(value = "餐厅反馈表id")
-    @Column(name = "id")
     private String id;
-    @ApiModelProperty(value = "所属企业")
-    @Column(name = "title")
+    @ApiModelProperty(value = "餐厅反馈表id")
+    @Column(name = "feedback_id")
+    private String feedbackId;
+    @ApiModelProperty(value = "企业")
+    @Column(name = "enterprise_name")
     private String title;
-    @Column(name = "name_num")
-    private String nameNum;
-    @ApiModelProperty(value = "纠错人")
-    @Column(name = "username")
+    
+    @ApiModelProperty(value = "企业短号")
+    @Column(name = "enterprise_name_num")
+    private String enterpriseNameNum;
+    
+    @Column(name = "error_man")
+    private String errorMan;
+    
+    @ApiModelProperty(value = "纠错人Id")
+    @Column(name = "error_man_id")
     private String username;
+    
     @ApiModelProperty(value = "纠错人姓名")
-    @Column(name = "realname")
+    @Column(name = "error_man_name")
     private String realname;
+    
     @ApiModelProperty(value = "纠错时间")
     @Column(name = "create_time")
     private String createTime;
@@ -42,29 +50,25 @@ public class AppRestaurantReportedWrong {
     @Column(name = "store_name")
     private String storeName;
     @ApiModelProperty(value = "城市ID")
-    @Column(name = "city")
+    @Column(name = "city_id")
     private String city;
-    @ApiModelProperty(value = "城市名称")
-    @Column(name = "name")
-    private String name;
     @ApiModelProperty(value = "纠错内容")
-    @Column(name = "content")
+    @Column(name = "error_content")
     private String content;
+    @ApiModelProperty(value = "销售Id")
+    @Column(name = "bd_id")
+    private String bdId;
+    
     @ApiModelProperty(value = "BD维护销售")
-    @Column(name = "user_name")
+    @Column(name = "bd_name")
     private String saleUserName;
+    
     @ApiModelProperty(value = "大区ID")
     @Column(name = "region_id")
     private String regionId;
     @ApiModelProperty(value = "大区")
     @Column(name = "city_name")
     private String cityName;
-    public String getUuid() {
-        return uuid;
-    }
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
     public String getId() {
         return id;
     }
@@ -76,12 +80,6 @@ public class AppRestaurantReportedWrong {
     }
     public void setTitle(String title) {
         this.title = title;
-    }
-    public String getNameNum() {
-        return nameNum;
-    }
-    public void setNameNum(String nameNum) {
-        this.nameNum = nameNum;
     }
     public String getUsername() {
         return username;
@@ -125,12 +123,6 @@ public class AppRestaurantReportedWrong {
     public void setCity(String city) {
         this.city = city;
     }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
     public String getContent() {
         return content;
     }
@@ -154,5 +146,29 @@ public class AppRestaurantReportedWrong {
     }
     public void setCityName(String cityName) {
         this.cityName = cityName;
+    }
+    public String getFeedbackId() {
+        return feedbackId;
+    }
+    public void setFeedbackId(String feedbackId) {
+        this.feedbackId = feedbackId;
+    }
+    public String getEnterpriseNameNum() {
+        return enterpriseNameNum;
+    }
+    public void setEnterpriseNameNum(String enterpriseNameNum) {
+        this.enterpriseNameNum = enterpriseNameNum;
+    }
+    public String getErrorMan() {
+        return errorMan;
+    }
+    public void setErrorMan(String errorMan) {
+        this.errorMan = errorMan;
+    }
+    public String getBdId() {
+        return bdId;
+    }
+    public void setBdId(String bdId) {
+        this.bdId = bdId;
     }
 }
