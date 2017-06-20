@@ -61,7 +61,7 @@
                                   <input name="submitPhone" class="form-control search" th:value="${submitPhone}"  placeholder="提交人手机"/>
                               </div>
                               <div class="col-md-2">
-                                <select class="selectpicker" data-style="form-control" name="cityNames" multiple="multiple" title="全部城市" data-live-search="true">
+                                <select class="selectpicker" data-style="form-control" name="cityIds" multiple="multiple" title="全部城市" data-live-search="true">
                                   <option th:each="x : ${cityList}" th:text="${x.regionName}" th:value="${x.id}" th:selected="${cityNames!=null and #arrays.contains(cityIds,x.id)}"></option>
                                 </select>
                               </div>
