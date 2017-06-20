@@ -10,6 +10,6 @@ import com.quancheng.achilles.dao.modelwrite.WhiteListRestaurant;
 
 public interface WhiteListRestaurantRepository extends JpaRepository<WhiteListRestaurant, Long>, JpaSpecificationExecutor<WhiteListRestaurant> {
     
-    @Query(value="SELECT distinct title FROM out_white_list_restaurant",nativeQuery=true)
+    @Query(value="SELECT distinct apply_enterprise FROM out_white_list_restaurant",nativeQuery=true)
     List<String> queryClientList();
 }

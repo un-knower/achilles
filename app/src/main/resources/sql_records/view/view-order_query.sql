@@ -16,7 +16,17 @@ create or replace view v_inn_order_rating as
 select max(id) as id, ora.order_num  from 16860_order_rating ora
 where ora.is_new=1
  group by ora.order_num;
-
+--外卖接单时间(可能,最早响应时间)
+ create or replace view v_inn_waimai_receive_time as 
+SELECT 
+    record_id,from_unixtime(min(create_time)) as waimai_receive_time
+FROM
+    quancheng_db.`16860_action_log` al
+WHERE
+    al.action_id IN (12 , 13)
+        AND al.model = 'waimai_order'
+        group by record_id;
+ 
  -- 订单支付卡号
 create or replace view v_inn_order_pay_card as 
 SELECT 
@@ -79,7 +89,7 @@ GROUP BY order_num;
         setment.rates,
         rate_money.rate_money AS rateMoney,
         o.approval_code   AS  approvalCode,
-        ali.address AS restaurantAddress,
+        convert(ali.address using utf8) AS restaurantAddress,
         `o`.is_hall AS isHall,
         `o`.message AS userComment,
         opc.bank_card as cardNumber
@@ -109,7 +119,8 @@ FROM `16860_order` `o`
     LEFT JOIN `16860_order_rating` `ora` ON oraa.id=ora.id
     LEFT JOIN `api_assets` `asset` ON `asset`.`id` = `rants`.`asset_id`
     LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`
-    LEFT JOIN v_inn_order_pay_card opc ON   o.order_num = opc.order_num)
+    LEFT JOIN v_inn_order_pay_card opc ON   o.order_num = opc.order_num
+    )
 UNION ALL
    (
       SELECT
@@ -136,7 +147,7 @@ UNION ALL
                 NULL AS `reportReason`,
                 NULL AS `isRoom`,
                 `o`.`created_at` AS `createTime`,
-                NULL AS `receiveTime`,
+                viwrt.waimai_receive_time AS `receiveTime`,
                 `detail`.`yuyue_time` AS `yuyueTime`,
                 `detail`.`is_delivery` AS `isDelivery`,
                 `detail`.`confirm_time` AS `confirmTime`,
@@ -165,7 +176,7 @@ UNION ALL
                 setment.rates,
                 rate_money.rate_money AS rateMoney,
                 detail.approval_code   AS  approvalCode,
-                ali.address AS restaurantAddress,
+                convert(ali.address using utf8) AS restaurantAddress,
                 NULL AS isHall,
                 CONVERT (`o`.comment USING utf8) as userComment,
                 opc.bank_card as cardNumber
@@ -196,7 +207,8 @@ FROM `api_orders` `o`
     LEFT JOIN `v_inn_order_rating` oraa on oraa.order_num = o.order_num
     LEFT JOIN `16860_order_rating` `ora` ON oraa.id=ora.id
     LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`
-    LEFT JOIN v_inn_order_pay_card opc ON   o.order_num = opc.order_num)
+    LEFT JOIN v_inn_order_pay_card opc ON   o.order_num = opc.order_num
+    LEFT JOIN v_inn_waimai_receive_time viwrt  on `o`.id=viwrt.record_id)
 UNION ALL
    (
       SELECT

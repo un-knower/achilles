@@ -5,13 +5,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
-
 import com.quancheng.achilles.dao.modelwrite.FranchiseRestApproveDetail;
 import com.quancheng.achilles.dao.write.FranchiseRestApproveDetailRepository;
 import com.quancheng.achilles.service.services.RestaurantServiceAbstract;
@@ -20,6 +18,8 @@ import com.quancheng.achilles.service.services.RestaurantServiceAbstract;
 public class FranchiseRestaurantServiceImpl extends RestaurantServiceAbstract<FranchiseRestApproveDetail>  {
     @Autowired
     FranchiseRestApproveDetailRepository franchiseRestApproveDetailRepository;
+    
+    
     public Page<FranchiseRestApproveDetail> getFranchiseRest(
             String applyUserName,
             String gouldId,
