@@ -48,6 +48,7 @@
                           <form id="query-form" th:action="@{/ops/orderquery/all}" method="get">
                           <input type="hidden" name="pageNum" th:value="${page.number}" />
                           <input type="hidden" name="pageSize" th:value="${page.size}" />
+                          <input type="hidden" name="templateId" th:value="${templateId}" />
                           <div class="col-md-4">
                             <select class="selectpicker"  data-style="form-control" name="company" data-live-search="true">
                               <option th:selected="${company==-1}" value="-1">所属企业</option>
