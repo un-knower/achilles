@@ -42,6 +42,8 @@ import com.quancheng.achilles.dao.model.BaseResponse;
 import com.quancheng.achilles.dao.model.CompanyDomain;
 import com.quancheng.achilles.dao.model.OrderRecordVo;
 import com.quancheng.achilles.dao.model.SalesDomain;
+import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplate;
+import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.service.utils.BatisPage;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
@@ -320,17 +322,9 @@ public class OrderQueryController extends ControllerAbstract{
 
             @Override
             public void run() {
-                String model = "";
-                if ("all".equalsIgnoreCase(scope)) {
-                    model="全部订单";
-                } else if ("bclient".equalsIgnoreCase(scope)) {
-                    model="大客户订单";
-                } else if ("finance".equalsIgnoreCase(scope)) {
-                    model="财务订单";
-                } else if ("operative".equalsIgnoreCase(scope)) {
-                    model="运营订单";
-                }
-                DownloadBuilder<OrderRecordVo> downloadBuilder = new DownloadBuilder<>(OrderRecordVo.class);
+                AchillesDiyTemplate adt = achillesDiyColumnsServiceImpl.getTemplate(templateId);
+                final List<AchillesDiyTemplateColumns> tempcols = templateId == null?null : achillesDiyColumnsServiceImpl.getTemplateColsByTemplate(templateId);
+                DownloadBuilder<OrderRecordVo> downloadBuilder = new DownloadBuilder<>(OrderRecordVo.class,null,tempcols);
                 mv = queryPageOrders(scope, startTime, endTime, sevivceType, timeType, orderType, payType, city,
                         orderStatus, sales, searchKey, company, 5000, pageNum,templateId, mv);
                 Page<OrderRecordVo> page = (Page<OrderRecordVo>) mv.getModel().get("page");
@@ -345,7 +339,7 @@ public class OrderQueryController extends ControllerAbstract{
                     mv.getModel().remove("page");
                 }
                 String filePath = downloadBuilder.saveOnServer();
-                ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath,model, username);
+                ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath,adt.getTemplateName()==null?adt.getTableName():adt.getTemplateName(), username);
             }
         }
         EXECUTOR_SERVICE.submit(new AsyncUploadToOSS(mv, request.getRemoteUser()));
