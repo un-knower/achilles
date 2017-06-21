@@ -20,9 +20,8 @@ public class OrderRecordVo {
     private String  email;
     @ApiModelProperty(value = "下单人手机")
     private String  mobile;
-
+    @ApiModelProperty(value = "销售id")
     private Integer salesId;
-
     
     @ApiModelProperty(value = "子公司")
     private String  branch;

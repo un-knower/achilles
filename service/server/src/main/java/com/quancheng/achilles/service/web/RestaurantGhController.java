@@ -33,6 +33,7 @@ import com.quancheng.achilles.service.services.RestaurantServiceImpl;
 import com.quancheng.achilles.dao.model.BaseResponse;
 import com.quancheng.achilles.dao.model.RestaurantGonghai;
 import com.quancheng.achilles.dao.model.RestaurantRecommender;
+import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplate;
 import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.EnumDownLoadModel;
@@ -138,6 +139,7 @@ public class RestaurantGhController extends ControllerAbstract{
                         shelfTimeStart, shelfTimeEnd, supportTakeout, supportReverse, sales,templateId, mv);
                 Page<RestaurantGonghai> page = (Page<RestaurantGonghai>) mv.getModel().get("page");
                 final List<AchillesDiyTemplateColumns> tempcols = templateId == null?null : achillesDiyColumnsServiceImpl.getTemplateColsByTemplate(templateId);
+                AchillesDiyTemplate adt = achillesDiyColumnsServiceImpl.getTemplate(templateId);
                 DownloadBuilder<RestaurantGonghai> eb = new DownloadBuilder<>(RestaurantGonghai.class,null, tempcols);
                 eb.append(page.getContent());
                 mv.clear();
@@ -153,7 +155,7 @@ public class RestaurantGhController extends ControllerAbstract{
                     mv.clear();
                 }
                 String filePath = eb.saveOnServer();
-                ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath, "公海餐厅", username);
+                ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath,adt.getTemplateName()==null?adt.getTableName():adt.getTemplateName(), username);
                 eb=null;
                 
             }

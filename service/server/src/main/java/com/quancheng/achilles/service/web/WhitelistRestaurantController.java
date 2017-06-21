@@ -102,7 +102,7 @@ public class WhitelistRestaurantController extends ControllerAbstract {
                     mv.clear();
                 }
                 String filePath = eb.saveOnServer();
-                ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath, adt.getTemplateName(), username);
+                ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath,adt.getTemplateName()==null?adt.getTableName():adt.getTemplateName(), username);
                 eb = null;
             }
         }
