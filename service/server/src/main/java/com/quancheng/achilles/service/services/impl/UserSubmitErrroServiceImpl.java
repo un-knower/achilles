@@ -23,7 +23,7 @@ public class UserSubmitErrroServiceImpl extends RestaurantServiceAbstract<AppRes
             String submitUserName,
             String submitPhone,
             String restaurantName,
-            String[] cityIds,
+            Long[] cityIds,
             String timeType,
             String begin,
             String end,

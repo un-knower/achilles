@@ -39,7 +39,7 @@ public class UserSubmitErrorController extends ControllerAbstract {
     @RequestMapping(value = "/app/error/report", method = { RequestMethod.GET, RequestMethod.POST }, produces = {
             MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.TEXT_HTML_VALUE })
     public ModelAndView appReportErrors(String submitUserName, String submitPhone, String restaurantName,
-            String[] cityIds, String timeType, String begin, String end, String[] applyCompanys,
+            Long[] cityIds, String timeType, String begin, String end, String[] applyCompanys,
             @ApiParam(value = "每页记录数") @RequestParam(value = "pageSize", required = false, defaultValue = InnConstantPage.PAGE_SIZE_STRING) Integer pageSize,
             @ApiParam(value = "页码") @RequestParam(value = "pageNum", required = false, defaultValue = "0") Integer pageNum,
             @RequestParam(required = false,defaultValue="true") Boolean forPage,
@@ -69,7 +69,7 @@ public class UserSubmitErrorController extends ControllerAbstract {
     @ResponseBody
     @SuppressWarnings("unchecked")
     public BaseResponse queryPageOrders(String submitUserName, String submitPhone, String restaurantName,
-            String[] cityIds, String timeType, String begin, String end, String[] applyCompanys,
+            Long[] cityIds, String timeType, String begin, String end, String[] applyCompanys,
             @ApiParam(value = "每页记录数") @RequestParam(value = "pageSize", required = false, defaultValue = InnConstantPage.PAGE_SIZE_STRING) Integer pageSize,
             @ApiParam(value = "页码") @RequestParam(value = "pageNum", required = false, defaultValue = "0") Integer pageNum,
             Long templateId, ModelAndView mv) {
