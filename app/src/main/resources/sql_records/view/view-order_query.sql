@@ -16,6 +16,15 @@ create or replace view v_inn_order_rating as
 select max(id) as id, ora.order_num  from 16860_order_rating ora
 where ora.is_new=1
  group by ora.order_num;
+ 
+  -- 订单支付卡号
+create or replace view v_inn_order_pay_card as 
+SELECT 
+    order_num, GROUP_CONCAT(distinct bank_card) as bank_card
+FROM
+    16860_order_payment
+GROUP BY order_num;        
+ 
 --外卖接单时间(可能,最早响应时间)
  create or replace view v_inn_waimai_receive_time as 
 SELECT 
@@ -26,15 +35,18 @@ WHERE
     al.action_id IN (12 , 13)
         AND al.model = 'waimai_order'
         group by record_id;
- 
- -- 订单支付卡号
-create or replace view v_inn_order_pay_card as 
+        
+--预定拒单时间(可能,最早响应时间)
+create or replace view v_inn_reversion_receive_time as 
 SELECT 
-    order_num, GROUP_CONCAT(distinct bank_card) as bank_card
+    record_id,from_unixtime(min(create_time)) as action_time
 FROM
-    16860_order_payment
-GROUP BY order_num;
-
+    quancheng_db.`16860_action_log` al
+WHERE
+    al.action_id IN (12 , 13)
+        AND al.model = 'order'
+        group by record_id;
+        
  create or replace view  `v_inn_order_query` AS  
  (SELECT
         `o`.`order_num` AS `orderNum`,
@@ -59,13 +71,13 @@ GROUP BY order_num;
         `o`.`order_state` AS `payType`,
         `o`.`report_reason` AS `reportReason`,
         `o`.`is_rooms` AS `isRoom`,
-        FROM_UNIXTIME(`o`.`create_time`,'%Y-%m-%d %H:%i:%s') AS `createTime`,
-        FROM_UNIXTIME(`o`.`receive_time`,'%Y-%m-%d %H:%i:%s') AS `receiveTime`,
-        FROM_UNIXTIME(`o`.`yuyue_time`,'%Y-%m-%d %H:%i:%s') AS `yuyueTime`,
+        FROM_UNIXTIME(`o`.`create_time` ) AS `createTime`,
+        CASE WHEN order_state in(7,11,15)  THEN  action_time ELSE FROM_UNIXTIME(`o`.`receive_time` ) end AS `receiveTime`,
+        FROM_UNIXTIME(`o`.`yuyue_time` ) AS `yuyueTime`,
         NULL AS `isDelivery`,
-        FROM_UNIXTIME(`o`.`confirm_time`,'%Y-%m-%d %H:%i:%s') AS `confirmTime`,
-        FROM_UNIXTIME(`o`.`pay_time`,'%Y-%m-%d %H:%i:%s') AS `payTime`,
-        FROM_UNIXTIME(`o`.`report_time`,'%Y-%m-%d %H:%i:%s') AS `reportTime`,
+        FROM_UNIXTIME(`o`.`confirm_time` ) AS `confirmTime`,
+        FROM_UNIXTIME(`o`.`pay_time` ) AS `payTime`,
+        FROM_UNIXTIME(`o`.`report_time` ) AS `reportTime`,
         concat('yd',`o`.`order_state`) AS `status`,
         `o`.`people_num` AS `peopleNum`,
         `o`.`predict_cost` AS `predictCost`,
@@ -120,6 +132,7 @@ FROM `16860_order` `o`
     LEFT JOIN `api_assets` `asset` ON `asset`.`id` = `rants`.`asset_id`
     LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`
     LEFT JOIN v_inn_order_pay_card opc ON   o.order_num = opc.order_num
+    left join v_inn_reversion_receive_time viwrt on  `o`.id=viwrt.record_id
     )
 UNION ALL
    (
