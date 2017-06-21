@@ -63,10 +63,7 @@ public class AppRestaurantReportedWrong {
     @Column(name = "bd_name")
     private String saleUserName;
     
-    @ApiModelProperty(value = "大区ID")
-    @Column(name = "region_id")
-    private String regionId;
-    @ApiModelProperty(value = "大区")
+    @ApiModelProperty(value = "城市")
     @Column(name = "city_name")
     private String cityName;
     public String getId() {
@@ -134,12 +131,6 @@ public class AppRestaurantReportedWrong {
     }
     public void setSaleUserName(String saleUserName) {
         this.saleUserName = saleUserName;
-    }
-    public String getRegionId() {
-        return regionId;
-    }
-    public void setRegionId(String regionId) {
-        this.regionId = regionId;
     }
     public String getCityName() {
         return cityName;
