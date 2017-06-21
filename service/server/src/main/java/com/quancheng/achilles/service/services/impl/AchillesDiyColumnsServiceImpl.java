@@ -60,6 +60,9 @@ public class AchillesDiyColumnsServiceImpl extends RestaurantServiceAbstract<Ach
             AchillesTableInfo ati = null;
             ApiModelProperty amp = null;
             for (Field field : fields) {
+                if("serialVersionUID".equals(field.getName()) ){
+                    continue;
+                }
                 ati = new AchillesTableInfo();
                 ati.setColumnName(field.getName());
                 amp = field.getAnnotation(ApiModelProperty.class);

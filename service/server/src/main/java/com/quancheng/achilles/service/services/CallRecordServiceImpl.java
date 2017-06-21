@@ -2,6 +2,7 @@ package com.quancheng.achilles.service.services;
 
 import static org.springframework.data.jpa.domain.Specifications.where;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +33,14 @@ public class CallRecordServiceImpl implements CallRecordService {
 	@Override
 	public Page<CallRecord> findAll(Date startDate, Date endDate, String company, String type, String kefuName, Pageable pageable) {
 		Specifications<CallRecord> spec = where(calledOnDateRange(startDate, endDate)).and(companyEqual(company)).and(typeEqual(type)).and(kefuNameEqual(kefuName));
-		return callRecordRepository.findAll(spec, pageable);
+
+		Page<CallRecord> page = callRecordRepository.findAll(spec, pageable);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss") ; 
+		for (CallRecord callRecord : page) {
+		    callRecord.setRecordTime(callRecord.getRecordTime()==null||callRecord.getRecordTime().trim().equals("")?null:
+		        sdf.format(new Date(Long.parseLong(callRecord.getRecordTime())*1000)));
+        }
+		return page;
 	}
 	
 	@Override
@@ -51,6 +59,9 @@ public class CallRecordServiceImpl implements CallRecordService {
 	}
 	
 	public static Specification<CallRecord> calledOnDateRange(Date startDate, Date endDate) {
+	    if(startDate== null||startDate==null){
+	        return null;
+	    }
 		return new Specification<CallRecord>() {
 			@Override
 			public Predicate toPredicate(Root<CallRecord> root, CriteriaQuery<?> query, CriteriaBuilder cb) {

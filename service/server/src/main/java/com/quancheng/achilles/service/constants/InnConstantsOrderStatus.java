@@ -19,7 +19,7 @@ public enum InnConstantsOrderStatus {
 //        PAYMENT_TO_BE_CONFIRM(InnOrderType.PRE_YD +2, "预订成功"),
 //        RESERVE_SUCCESS_5(InnOrderType.PRE_YD+5, "预订成功"),
         REFUSED("8",Arrays.asList( new String[]{InnOrderType.PRE_YD + 6}),"商户拒绝"),
-        REFUSED_("9",Arrays.asList( new String[]{InnOrderType.PRE_YD +  7}),"客户拒绝"),
+        REFUSED_("9",Arrays.asList( new String[]{InnOrderType.PRE_YD +  7}),"客服拒绝"),
         CANCLE_10("10",Arrays.asList( new String[]{InnOrderType.PRE_YD + 10}) , "商户取消"),
 //        CANCLE_11(InnOrderType.PRE_YD+  11,"客服取消"),
         CANCLE_USER("11",Arrays.asList( new String[]{InnOrderType.PRE_YD + 15}), "用户取消"),

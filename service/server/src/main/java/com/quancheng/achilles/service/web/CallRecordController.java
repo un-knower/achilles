@@ -94,14 +94,14 @@ public class CallRecordController {
             @ApiParam(value = "每页记录数") @RequestParam(value = "pageSize", required = false, defaultValue = InnConstantPage.PAGE_SIZE_STRING) int pageSize,
             @ApiParam(value = "页码") @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
             ModelAndView mv) {
-        if (start == null || start.isEmpty()) {
-            start = "2014-01-01";
+        Date startDate = null;
+        if (start != null && !start.isEmpty()) {
+             startDate = DateUtils.toDate(start, DateUtils.SDF_DATE);
         }
-        if (end == null || end.isEmpty()) {
-            end = DateUtils.getToday();
+        Date endDate = null;
+        if (end != null && !end.isEmpty()) {
+              endDate = DateUtils.toDate(end, DateUtils.SDF_DATE);
         }
-        Date startDate = DateUtils.toDate(start, DateUtils.SDF_DATE);
-        Date endDate = DateUtils.toDate(end, DateUtils.SDF_DATE);
         Pageable pageable = new PageRequest(pageNum, pageSize, Sort.Direction.DESC, "recordTime", "description");
         Page<CallRecord> page = new PageImpl<CallRecord>(new ArrayList<CallRecord>());
         page = callRecordService.findAll(startDate, endDate, company, type, kefuName, pageable);
