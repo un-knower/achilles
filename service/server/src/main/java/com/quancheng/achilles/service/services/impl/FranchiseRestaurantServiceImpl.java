@@ -52,7 +52,7 @@ public class FranchiseRestaurantServiceImpl extends RestaurantServiceAbstract<Fr
                 .and(like("userName",applyUserName))
                 .and(equal("gouldId",gouldId))
                 .and(in("city",cityNames))
-                .and(in("applyType",applyTypes))
+                .and(in("applyTypeDisplay",applyTypes))
                 .and(between(timeType,begin,end))
                 .and(in("status",finalResults))
                 .and(in("reason",refusedReasons));
