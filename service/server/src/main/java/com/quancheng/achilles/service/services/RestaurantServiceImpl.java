@@ -25,16 +25,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.quancheng.achilles.dao.repository.ClientRepository;
 import com.quancheng.achilles.dao.repository.RegionRepository;
-import com.quancheng.achilles.dao.repository.RestaurantGHRepository;
 import com.quancheng.achilles.dao.repository.RestaurantOwnCompanyRepository;
 import com.quancheng.achilles.dao.repository.RestaurantRecommenderRepository;
 import com.quancheng.achilles.dao.repository.SalesRepository;
+import com.quancheng.achilles.dao.write.RestaurantGHRepository;
 import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.dao.model.Client;
-import com.quancheng.achilles.dao.model.RestaurantGonghai;
 import com.quancheng.achilles.dao.model.RestaurantOwnCompany;
 import com.quancheng.achilles.dao.model.RestaurantOwnCompanyRelation;
 import com.quancheng.achilles.dao.model.SalesDomain;
+import com.quancheng.achilles.dao.modelwrite.RestaurantGonghai;
 
 @Service
 @Transactional(readOnly = true)

@@ -1,4 +1,4 @@
-package com.quancheng.achilles.dao.model;
+package com.quancheng.achilles.dao.modelwrite;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

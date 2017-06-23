@@ -10,7 +10,7 @@
         		sa.`name` salesName
 <!--         		, op.bank_card AS cardNumber -->
         FROM `tmp_order_query` o
-        		LEFT JOIN api_sales sa ON sa.id=o.salesId
+        		LEFT JOIN quancheng_db.api_sales sa ON sa.id=o.salesId
 <!--         		LEFT JOIN 16860_order_payment op ON  op.order_num=o.orderNum -->
         where 1=1
             <if test="serviceType !=null and serviceType !=''">

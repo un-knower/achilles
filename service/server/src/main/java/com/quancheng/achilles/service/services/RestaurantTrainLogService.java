@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.quancheng.achilles.dao.model.RestaurantTrainLog;
+import com.quancheng.achilles.dao.modelwrite.RestaurantTrainLog;
 
 public interface RestaurantTrainLogService {
 

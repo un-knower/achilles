@@ -27,7 +27,7 @@ import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.services.MemberService;
 import com.quancheng.achilles.service.services.OssFileInfoService;
 import com.quancheng.achilles.dao.model.BaseResponse;
-import com.quancheng.achilles.dao.model.Member;
+import com.quancheng.achilles.dao.modelwrite.Member;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
 

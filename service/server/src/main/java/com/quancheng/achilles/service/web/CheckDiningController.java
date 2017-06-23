@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.services.CheckDiningService;
 import com.quancheng.achilles.dao.model.BaseResponse;
-import com.quancheng.achilles.dao.model.CheckEmphasisDining;
+import com.quancheng.achilles.dao.modelwrite.CheckEmphasisDining;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
 import com.quancheng.achilles.util.CheckReasonUtil;

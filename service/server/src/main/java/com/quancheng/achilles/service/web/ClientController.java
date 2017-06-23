@@ -23,7 +23,7 @@ import com.quancheng.achilles.service.services.MemberServiceImpl;
 import com.quancheng.achilles.service.services.QCClientServiceImpl;
 import com.quancheng.achilles.service.services.RestaurantServiceImpl;
 import com.quancheng.achilles.dao.model.BaseResponse;
-import com.quancheng.achilles.dao.model.QCClient;
+import com.quancheng.achilles.dao.modelwrite.QCClient;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
 

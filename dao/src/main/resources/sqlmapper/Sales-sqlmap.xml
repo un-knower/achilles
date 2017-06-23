@@ -4,9 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="SalesMapper">
     <select id="queryAllSales" resultType="com.quancheng.achilles.dao.model.SalesDomain">
-    SELECT sare.sales_id id,sa.`name` salesName FROM `api_sales_rest`sare ,api_sales sa where sa.id=sare.sales_id GROUP BY sare.sales_id;
+    SELECT sare.sales_id id,sa.`name` salesName FROM 
+    quancheng_db. `api_sales_rest`sare ,
+    quancheng_db.api_sales sa where sa.id=sare.sales_id and sare.deleted_at is null  GROUP BY sare.sales_id;
     </select>
     <select id="getSalesById" resultType="com.quancheng.achilles.dao.model.SalesDomain" parameterType="int">
-        select id,name salesName  from api_sales where id= #{id}
+        select id,name salesName  from quancheng_db.api_sales where id= #{id}
     </select>
 </mapper>

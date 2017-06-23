@@ -73,12 +73,12 @@
                 ) else null end) 
             as after_count_reason 
 		    FROM
-		    `v_inn_sj_order_had_payment` `o`
+		    quancheng_db.`v_inn_sj_order_had_payment` `o`
 		        LEFT JOIN
-		    16860_region reg ON o.city_id = reg.id
+		    quancheng_db.16860_region reg ON o.city_id = reg.id
 		        LEFT JOIN
-		    16860_quality_check `168check` ON o.order_num = `168check`.order_num
-		    left join 16860_quality_check_result r on `168check`.id=r.quality_check_id
+		    quancheng_db.16860_quality_check `168check` ON o.order_num = `168check`.order_num
+		    left join quancheng_db.16860_quality_check_result r on `168check`.id=r.quality_check_id
 		WHERE
 		    `o`.`pay_at` BETWEEN STR_TO_DATE(#{date_begin}, '%Y-%m-%d') AND STR_TO_DATE(#{date_end}, '%Y-%m-%d')
 		      <if test="clientId !=null and clientId !=''">
@@ -114,8 +114,8 @@
 			SELECT
 				order_rate.client_id,
 				ROUND((dish_score + restaurant_score + syt_service_score )/ 3) as score
-			FROM v_inn_sj_order_had_payment payment_order
-			LEFT JOIN 16860_order_rating order_rate ON payment_order.order_num = order_rate.order_num
+			FROM quancheng_db.v_inn_sj_order_had_payment payment_order
+			LEFT JOIN quancheng_db.16860_order_rating order_rate ON payment_order.order_num = order_rate.order_num
 			WHERE payment_order.pay_at  BETWEEN STR_TO_DATE(#{date_begin}, '%Y-%m-%d') AND STR_TO_DATE(#{date_end}, '%Y-%m-%d')
 				AND order_rate.id is not null) score_info
 		WHERE score_info.score &lt;&gt; 0

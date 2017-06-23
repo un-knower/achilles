@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.quancheng.achilles.service.constants.InnConstantPage;
-import com.quancheng.achilles.dao.repository.CheckDiningRepository;
-import com.quancheng.achilles.dao.model.CheckEmphasisDining;
+import com.quancheng.achilles.dao.modelwrite.CheckEmphasisDining;
+import com.quancheng.achilles.dao.write.CheckDiningRepository;
 
 import io.swagger.annotations.ApiParam;
 

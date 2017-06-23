@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.quancheng.achilles.service.constants.InnConstantPage;
-import com.quancheng.achilles.dao.repository.QuanlityCheckRecordRepository;
-import com.quancheng.achilles.dao.model.QuanlityCheckRecord;
+import com.quancheng.achilles.dao.modelwrite.QuanlityCheckRecord;
+import com.quancheng.achilles.dao.write.QuanlityCheckRecordRepository;
 import com.quancheng.achilles.service.utils.DateUtils;
 
 import io.swagger.annotations.ApiParam;

@@ -5,8 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
-import com.quancheng.achilles.dao.repository.QCClientRepository;
-import com.quancheng.achilles.dao.model.QCClient;
+
+import com.quancheng.achilles.dao.modelwrite.QCClient;
+import com.quancheng.achilles.dao.write.QCClientRepository;
 
 @Service
 public class QCClientServiceImpl extends RestaurantServiceAbstract<QCClient>{

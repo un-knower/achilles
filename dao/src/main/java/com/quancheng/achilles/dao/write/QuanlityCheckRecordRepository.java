@@ -1,4 +1,4 @@
-package com.quancheng.achilles.dao.repository;
+package com.quancheng.achilles.dao.write;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.quancheng.achilles.dao.model.QuanlityCheckRecord;
+import com.quancheng.achilles.dao.modelwrite.QuanlityCheckRecord;
 
 public interface QuanlityCheckRecordRepository extends JpaRepository<QuanlityCheckRecord, String>, JpaSpecificationExecutor<QuanlityCheckRecord> {
 

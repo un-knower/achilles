@@ -19,8 +19,8 @@ import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.quancheng.achilles.dao.repository.QuanlityCheckRecordRepository;
-import com.quancheng.achilles.dao.model.QuanlityCheckRecord;
+import com.quancheng.achilles.dao.modelwrite.QuanlityCheckRecord;
+import com.quancheng.achilles.dao.write.QuanlityCheckRecordRepository;
 
 /**
  * @author lijun jiang

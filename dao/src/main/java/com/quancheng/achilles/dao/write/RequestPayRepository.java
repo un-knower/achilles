@@ -1,4 +1,4 @@
-package com.quancheng.achilles.dao.repository;
+package com.quancheng.achilles.dao.write;
 
 import java.util.Date;
 import java.util.List;
@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.quancheng.achilles.dao.model.RequestPayment;
+import com.quancheng.achilles.dao.modelwrite.RequestPayment;
 
 /**
  * <strong>描述：</strong>TODO<br>

@@ -30,7 +30,7 @@ import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.constants.InnConstantsOrderStatus;
 import com.quancheng.achilles.service.services.RequestPayService;
 import com.quancheng.achilles.dao.model.BaseResponse;
-import com.quancheng.achilles.dao.model.RequestPayment;
+import com.quancheng.achilles.dao.modelwrite.RequestPayment;
 import com.quancheng.achilles.service.utils.DateUtils;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;

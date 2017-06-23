@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.quancheng.achilles.dao.repository.CheckPeopleRepository;
-import com.quancheng.achilles.dao.model.CheckEmphasisPeople;
+import com.quancheng.achilles.dao.modelwrite.CheckEmphasisPeople;
+import com.quancheng.achilles.dao.write.CheckPeopleRepository;
 
 /**
  * @author lijun jiang

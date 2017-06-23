@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.services.CheckPeopleRestService;
 import com.quancheng.achilles.dao.model.BaseResponse;
-import com.quancheng.achilles.dao.model.CheckEmphasisPeople;
+import com.quancheng.achilles.dao.modelwrite.CheckEmphasisPeople;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
 import com.quancheng.achilles.util.CheckReasonUtil;
