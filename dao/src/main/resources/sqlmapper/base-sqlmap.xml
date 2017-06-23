@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BaseMapper" >
+  <select id="queryAll" resultType="Map" parameterType="Map" >
+    select  * from ${tableName}
+  </select>
+  <select id="queryBySql" resultType="Map" parameterType="Map" >
+    ${sqlString,jdbcType=VARCHAR}
+  </select>
+  <update id="updateBySql" parameterType="Map">
+    ${sqlString}
+  </update>
+  <update id="truncateTable" parameterType="Map">
+   truncate table ${tableName}
+  </update>
+</mapper>

@@ -1,5 +1,6 @@
 package com.quancheng.achilles.dao.odps;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,13 @@ public class RecordToJsonUitl {
             field = fieldMap.get(col.getName());
             map.put(field.getName(), record.get(col.getName()));
         }
-        return JsonUtil.mapToObject(map, cls);
+        T mapToObject = null;
+        try {
+            mapToObject = JsonUtil.mapToObject(map, cls);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return mapToObject;
 
     }
 }

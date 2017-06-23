@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="RestaurantInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.quancheng.achilles.dao.odps.model.RestaurantInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="city_id" property="cityId" jdbcType="VARCHAR" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="restaurant_id" property="restaurantId" jdbcType="VARCHAR" />
+    <result column="restaurant_name" property="restaurantName" jdbcType="VARCHAR" />
+    <result column="lng" property="lng" jdbcType="DOUBLE" />
+    <result column="lat" property="lat" jdbcType="DOUBLE" />
+    <result column="settable" property="settable" jdbcType="INTEGER" />
+    <result column="support_waimai" property="supportWaimai" jdbcType="INTEGER" />
+    <result column="support_reserve" property="supportReserve" jdbcType="INTEGER" />
+    <result column="cook_style" property="cookStyle" jdbcType="VARCHAR" />
+    <result column="consume" property="consume" jdbcType="DOUBLE" />
+    <result column="box_num" property="boxNum" jdbcType="INTEGER" />
+    <result column="period" property="period" jdbcType="DOUBLE" />
+    <result column="rate_settlement_type" property="rateSettlementType" jdbcType="VARCHAR" />
+    <result column="manage_type" property="manageType" jdbcType="VARCHAR" />
+    <result column="shipping_dis" property="shippingDis" jdbcType="DOUBLE" />
+    <result column="address" property="address" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, company_id, company_name, city_id, city_name, restaurant_id, restaurant_name, address,
+    lng, lat, settable, support_waimai, support_reserve, cook_style, consume, box_num, 
+    period, rate_settlement_type, manage_type, shipping_dis
+    from restaurant_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from restaurant_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="queryAndSaveToDB" parameterType="Map" >
+    insert into restaurant_info (company_id,company_name,city_id,city_name,restaurant_id,restaurant_name,address,lng,lat,settable,support_waimai,support_reserve,cook_style,consume,box_num,period,rate_settlement_type,manage_type,shipping_dis) 
+	SELECT DISTINCT c.id AS company_id
+		, c.title AS company_name
+		, ali.city_id
+		, r.name AS city_name
+		, ar.id AS restaurant_id
+		, ar.name AS restaurant_name
+		, ali.address
+		, ali.lng
+		, ali.lat
+		, case when ali.lng is not null and ali.lat is not null then 1
+		  else 0 end as settable
+		, case when awrds.restaurant_id IS NULL THEN '0'
+			else '1' end as support_waimai
+		, case when qay.restaurant_id IS NULL THEN '0'
+			else '1' end as support_reserve
+		, ar.cook_style
+		, ar.consume
+	    , qay.box_num
+		, qaa.period
+		, qaa.rate_settlement_type
+		, qaa.manage_type
+		, awrds.shipping_dis
+	FROM quancheng_db.16860_client c
+	LEFT OUTER JOIN quancheng_db.16860_restaurant_client rc
+	ON c.id = rc.client_id and rc.deleted_at is null
+	LEFT OUTER JOIN quancheng_db.api_restaurants ar
+	ON ar.id = rc.restaurant_id and ar.deleted_at is null
+	LEFT OUTER JOIN quancheng_db.api_yuding qay on qay.restaurant_id = ar.id and qay.status=0 and qay.deleted_at is null
+	LEFT OUTER JOIN quancheng_db.api_assets qaa on qaa.id=ar.asset_id and qaa.deleted_at is null
+	LEFT OUTER JOIN (
+		SELECT awrd.restaurant_id  
+			, awrc.name AS category_name
+			, awrd.shipping_fee_min
+			, awrd.polygon
+			, awrd.shipping_dis
+		FROM quancheng_db.api_waimai_restaurant_detail awrd
+		LEFT OUTER JOIN quancheng_db.api_waimai_restaurant_category awrc
+		ON awrd.category_id = awrc.id and awrc.deleted_at is null
+		where awrd.deleted_at is null
+		GROUP BY awrd.restaurant_id, 
+			awrc.name, 
+			awrd.shipping_fee_min, 
+			awrd.polygon, 
+			awrd.shipping_dis
+	) awrds
+	ON awrds.restaurant_id = ar.id
+	LEFT OUTER JOIN quancheng_db.api_lbs_infos ali
+	ON ar.lbs_id = ali.id and ali.deleted_at is null
+	INNER JOIN quancheng_db.16860_region r
+	ON r.id = ali.city_id and r.deleted_at is null
+	WHERE c.deleted_at IS NULL
+	AND ar.status = 0
+	<if test="companyIdList != null" >
+     and  c.id in (#{companyIdList,jdbcType=VARCHAR}) 
+    </if>
+	<if test="cityIdList != null" >
+      and  ali.city_id in (#{cityIdList,jdbcType=VARCHAR}) 
+    </if>
+    <if test="companyNameList != null" >
+     and  c.title in (#{companyNameList,jdbcType=VARCHAR}) 
+    </if>
+    <if test="cityNameList != null" >
+      and  r.name in (#{cityNameList,jdbcType=VARCHAR}) 
+    </if>
+  </insert>
+  <insert id="batchInsert" parameterType="List" >
+    insert into restaurant_info (id, company_id, company_name,city_id, city_name, restaurant_id, restaurant_name, lng, lat, 
+      settable, support_waimai, support_reserve,cook_style, consume, box_num, period, rate_settlement_type, manage_type,shipping_dis, address)
+    values 
+     <foreach collection="list" item="item"  separator="," >
+     (#{item.id,jdbcType=INTEGER}, #{item.companyId,jdbcType=VARCHAR}, #{item.companyName,jdbcType=VARCHAR}, 
+      #{item.cityId,jdbcType=VARCHAR}, #{item.cityName,jdbcType=VARCHAR}, #{item.restaurantId,jdbcType=VARCHAR}, 
+      #{item.restaurantName,jdbcType=VARCHAR}, #{item.lng,jdbcType=DOUBLE}, #{item.lat,jdbcType=DOUBLE}, 
+      #{item.settable,jdbcType=INTEGER}, #{item.supportWaimai,jdbcType=INTEGER}, #{item.supportReserve,jdbcType=INTEGER}, 
+      #{item.cookStyle,jdbcType=VARCHAR}, #{item.consume,jdbcType=DOUBLE}, #{item.boxNum,jdbcType=INTEGER}, 
+      #{item.period,jdbcType=DOUBLE}, #{item.rateSettlementType,jdbcType=VARCHAR}, #{item.manageType,jdbcType=VARCHAR}, 
+      #{item.shippingDis,jdbcType=DOUBLE}, #{item.address,jdbcType=LONGVARCHAR})
+     </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="com.quancheng.achilles.dao.odps.model.RestaurantInfo" >
+    insert into restaurant_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="cityName != null" >
+        city_name,
+      </if>
+      <if test="restaurantId != null" >
+        restaurant_id,
+      </if>
+      <if test="restaurantName != null" >
+        restaurant_name,
+      </if>
+      <if test="lng != null" >
+        lng,
+      </if>
+      <if test="lat != null" >
+        lat,
+      </if>
+      <if test="settable != null" >
+        settable,
+      </if>
+      <if test="supportWaimai != null" >
+        support_waimai,
+      </if>
+      <if test="supportReserve != null" >
+        support_reserve,
+      </if>
+      <if test="cookStyle != null" >
+        cook_style,
+      </if>
+      <if test="consume != null" >
+        consume,
+      </if>
+      <if test="boxNum != null" >
+        box_num,
+      </if>
+      <if test="period != null" >
+        period,
+      </if>
+      <if test="rateSettlementType != null" >
+        rate_settlement_type,
+      </if>
+      <if test="manageType != null" >
+        manage_type,
+      </if>
+      <if test="shippingDis != null" >
+        shipping_dis,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null" >
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="restaurantId != null" >
+        #{restaurantId,jdbcType=VARCHAR},
+      </if>
+      <if test="restaurantName != null" >
+        #{restaurantName,jdbcType=VARCHAR},
+      </if>
+      <if test="lng != null" >
+        #{lng,jdbcType=DOUBLE},
+      </if>
+      <if test="lat != null" >
+        #{lat,jdbcType=DOUBLE},
+      </if>
+      <if test="settable != null" >
+        #{settable,jdbcType=INTEGER},
+      </if>
+      <if test="supportWaimai != null" >
+        #{supportWaimai,jdbcType=INTEGER},
+      </if>
+      <if test="supportReserve != null" >
+        #{supportReserve,jdbcType=INTEGER},
+      </if>
+      <if test="cookStyle != null" >
+        #{cookStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="consume != null" >
+        #{consume,jdbcType=DOUBLE},
+      </if>
+      <if test="boxNum != null" >
+        #{boxNum,jdbcType=INTEGER},
+      </if>
+      <if test="period != null" >
+        #{period,jdbcType=DOUBLE},
+      </if>
+      <if test="rateSettlementType != null" >
+        #{rateSettlementType,jdbcType=VARCHAR},
+      </if>
+      <if test="manageType != null" >
+        #{manageType,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingDis != null" >
+        #{shippingDis,jdbcType=DOUBLE},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>
