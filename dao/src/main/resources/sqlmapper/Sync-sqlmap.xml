@@ -8,21 +8,21 @@
 		truncate table tmp_order_query 
 	</update>
 	<update id="insertOrderTemptable">
-		insert into tmp_order_query SELECT * FROM v_inn_order_query
+		insert into tmp_order_query SELECT * FROM quancheng_db.v_inn_order_query
 	</update>
 	
 	<update id="dropRestaurantTemptable">
 		truncate table tmp_restaurant_query  
 	</update>
 	<update id="insertNewRestaurantTemptable">
-		insert into tmp_restaurant_query SELECT * FROM v_inn_restaurant_gh_statistic   
+		insert into tmp_restaurant_query SELECT * FROM quancheng_db.v_inn_restaurant_gh_statistic   
 	</update>
 	
 	<update id="dropPrevClientTemptable">
 		truncate table tmp_inn_client_rest_order_statistic 
 	</update>
 	<update id="insertPrevNewClientTemptable">
-		insert into tmp_inn_client_rest_order_statistic  SELECT *  FROM v_inn_client_rest_order_statistic 
+		insert into tmp_inn_client_rest_order_statistic  SELECT *  FROM quancheng_db.v_inn_client_rest_order_statistic 
 	</update>
 	
 
@@ -30,7 +30,7 @@
 		truncate table tmp_client_query 
 	</update>
 	<update id="insertNewClientTemptable">
-		insert into tmp_client_query  SELECT * FROM v_inn_order_statistic_for_client 
+		insert into tmp_client_query  SELECT * FROM quancheng_db.v_inn_order_statistic_for_client 
 	</update>
 
 
@@ -47,21 +47,21 @@
 		truncate table tmp_check_people
 	</update>
 	<update id="createNewCheckPeopleTemptable">
-		insert into  tmp_check_people  SELECT * FROM v_inn_checkemphasisp  
+		insert into  tmp_check_people  SELECT * FROM quancheng_db.v_inn_checkemphasisp  
 	</update>
 
 	<update id="dropCheckDiningTemptable">
 		truncate table tmp_check_dining
 	</update>
 	<update id="createNewCheckDiningTemptable">
-		insert into  tmp_check_dining  SELECT * FROM v_inn_checkemphasisdining 
+		insert into  tmp_check_dining  SELECT * FROM quancheng_db.v_inn_checkemphasisdining 
 	</update>
 
 	<update id="dropCheckRecordTemptable">
 		truncate table tmp_flecheck_record
 	</update>
 	<update id="createNewCheckRecordTemptable">
-		insert into tmp_flecheck_record  SELECT * FROM v_inn_flycheckrecord 
+		insert into tmp_flecheck_record  SELECT * FROM quancheng_db.v_inn_flycheckrecord 
 	</update>
 
 	<!-- payment -->
@@ -69,7 +69,7 @@
 		truncate table tmp_request_payment 
 	</update>
 	<update id="createNewCustomerServiceTemptable">
-		insert into tmp_request_payment  SELECT * FROM v_inn_requestpatment 
+		insert into tmp_request_payment  SELECT * FROM quancheng_db.v_inn_requestpatment 
 	</update>
 	
 	<!-- member -->
@@ -77,24 +77,24 @@
 		truncate table tmp_member
 	</update>
 	<update id="createNewMemberTemptable">
-		insert into tmp_member  SELECT * FROM v_inn_member 
+		insert into tmp_member  SELECT * FROM quancheng_db.v_inn_member 
 	</update>
 
 	<update id="dropTrainLogTemptable">
 		truncate table tmp_inn_train_log 
 	</update>
 	<update id="createNewTrainLogTemptable">
-		INSERT INTO tmp_inn_train_log  SELECT * FROM v_inn_train_log
+		INSERT INTO tmp_inn_train_log  SELECT * FROM quancheng_db.v_inn_train_log
 	</update>
 
 	<update id="dropVisitLogTemptable">
 		truncate table tmp_inn_visit_log 
 	</update>
 	<update id="insertVisitLogTemptable" >
-		INSERT INTO tmp_inn_visit_log SELECT * FROM v_inn_visit_log t order by t.restaurant_id  limit #{page},#{pagesize}
+		INSERT INTO tmp_inn_visit_log SELECT * FROM quancheng_db.v_inn_visit_log t order by t.restaurant_id  limit #{page},#{pagesize}
 	</update>
 	
 	<select id="getVisitLogViewCount" parameterType="map" resultType="int">
-		select count(1) from v_inn_visit_log  
+		select count(1) from quancheng_db.v_inn_visit_log  
 	</select>
 </mapper>

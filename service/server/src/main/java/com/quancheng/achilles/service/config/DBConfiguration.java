@@ -24,16 +24,16 @@ import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
 @Configuration
 public class DBConfiguration {
 
-	@Bean(name="quanchengDBReadDataSource")
-	@Primary
-	@ConfigurationProperties(prefix = "spring.datasource.ro")
-	public DataSource quanchengDBReadDataSource() {
-	    DataSource ds = DataSourceBuilder.create().build();
-		return ds;
-	}
-	
+    @Primary
+    @Bean(name="quanchengDBReadDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.readonly")
+    public DataSource dataSource() {
+        DataSource ds = DataSourceBuilder.create().build();
+        return ds;
+    }
+    
+    @Primary
 	@Bean
-	@Primary
 	public SqlSessionFactoryBean readSqlSessionFactoryBean(@Qualifier("quanchengDBReadDataSource")DataSource dataSource) {
 		SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
 		sqlSessionFactory.setDataSource(dataSource);
@@ -53,11 +53,12 @@ public class DBConfiguration {
 	public SqlSession sqlSessionTemplate(@Qualifier("writeSqlSessionFactoryBean") SqlSessionFactory sqlSessionFactory) {
 		return new SqlSessionTemplate(sqlSessionFactory);
 	}
-
+	
     @Bean(name="quanchengDBWriteDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.writedb")
     public DataSource quanchengDBWriteDataSource() {
-        return DataSourceBuilder.create().build();
+	    DataSource ds = DataSourceBuilder.create().build();
+        return ds;
     }
     
     @Bean(name="writeSqlSessionFactoryBean")

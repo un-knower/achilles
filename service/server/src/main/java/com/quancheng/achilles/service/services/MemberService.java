@@ -1,7 +1,8 @@
 package com.quancheng.achilles.service.services;
 
-import com.quancheng.achilles.dao.model.Member;
 import com.quancheng.achilles.dao.model.Region;
+import com.quancheng.achilles.dao.modelwrite.Member;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

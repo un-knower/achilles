@@ -1,11 +1,12 @@
 package com.quancheng.achilles.service.services;
 
 import com.quancheng.achilles.dao.repository.ClientRepository;
-import com.quancheng.achilles.dao.repository.MemberRepository;
 import com.quancheng.achilles.dao.repository.RegionRepository;
+import com.quancheng.achilles.dao.write.MemberRepository;
 import com.quancheng.achilles.service.utils.DateUtils;
-import com.quancheng.achilles.dao.model.Member;
 import com.quancheng.achilles.dao.model.Region;
+import com.quancheng.achilles.dao.modelwrite.Member;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.quancheng.achilles.service.constants.InnConstantPage;
-import com.quancheng.achilles.dao.repository.RequestPayRepository;
-import com.quancheng.achilles.dao.model.RequestPayment;
+import com.quancheng.achilles.dao.modelwrite.RequestPayment;
+import com.quancheng.achilles.dao.write.RequestPayRepository;
 import com.quancheng.achilles.service.utils.DateUtils;
 
 import io.swagger.annotations.ApiParam;

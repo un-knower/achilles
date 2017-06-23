@@ -20,11 +20,11 @@
          date_format(#{time,jdbcType=VARCHAR},'%Y-%m') time,
         </if>
         arm.city region_id,r.name region_name,count(*) restaurants_num 
-		from 16860_client c
-		left join 16860_restaurant_client rc on c.id=rc.client_id 
-		left join api_restaurants ar on ar.id=rc.restaurant_id 
-		inner join api_restaurants_master arm on arm.id=ar.gonghai_id
-		inner join 16860_region r on r.id=arm.city and r.id in (select city_id from 16860_client_region cr where cr.client_id=c.id and cr.status=1 and cr.business="syt")
+		from quancheng_db.16860_client c
+		left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id 
+		left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id 
+		inner join quancheng_db.api_restaurants_master arm on arm.id=ar.gonghai_id
+		inner join quancheng_db.16860_region r on r.id=arm.city and r.id in (select city_id from quancheng_db.16860_client_region cr where cr.client_id=c.id and cr.status=1 and cr.business="syt")
 		where  rc.deleted_at is null and ar.status=0 
 		<if test="time != null"> <![CDATA[ and ar.created_at <= #{time,jdbcType=VARCHAR} ]]></if>
 		group by c.id,r.name
@@ -47,12 +47,12 @@
       
 			select distinct c.id companyId,c.title companyName,
 			aar.text reason,count(*) shelfNum 
-			from 16860_client c
-			left join 16860_restaurant_client rc on c.id=rc.client_id
-			left join api_restaurants ar on ar.id=rc.restaurant_id
-			left join api_apply_recodes aar on aar.pid=ar.id
+			from quancheng_db.16860_client c
+			left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id
+			left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id
+			left join quancheng_db.api_apply_recodes aar on aar.pid=ar.id
 			where aar.id in ( 
-			select max(aars.id) from api_apply_recodes aars where aars.status = 1 and aars.table_name = 'restaurant' and aars.type = 2 and aars.pid is not null  group by  aars.pid
+			select max(aars.id) from quancheng_db.api_apply_recodes aars where aars.status = 1 and aars.table_name = 'restaurant' and aars.type = 2 and aars.pid is not null  group by  aars.pid
 			)  and rc.deleted_at is null and ar.status=0 
 			<if test="time != null">
 			and date_format(aar.updated_at,'%Y-%m')=#{time,jdbcType=VARCHAR} 
@@ -63,29 +63,29 @@
 	union  
 	( 
 		select f.companyId,f.companyName,f.reason,f.shelfNum from (
-			select distinct c.id companyId,c.title companyName,"合规风险" reason ,0 shelfNum from 16860_client c
-			left join 16860_restaurant_client rc on c.id=rc.client_id
-			left join api_restaurants ar on ar.id=rc.restaurant_id
+			select distinct c.id companyId,c.title companyName,"合规风险" reason ,0 shelfNum from quancheng_db.16860_client c
+			left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id
+			left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id
 			where rc.deleted_at is null and ar.status=0 
 		union 
-			select distinct c.id companyId,c.title companyName,"合同到期/订单少" reason ,0 shelfNum from 16860_client c
-			left join 16860_restaurant_client rc on c.id=rc.client_id
-			left join api_restaurants ar on ar.id=rc.restaurant_id
+			select distinct c.id companyId,c.title companyName,"合同到期/订单少" reason ,0 shelfNum from quancheng_db.16860_client c
+			left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id
+			left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id
 			where rc.deleted_at is null and ar.status=0 
 		union 
-			select distinct c.id companyId,c.title companyName,"内部系统或财务调整" reason ,0 shelfNum from 16860_client c
-			left join 16860_restaurant_client rc on c.id=rc.client_id
-			left join api_restaurants ar on ar.id=rc.restaurant_id
+			select distinct c.id companyId,c.title companyName,"内部系统或财务调整" reason ,0 shelfNum from quancheng_db.16860_client c
+			left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id
+			left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id
 			where rc.deleted_at is null and ar.status=0 
 		union 
-			select distinct c.id companyId,c.title companyName,"服务质量问题" reason ,0 shelfNum from 16860_client c
-			left join 16860_restaurant_client rc on c.id=rc.client_id
-			left join api_restaurants ar on ar.id=rc.restaurant_id
+			select distinct c.id companyId,c.title companyName,"服务质量问题" reason ,0 shelfNum from quancheng_db.16860_client c
+			left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id
+			left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id
 			where rc.deleted_at is null and ar.status=0 
 		union 
-			select distinct c.id companyId,c.title companyName,"餐厅其他原因" reason ,0 shelfNum from 16860_client c
-			left join 16860_restaurant_client rc on c.id=rc.client_id
-			left join api_restaurants ar on ar.id=rc.restaurant_id
+			select distinct c.id companyId,c.title companyName,"餐厅其他原因" reason ,0 shelfNum from quancheng_db.16860_client c
+			left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id
+			left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id
 			where rc.deleted_at is null and ar.status=0 
 		) f 
 	)
@@ -109,12 +109,12 @@
          #{time,jdbcType=VARCHAR} time,
         </if>
 		trs.code,trs.code_view source,ar.id,ar.name 
-		from 16860_client c
-		left join 16860_restaurant_client rc on c.id=rc.client_id
-		left join api_restaurants ar on ar.id=rc.restaurant_id
-		left join api_restaurant_master_sources arms on ar.id=arms.restaurant_id 
+		from quancheng_db.16860_client c
+		left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id
+		left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id
+		left join quancheng_db.api_restaurant_master_sources arms on ar.id=arms.restaurant_id 
 		and arms.id in(
-		select min(id) from api_restaurant_master_sources group by restaurant_id
+		select min(id) from quancheng_db.api_restaurant_master_sources group by restaurant_id
 		)
 		inner join tmp_restaurant_sources trs on trs.code=arms.type
 		where rc.deleted_at is null and ar.status=0
@@ -143,19 +143,19 @@
 		from (
 		        select c.id company_id,c.title company_name,
 		        trs.code,trs.code_view  source 
-		        from 16860_client c
-				left join 16860_restaurant_client rc on c.id=rc.client_id
-				left join api_restaurants ar on ar.id=rc.restaurant_id
-				left join api_restaurant_master_sources arms on ar.id=arms.restaurant_id 
+		        from quancheng_db.16860_client c
+				left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id
+				left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id
+				left join quancheng_db.api_restaurant_master_sources arms on ar.id=arms.restaurant_id 
 				inner join tmp_restaurant_sources trs on trs.code=arms.type
 				) a
 				left join sj_company_restaurant_sources_map scrp on scrp.sources_code=a.code
 			union
 				select distinct c.id company_id,c.title company_name,
 		        trs.code_view sourceType,trs.num sourceNum from 16860_client c
-				left join 16860_restaurant_client rc on c.id=rc.client_id
-				left join api_restaurants ar on ar.id=rc.restaurant_id
-				left join api_restaurant_master_sources arms on ar.id=arms.restaurant_id 
+				left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id
+				left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id
+				left join quancheng_db.api_restaurant_master_sources arms on ar.id=arms.restaurant_id 
 				inner join ( 
 				select  code,'其他公司推荐' as code_view,0 as num from tmp_restaurant_sources
 				union 
@@ -174,17 +174,17 @@
 		,case when awrd.restaurant_id is null then '0' else '1' end as support_takeout_of_food,
 		 case when sup_reserve.restaurant_id is null then '0' else '1' end support_reserve
 		 ,ar.cook_style,ar.consume,awrd.shipping_fee_min,awrd.polygon,awrd.shipping_dis
-		from 16860_client c
-		left join 16860_restaurant_client rc on c.id=rc.client_id
-		left join api_restaurants ar on ar.id=rc.restaurant_id
+		from quancheng_db.16860_client c
+		left join quancheng_db.16860_restaurant_client rc on c.id=rc.client_id
+		left join quancheng_db.api_restaurants ar on ar.id=rc.restaurant_id
 		left join (select restaurant_id from api_yuding group by restaurant_id) sup_reserve on sup_reserve.restaurant_id=ar.id
 		left join (select awrd.restaurant_id,group_concat(awrc.name) as category_name
 		,awrd.shipping_fee_min,awrd.polygon,awrd.shipping_dis
-		from api_waimai_restaurant_detail awrd
-		left join api_waimai_restaurant_category awrc on awrd.category_id = awrc.id
+		from quancheng_db.api_waimai_restaurant_detail awrd
+		left join quancheng_db.api_waimai_restaurant_category awrc on awrd.category_id = awrc.id
 		group by awrd.restaurant_id) awrd on awrd.restaurant_id=ar.id
-		left join api_lbs_infos ali on ar.lbs_id=ali.id
-		inner join 16860_region r on r.id=ali.city_id
+		left join quancheng_db.api_lbs_infos ali on ar.lbs_id=ali.id
+		inner join quancheng_db.16860_region r on r.id=ali.city_id
 		where rc.deleted_at is null and ar.status=0 
 		<if test="time != null"> <![CDATA[ and ar.created_at <= #{time,jdbcType=VARCHAR} ]]></if>
 		<if test="endTime != null"> <![CDATA[ and ar.created_at <= #{endTime,jdbcType=VARCHAR} ]]></if>
@@ -208,10 +208,10 @@
          date_format(#{time,jdbcType=VARCHAR},'%Y-%m') time,
         </if>
 		h.id hospital_id, h.name hospital_name,h.address,h.city city_id,r.name city_name,h.lng,h.lat
-		from 16860_client c
-		left join 16860_hospital_clients hc on c.id=hc.client_id
-		left join  16860_hospitals h on h.id=hc.hospital_id
-		inner join 16860_region r on r.id=h.city
+		from quancheng_db.16860_client c
+		left join quancheng_db.16860_hospital_clients hc on c.id=hc.client_id
+		left join  quancheng_db.16860_hospitals h on h.id=hc.hospital_id
+		inner join quancheng_db.16860_region r on r.id=h.city
 		where h.status='1'  
 		<if test="time != null"> <![CDATA[ and hc.created_at <= #{time,jdbcType=VARCHAR} ]]></if>
 		<if test="endTime != null"> <![CDATA[ and hc.created_at <= #{endTime,jdbcType=VARCHAR} ]]></if>

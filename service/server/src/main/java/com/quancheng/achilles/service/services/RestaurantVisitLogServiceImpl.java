@@ -19,10 +19,10 @@ import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.quancheng.achilles.dao.repository.RestaurantVisitLogRepository;
+import com.quancheng.achilles.dao.modelwrite.RestaurantVisitLog;
+import com.quancheng.achilles.dao.write.RestaurantVisitLogRepository;
 import com.quancheng.achilles.service.constants.InnConstantRestStateEnum;
 import com.quancheng.achilles.service.utils.DateUtils;
-import com.quancheng.achilles.dao.model.RestaurantVisitLog;
 
 @Service
 @Transactional(readOnly = true)

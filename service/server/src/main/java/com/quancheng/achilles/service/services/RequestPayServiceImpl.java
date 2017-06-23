@@ -19,8 +19,8 @@ import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.quancheng.achilles.dao.repository.RequestPayRepository;
-import com.quancheng.achilles.dao.model.RequestPayment;
+import com.quancheng.achilles.dao.modelwrite.RequestPayment;
+import com.quancheng.achilles.dao.write.RequestPayRepository;
 
 @Service
 @Transactional(readOnly = true)

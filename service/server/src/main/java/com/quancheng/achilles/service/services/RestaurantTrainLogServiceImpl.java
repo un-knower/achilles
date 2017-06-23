@@ -18,9 +18,9 @@ import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.quancheng.achilles.dao.repository.RestaurantTrainLogRepository;
+import com.quancheng.achilles.dao.modelwrite.RestaurantTrainLog;
+import com.quancheng.achilles.dao.write.RestaurantTrainLogRepository;
 import com.quancheng.achilles.service.utils.DateUtils;
-import com.quancheng.achilles.dao.model.RestaurantTrainLog;
 
 @Service
 @Transactional(readOnly = true)

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.quancheng.achilles.service.constants.InnConstantPage;
-import com.quancheng.achilles.dao.repository.MemberRepository;
-import com.quancheng.achilles.dao.model.Member;
+import com.quancheng.achilles.dao.modelwrite.Member;
+import com.quancheng.achilles.dao.write.MemberRepository;
 
 import io.swagger.annotations.ApiParam;
 

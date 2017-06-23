@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.quancheng.achilles.dao.model.BaseResponse;
-import com.quancheng.achilles.dao.model.QuanlityCheckRecord;
+import com.quancheng.achilles.dao.modelwrite.QuanlityCheckRecord;
 import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.constants.InnConstantsQualityState;
 import com.quancheng.achilles.service.services.QuanlityCheckService;

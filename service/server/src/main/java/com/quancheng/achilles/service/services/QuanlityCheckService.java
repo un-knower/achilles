@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.quancheng.achilles.dao.model.QuanlityCheckRecord;
+import com.quancheng.achilles.dao.modelwrite.QuanlityCheckRecord;
 
 /**
  * @author pcuser 2016年9月21日 上午11:33:32

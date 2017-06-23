@@ -68,7 +68,7 @@
                 o.client_id,
                 COUNT(DISTINCT user_id) AS  current_value
             FROM 
-                `v_inn_sj_order_had_payment` `o`
+                quancheng_db.`v_inn_sj_order_had_payment` `o`
             WHERE  `o`.`pay_at` 
                     BETWEEN STR_TO_DATE(#{date_begin},'%Y-%m-%d') AND STR_TO_DATE(#{date_end},'%Y-%m-%d')
                     <if test="clientId !=null and clientId !=''">
@@ -98,7 +98,7 @@
                 o.client_id,
                 COUNT(1) AS  current_value
             FROM 
-                `v_inn_sj_order_had_payment` `o`
+                quancheng_db.`v_inn_sj_order_had_payment` `o`
             WHERE  `o`.`pay_at` 
                     BETWEEN STR_TO_DATE(#{date_begin},'%Y-%m-%d') AND STR_TO_DATE(#{date_end},'%Y-%m-%d')
             GROUP BY o.client_id) order_info 
@@ -125,7 +125,7 @@
                 o.client_id,
                 SUM(money) AS  current_value
             FROM 
-                `v_inn_sj_order_had_payment` `o`
+                quancheng_db.`v_inn_sj_order_had_payment` `o`
             WHERE  `o`.`pay_at` 
                     BETWEEN STR_TO_DATE(#{date_begin},'%Y-%m-%d') AND STR_TO_DATE(#{date_end},'%Y-%m-%d')
                     <if test="clientId !=null and clientId !=''">
@@ -149,7 +149,7 @@
 		'order_sum' as data_type,
 	    #{data_current_date} as happen_date 
 	FROM 
-		`v_inn_sj_order_had_payment` `o`
+		quancheng_db.`v_inn_sj_order_had_payment` `o`
 	    left join 16860_region reg on o.city_id = reg.id
 	WHERE  `o`.`pay_at` 
 			BETWEEN STR_TO_DATE(#{date_begin} ,'%Y-%m-%d') AND STR_TO_DATE(#{date_end},'%Y-%m-%d')
@@ -181,7 +181,7 @@
 		'usercount' as data_type,
 	    #{data_current_date} as happen_date
 	FROM 
-		`v_inn_sj_order_had_payment` `o`
+		quancheng_db.`v_inn_sj_order_had_payment` `o`
 	    left join 16860_region reg on o.city_id = reg.id
 	WHERE  `o`.`pay_at` 
 			BETWEEN STR_TO_DATE(#{date_begin} ,'%Y-%m-%d') AND STR_TO_DATE(#{date_end},'%Y-%m-%d')
