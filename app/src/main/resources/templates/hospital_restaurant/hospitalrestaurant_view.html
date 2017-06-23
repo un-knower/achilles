@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head th:replace="fragments/head :: head"></head>
+
+<body class="fix-sidebar fix-header">
+	<!-- Preloader -->
+	<div class="preloader">
+		<div class="cssload-speeding-wheel"></div>
+	</div>
+	<div id="wrapper">
+		<!-- Top Navigation -->
+		<nav th:replace="fragments/top_navbar :: navbar"></nav>
+		<!-- End Top Navigation -->
+
+		<!-- Left navbar-sidebar -->
+		<div th:replace="fragments/left_sidebar :: sidebar"></div>
+		<!-- Left navbar-sidebar end -->
+
+		<!-- Page Content -->
+		<div id="page-wrapper">
+			<div class="container-fluid">
+				<div class="row bg-title">
+					<!-- .page title -->
+					<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+						<h4 class="page-title">医院餐厅距离信息导出</h4>
+					</div>
+					<!-- /.page title -->
+					<!-- .breadcrumb -->
+					<div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+						<ol class="breadcrumb">
+							<li><a th:href="@{/}">首页</a></li>
+							<li><a th:href="@{/ops}">运营数据</a></li>
+							<li class="active"><a th:href="@{#}">医院餐厅距离信息导出</a></li>
+						</ol>
+					</div>
+					<!-- /.breadcrumb -->
+				</div>
+				<!-- .row -->
+				<div class="row">
+					<form id="query-form" th:action="@{/ops/hospitalrestaurant/upload}"
+						enctype="multipart/form-data" method="post">
+						<div class="col-md-12">
+							<div class="white-box">
+								<div class="row">Excel表头字段对照信息：</div>
+								<div class="row">
+									医院/餐厅ID:hospitalId/restaurantId,医院/餐厅名称:hospitalName/restaurantName(必有),城市名称:cityName(必有),地址:address(必有),公司ID:companyId,公司名称:companyName
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="white-box">
+								<div class="row">
+									<div class="col-md-2">
+										<input name="isUpload" type="checkbox" checked="checked"
+											value="true" />上传Excel
+									</div>
+									<div class="col-md-3">
+										<select class="selectpicker" data-style="form-control"
+											name="excelCompanyId" title="选择上传Excel所属企业"
+											data-live-search="true">
+											<option th:each="x : ${companyList}"
+												th:value="${x.companyId}" th:text="${x.companyName}"
+												th:selected="${companyList!=null and #arrays.contains(companyList,x.companyId)}"></option>
+										</select>
+									</div>
+									<div class="col-md-2">
+										<select class="selectpicker" data-style="form-control"
+											onchange="setExcelTypeName(this)" name="excelType"
+											title="选择数据类型" data-live-search="false"
+											th:selected="${excelType!=null}">
+											<option value="hospital">医院</option>
+											<option value="restaurant">餐厅</option>
+										</select>
+									</div>
+
+
+									<div class="col-md-2">
+										<button type="button" id="excelfileinput"
+											class="btn btn-block btn-primary waves-effect waves-light"
+											style="height: 38px">选择Excel</button>
+										<input type="file" name="file" id="excelfile"
+											style="display: none;" />
+									</div>
+									<div class="col-md-3">
+										<span id="showName"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="white-box">
+								<div class="row">
+									<div class="col-md-3">
+										<input name="compareCompany" type="checkbox" checked="checked"
+											value="true" />使用公司关联计算
+									</div>
+									<div class="col-md-2">
+										<input name="isInsertDatas" type="checkbox" value="true" />
+										插入新<span id="excelTypeName">数据</span>
+									</div>
+									<div class="col-md-3">
+										<select class="selectpicker" data-style="form-control"
+											multiple="multiple" name="companyIds" title="选择数据所属企业"
+											data-live-search="true">
+											<option th:each="x : ${companyList}"
+												th:value="${x.companyId}" th:text="${x.companyName}"
+												th:selected="${companyIds!=null and #arrays.contains(companyIds,x.companyId)}"></option>
+										</select>
+									</div>
+									<div class="col-md-3">
+										<select class="selectpicker" data-style="form-control"
+											multiple="multiple" name="cityIds" title="选择数据所属城市"
+											data-live-search="true">
+											<option th:each="x : ${cityList}" th:value="${x.id}"
+												th:text="${x.name}"
+												th:selected="${cityIds!=null and #arrays.contains(cityIds,x.id)}"></option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="white-box">
+								<div class="row">
+									<div class="col-md-2">
+										<input type="checkbox" name="taskType" class="chkItem"
+											checked="checked" value="hospitalrestaurant"
+											onclick="checkboxclick(this)" /> 医院匹配餐厅
+									</div>
+									<div class="col-md-2">
+										<input type="checkbox" name="taskType" class="chkItem"
+											value="restauranthospital" onclick="checkboxclick(this)" />
+										餐厅匹配医院&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+									</div>
+									<div class="col-md-1">
+										<input type="checkbox" name="waimai" class="chkwaimai"
+											value="waimai" onclick="checkboxclick(this)" /> 外卖
+									</div>
+									<div class="col-md-1">
+										<input type="checkbox" name="waimai" class="chkwaimai"
+											value="onlywaimai" onclick="checkboxclick(this)" /> 仅外卖
+									</div>
+									<div class="col-md-2">
+										<input type="checkbox" name="isWaimaiOk" value="true"
+											onclick="checkboxclick()" /> 外卖在配送范围
+									</div>
+									<div class="col-md-1">
+										<input type="checkbox" name="reserve" class="chkreserve"
+											value="reserve" onclick="checkboxclick(this)" /> 预定
+									</div>
+									<div class="col-md-1">
+										<input type="checkbox" name="reserve" class="chkreserve"
+											value="onlyreserve" onclick="checkboxclick(this)" /> 仅预定
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-12">
+							<div class="white-box">
+								<div class="row">
+									<div class="col-md-2">
+										<input name="distances" class="form-control search"
+											th:value="3000" placeholder="距离范围（米）" />
+									</div>
+									<div class="col-md-3">
+										<button type="submit" id="bnt_submit"
+											class="btn btn-block btn-primary waves-effect waves-light"
+											style="height: 38px">提交计算并下载</button>
+									</div>
+								</div>
+							</div>
+							<!-- /.white-box -->
+						</div>
+						<!-- /.col-md-12 -->
+					</form>
+				</div>
+				<!-- /.row -->
+				<!-- .right-sidebar -->
+				<div th:replace="fragments/right_sidebar :: rightsidebar"></div>
+				<!-- /.right-sidebar -->
+			</div>
+			<!-- /.container-fluid -->
+			<footer th:replace="fragments/footer :: footer"></footer>
+		</div>
+		<!-- /#page-wrapper -->
+	</div>
+	<!-- /#wrapper -->
+
+	<div class="foot_scripts" id="foot_scripts"
+		th:replace="fragments/foot_scripts :: foot_scripts"></div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			setInterval("startRequest()", 1000);
+		});
+		function startRequest() {
+			$.post("/api/ops/hospitalrestaurant/getStatus",{},function(result){
+					if(result){
+						$('#bnt_submit').attr("disabled",true); 
+						$('#bnt_submit').html('任务执行中,稍后再试<i class="fa fa-spin fa-spinner"></i> '); 
+					}else{
+						$('#bnt_submit').attr("disabled",false); 
+						$('#bnt_submit').html("提交计算并下载"); 
+					}
+				  });
+		}
+		$("#excelfileinput").click(function() {
+			$("#excelfile").click();
+		});
+		$("#excelfile").change(function() {
+			var name = $("#excelfile").val();
+			$("#showName").html(name);
+		});
+		function setExcelTypeName(obj) {
+			$("#excelTypeName").html($(obj).find("option:selected").text());
+		}
+
+		function checkboxclick(obj) {
+		/* 	var result = new Array(); */
+			$("[class = " + $(obj).attr("class") + "]:checkbox").each(
+					function() {
+						if ($(this).is(":checked")) {
+							$(this).attr("checked", !$(this).attr("checked"));
+						/* 	result.push($(this).attr("value")); */
+						}
+					});
+			/*  alert(result.join(",")); */
+		}
+	</script>
+</body>
+</html>

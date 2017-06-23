@@ -11,18 +11,18 @@
     <result column="hospital_name" property="hospitalName" jdbcType="VARCHAR" />
     <result column="hospital_lng" property="hospitalLng" jdbcType="DOUBLE" />
     <result column="hospital_lat" property="hospitalLat" jdbcType="DOUBLE" />
-    <result column="hospital_settable" property="hospitalSettable" jdbcType="INTEGER" />
+    <result column="hospital_settable" property="hospitalSettable" jdbcType="VARCHAR" />
     <result column="restaurant_id" property="restaurantId" jdbcType="VARCHAR" />
     <result column="restaurant_name" property="restaurantName" jdbcType="VARCHAR" />
     <result column="restaurant_lng" property="restaurantLng" jdbcType="DOUBLE" />
     <result column="restaurant_lat" property="restaurantLat" jdbcType="DOUBLE" />
-    <result column="restaurant_settable" property="restaurantSettable" jdbcType="INTEGER" />
+    <result column="restaurant_settable" property="restaurantSettable" jdbcType="VARCHAR" />
     <result column="support_waimai" property="supportWaimai" jdbcType="INTEGER" />
     <result column="support_reserve" property="supportReserve" jdbcType="INTEGER" />
     <result column="cook_style" property="cookStyle" jdbcType="VARCHAR" />
     <result column="consume" property="consume" jdbcType="DOUBLE" />
     <result column="box_num" property="boxNum" jdbcType="INTEGER" />
-    <result column="period" property="period" jdbcType="INTEGER" />
+    <result column="period" property="period" jdbcType="DOUBLE" />
     <result column="rate_settlement_type" property="rateSettlementType" jdbcType="VARCHAR" />
     <result column="manage_type" property="manageType" jdbcType="VARCHAR" />
     <result column="shipping_dis" property="shippingDis" jdbcType="DOUBLE" />
@@ -39,28 +39,56 @@
     is_within
   </sql>
   <select id="queryCompanyInfo" resultType="Map" parameterType="Map" >
-    select id as companyId,title as companyName from quancheng_db.16860_client
+    select id as companyId,title as companyName from quancheng_db.16860_client 
     <where>
+       status='1' 
      <if test="companyId != null" >
-       id = ${companyId,jdbcType=VARCHAR} 
+      and id = #{companyId,jdbcType=VARCHAR} 
     </if>
     <if test="companyName  != null" >
-       and title = ${companyName ,jdbcType=VARCHAR} 
+       and title = #{companyName ,jdbcType=VARCHAR} 
     </if>
     </where>
   </select>
+   <select id="queryCityInfo" resultType="Map"  >
+    select id,name  from quancheng_db.16860_region where level=2 and deleted_at is null
+  </select>
   
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from out_hospital_restaurant_distance
-    where id = #{id,jdbcType=INTEGER}
+  <select id="queryInfo" resultMap="BaseResultMap" parameterType="Map" >
+    select id, company_id, company_name, city_id, city_name, hospital_id, hospital_name,hospital_address, hospital_lng, 
+    hospital_lat, hospital_settable, restaurant_id, restaurant_name,restaurant_address, restaurant_lng, 
+    restaurant_lat, restaurant_settable, support_waimai, support_reserve, cook_style, 
+    consume, box_num, period, rate_settlement_type, manage_type, shipping_dis, distance, is_within
+    from out_hospital_restaurant_distance 
+    <where>
+    <if test="param != null" >
+        ${param,jdbcType=VARCHAR} 
+      </if>
+     <if test="id != null" >
+      and id= #{id,jdbcType=INTEGER} 
+      </if>
+      <if test="companyId != null" >
+      and company_id= #{companyId,jdbcType=VARCHAR} 
+      </if>
+      <if test="companyName != null" >
+      and company_name= #{companyName,jdbcType=VARCHAR} 
+      </if>
+      <if test="cityId != null" >
+      and city_id= #{cityId,jdbcType=VARCHAR} 
+      </if>
+      <if test="cityName != null" >
+      and city_name= #{cityName,jdbcType=VARCHAR} 
+      </if>
+      <if test="hospitalId != null" >
+      and hospital_d= #{hospitalId,jdbcType=VARCHAR} 
+      </if>
+    </where>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from out_hospital_restaurant_distance
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="batchInsert" parameterType="List" >
+  <insert id="batchInsertO" parameterType="List" >
     insert into out_hospital_restaurant_distance (id, company_id, company_name, 
       city_id, city_name, hospital_id, 
       hospital_name, hospital_lng, hospital_lat, 
@@ -85,7 +113,31 @@
       #{item.restaurantAddress,jdbcType=LONGVARCHAR})
       </foreach>
   </insert>
-      
+   <insert id="batchInsert" parameterType="List" >
+    insert into out_hospital_restaurant_distance (id, company_id, company_name, 
+      city_id, city_name, hospital_id, 
+      hospital_name, hospital_lng, hospital_lat, 
+      hospital_settable, restaurant_id, restaurant_name, 
+      restaurant_lng, restaurant_lat, restaurant_settable, 
+      support_waimai, support_reserve, cook_style, 
+      consume, box_num, period, 
+      rate_settlement_type, manage_type, shipping_dis, 
+      distance, is_within, hospital_address, 
+      restaurant_address)
+    values
+    <foreach collection="list" item="item"  separator="," >
+     (#{item.id,jdbcType=INTEGER}, #{item.company_id,jdbcType=VARCHAR}, #{item.company_name,jdbcType=VARCHAR}, 
+      #{item.city_id,jdbcType=VARCHAR}, #{item.city_name,jdbcType=VARCHAR}, #{item.hospital_id,jdbcType=VARCHAR}, 
+      #{item.hospital_name,jdbcType=VARCHAR}, #{item.hospital_lng,jdbcType=DOUBLE}, #{item.hospital_lat,jdbcType=DOUBLE}, 
+      #{item.hospital_settable,jdbcType=INTEGER}, #{item.restaurant_id,jdbcType=VARCHAR}, #{item.restaurant_name,jdbcType=VARCHAR}, 
+      #{item.restaurant_lng,jdbcType=DOUBLE}, #{item.restaurant_lat,jdbcType=DOUBLE}, #{item.restaurant_settable,jdbcType=INTEGER}, 
+      #{item.support_waimai,jdbcType=INTEGER}, #{item.support_reserve,jdbcType=INTEGER}, #{item.cook_style,jdbcType=VARCHAR}, 
+      #{item.consume,jdbcType=DOUBLE}, #{item.box_num,jdbcType=INTEGER}, #{item.period,jdbcType=INTEGER}, 
+      #{item.rate_settlement_type,jdbcType=VARCHAR}, #{item.manage_type,jdbcType=VARCHAR}, #{item.shipping_dis,jdbcType=DOUBLE}, 
+      #{item.distance,jdbcType=DOUBLE}, #{item.is_within,jdbcType=INTEGER}, #{item.hospital_address,jdbcType=LONGVARCHAR}, 
+      #{item.restaurant_address,jdbcType=LONGVARCHAR})
+      </foreach>
+  </insert>   
   <insert id="insertSelective" parameterType="com.quancheng.achilles.dao.odps.model.OutHospitalRestaurantDistance" >
     insert into out_hospital_restaurant_distance
     <trim prefix="(" suffix=")" suffixOverrides="," >

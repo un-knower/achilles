@@ -215,7 +215,19 @@
                                         </div>
                                     </td>
                                   </tr>
-                                  
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+                                    <td><a th:href="@{/ops/hospitalrestaurant/view}" >医院餐厅距离信息导出</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="template/edit?tableName=out_approve_time_detail">新增模版</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
                                 </tbody>
                               </table>
                            </div>

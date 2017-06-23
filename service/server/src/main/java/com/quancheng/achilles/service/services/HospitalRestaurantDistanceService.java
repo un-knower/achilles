@@ -2,6 +2,7 @@ package com.quancheng.achilles.service.services;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -9,7 +10,9 @@ import java.util.concurrent.TimeoutException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.aliyun.odps.OdpsException;
+import com.github.pagehelper.PageInfo;
 import com.quancheng.achilles.dao.constant.InnConstantODPSTables;
+import com.quancheng.achilles.dao.odps.model.OutHospitalRestaurantDistance;
 
 /**
  * <strong>描述：医院餐厅距离计算service</strong>TODO 描述 <br>
@@ -29,30 +32,45 @@ public interface HospitalRestaurantDistanceService {
     Boolean clearHospitalInfo();
 
     /** Excel信息到DB */
-    <T> Boolean saveExcelToDB(MultipartFile file, T type, String companyId) throws IOException;
+    <T> Boolean saveExcelToDB(MultipartFile file, T type, String companyId, Boolean clearTable) throws IOException;
 
     /** 清空餐厅信息表 */
     Boolean clearRestaurantInfo();
 
     /** 查询并且保存医院信息到DB */
-    Boolean queryAndSaveHospitalInfoToDB(Map<String, String> param);
+    Boolean queryAndSaveHospitalInfoToDB(Map<String, String> param, Boolean clearTable);
 
     /** 查询并且保存餐厅信息到DB */
-    Boolean queryAndSaveRestaurantInfoToDB(Map<String, String> param);
+    Boolean queryAndSaveRestaurantInfoToDB(Map<String, String> param, Boolean clearTable);
 
     /** 同步DB表信息到ODPS */
-    Boolean syncDBToODPS(String tableName) throws OdpsException, IOException, ParseException, ExecutionException,
-                                           TimeoutException;
+    Boolean syncDBToODPS(String tableName, Boolean isDelete) throws OdpsException, IOException, ParseException,
+                                                             ExecutionException, TimeoutException;
 
     /** 同步DB表信息到ODPS */
-    Boolean syncDBToODPS(String dbTableName, String odpsTableName) throws OdpsException, IOException, ParseException,
-                                                                   ExecutionException, TimeoutException;
+    Boolean syncDBToODPS(String dbTableName, String odpsTableName, Boolean isDelete) throws OdpsException, IOException,
+                                                                                     ParseException, ExecutionException,
+                                                                                     TimeoutException;
 
-    /** 调用ODPS执行计算 */
-    Boolean invokeODPSTask(InnConstantODPSTables.TaskHospitalRestaurantDistance type, double distances,
-                           boolean compareCompany) throws OdpsException, IOException;
+    /**
+     * 调用ODPS执行计算
+     * 
+     * @param <T>
+     */
+    <T> Boolean invokeODPSTask(T otype, InnConstantODPSTables.TaskHospitalRestaurantDistance type,
+                               Boolean compareCompany, String sqlParam) throws OdpsException, IOException;
 
     /** 从ODPS拿到结果保存到DB */
-    Boolean queryFromODPSAndSaveToDB() throws OdpsException, IOException;
+    Boolean queryFromODPSAndSaveToDB() throws OdpsException, IOException, TimeoutException;
+
+    /** 获取城市列表 */
+    List<Map<String, Object>> queryCityInfo();
+
+    /** 获取公司列表 */
+    List<Map<String, String>> queryCompanyInfo();
+
+    /** 获取结果表数据 */
+    PageInfo<OutHospitalRestaurantDistance> queryOutHospitalRestaurantDistanceFromDB(Map<String, Object> param,
+                                                                                     Integer pageNum, Integer pageSize);
 
 }

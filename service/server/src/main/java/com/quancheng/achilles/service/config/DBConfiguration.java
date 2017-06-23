@@ -89,7 +89,7 @@ public class DBConfiguration {
     public SqlSessionFactoryBean statisticsSqlSessionFactoryBean(@Qualifier("quanchengDBWriteDataSource") DataSource dataSource) {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
-        // sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-read-config.xml"));
+        sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-config.xml"));
         // new Resource[] { new ClassPathResource("aaa-sqlmap.xml") }
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         // 将加载多个绝对匹配的所有Resource
@@ -100,7 +100,7 @@ public class DBConfiguration {
             resources = resolver.getResources("classpath:/sqlmapper/*-sqlmap.xml");
             sqlSessionFactory.setMapperLocations(resources);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("statisticsSqlSessionFactoryBean have a error " + e.getMessage());
         }
         sqlSessionFactory.setTypeAliasesPackage("com.quancheng.achilles.dao.model");
         // 分页插件

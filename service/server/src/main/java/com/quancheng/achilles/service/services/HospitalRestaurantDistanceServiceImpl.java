@@ -26,6 +26,7 @@ import com.aliyun.odps.OdpsException;
 import com.github.pagehelper.PageInfo;
 import com.quancheng.achilles.dao.constant.InnConstantODPSTables;
 import com.quancheng.achilles.dao.odps.model.HospitalInfo;
+import com.quancheng.achilles.dao.odps.model.OutHospitalRestaurantDistance;
 import com.quancheng.achilles.dao.odps.model.RestaurantInfo;
 import com.quancheng.achilles.service.odps.ODPSQueryService;
 import com.quancheng.achilles.util.JsonUtil;
@@ -58,13 +59,11 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
     private BaseService        baseService;
 
     public <T> Boolean saveHospitalInfoToDB(List<T> datas) {
-        clearHospitalInfo();
         int insert = sqlSession.insert("HospitalInfoMapper.batchInsert", datas);
         return insert > 0 ? true : false;
     }
 
     public <T> Boolean saveRestaurantInfoToDB(List<T> datas) {
-        clearRestaurantInfo();// 清空表
         int insert = sqlSession.insert("RestaurantInfoMapper.batchInsert", datas);
         return insert > 0 ? true : false;
     }
@@ -94,10 +93,41 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
         return result;
     }
 
-    @SuppressWarnings("rawtypes")
-    public Boolean saveOutHospitalRestaurantDistanceToDB(List<Map> datas) {
+    public Boolean saveOutHospitalRestaurantDistanceToDB(List<Map<String, Object>> datas) {
+        if (CollectionUtils.isEmpty(datas)) {
+            return true;
+        }
         int insert = sqlSession.insert("OutHospitalRestaurantDistanceMapper.batchInsert", datas);
         return insert > 0 ? true : false;
+    }
+
+    @Override
+    public PageInfo<OutHospitalRestaurantDistance> queryOutHospitalRestaurantDistanceFromDB(Map<String, Object> param,
+                                                                                            Integer pageNum,
+                                                                                            Integer pageSize) {
+        return baseService.queryFromDB("OutHospitalRestaurantDistanceMapper.queryInfo", param, pageNum, pageSize);
+    }
+
+    public Map<String, String> queryCityInfoMap() {
+        List<Map<String, Object>> selectList = queryCityInfo();
+        Map<String, String> map = new HashMap<>();
+        for (Map<String, Object> m : selectList) {
+            map.put(m.get("name") + "", m.get("id") + "");
+        }
+
+        return map;
+    }
+
+    @Override
+    public List<Map<String, Object>> queryCityInfo() {
+        List<Map<String, Object>> selectList = sqlSession.selectList("OutHospitalRestaurantDistanceMapper.queryCityInfo");
+        return selectList;
+    }
+
+    @Override
+    public List<Map<String, String>> queryCompanyInfo() {
+        Map<String, String> param = new HashMap<>();
+        return queryCompanyInfo(param);
     }
 
     public List<Map<String, String>> queryCompanyInfo(Map<String, String> param) {
@@ -108,14 +138,22 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Boolean saveExcelToDB(MultipartFile file, T type, String companyId) throws IOException {
-        if (type instanceof HospitalInfo) {
-            clearHospitalInfo();
-        } else if (type instanceof RestaurantInfo) {
-            clearRestaurantInfo();// 清空表
+    public <T> Boolean saveExcelToDB(MultipartFile file, T type, String companyId,
+                                     Boolean clearTable) throws IOException {
+        if (clearTable != null && clearTable) {
+            if (type instanceof HospitalInfo) {
+                clearHospitalInfo();
+            } else if (type instanceof RestaurantInfo) {
+                clearRestaurantInfo();// 清空表
+            }
         }
 
         List<Map<String, String>> mapsFromExcel = UtilClassHelper.getAttributeMapsFromExcel(file);
+        if (CollectionUtils.isEmpty(mapsFromExcel)) {
+            return false;
+        }
+        Map<String, String> cityInfo = queryCityInfoMap();// 获取城市信息
+
         List<T> list = new ArrayList<>();
         String companyName = null;
         if (!StringUtils.isEmpty(companyId)) {
@@ -132,7 +170,7 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
             Map<String, String> mapParam = new HashMap<>();
             mapParam.put("name",
                          StringUtils.isEmpty(map.get("hospitalName")) ? map.get("restaurantName") : map.get("hospitalName"));
-            String cityName = map.get("cityName").replaceAll("直辖", "");
+            String cityName = map.get("cityName").replaceAll("直辖", "").replaceAll("市", "");
             mapParam.put("cityName", cityName);
             mapParam.put("address", cityName + map.get("address"));
             Map<String, Double> mapLocation = UtilClassHelper.getLatAndLngByAddressFromBaidu(mapParam);
@@ -140,6 +178,10 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
                 map.put("lng", mapLocation.get("lng").toString());
                 map.put("lat", mapLocation.get("lat").toString());
                 map.put("settable", "1");
+            }
+            String cityId = cityInfo.get(cityName);
+            if (!StringUtils.isEmpty(cityId)) {
+                map.put("cityId", cityId);
             }
             if (!StringUtils.isEmpty(companyName)) {
                 map.put("companyName", companyName);
@@ -172,32 +214,39 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
     }
 
     @Override
-    public Boolean queryAndSaveHospitalInfoToDB(Map<String, String> param) {
+    public Boolean queryAndSaveHospitalInfoToDB(Map<String, String> param, Boolean clearTable) {
+        if (clearTable != null && clearTable) {
+            clearHospitalInfo(); // 清空表
+        }
         int insert = sqlSession.insert("HospitalInfoMapper.queryAndSaveToDB", param);
         return insert > 0 ? true : false;
     }
 
     @Override
-    public Boolean queryAndSaveRestaurantInfoToDB(Map<String, String> param) {
-        // queryInfo
-        // baseService.queryFromDB(tableName, pageNum, pageSize)
+    public Boolean queryAndSaveRestaurantInfoToDB(Map<String, String> param, Boolean clearTable) {
+        if (clearTable != null && clearTable) {
+            clearRestaurantInfo();// 清空表
+        }
         int insert = sqlSession.insert("RestaurantInfoMapper.queryAndSaveToDB", param);
         return insert > 0 ? true : false;
     }
 
     @Override
-    public Boolean syncDBToODPS(String dbTableName) throws OdpsException, IOException, ParseException,
-                                                    ExecutionException, TimeoutException {
-        return syncDBToODPS(dbTableName, dbTableName);
+    public Boolean syncDBToODPS(String dbTableName, Boolean isDelete) throws OdpsException, IOException, ParseException,
+                                                                      ExecutionException, TimeoutException {
+        return syncDBToODPS(dbTableName, dbTableName, isDelete);
     }
 
     @Override
-    public Boolean syncDBToODPS(String dbTableName, String odpsTableName) throws OdpsException, IOException,
-                                                                          ParseException, ExecutionException,
-                                                                          TimeoutException {
+    public Boolean syncDBToODPS(String dbTableName, String odpsTableName,
+                                Boolean isDelete) throws OdpsException, IOException, ParseException, ExecutionException,
+                                                  TimeoutException {
         boolean result = true;
-        int pageSize = 50000;
-        // odpsService.clearODPSTable(odpsTableName);
+        int pageSize = 20000;
+        if (isDelete != null && isDelete) {
+            odpsService.clearODPSTable(odpsTableName);
+        }
+
         PageInfo<Map<String, Object>> queryFromDB = baseService.queryFromDB(dbTableName, 1, pageSize);
 
         List<Map<String, Object>> datas = queryFromDB.getList();
@@ -218,33 +267,19 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
     }
 
     @Override
-    public Boolean invokeODPSTask(InnConstantODPSTables.TaskHospitalRestaurantDistance type, double distances,
-                                  boolean compareCompany) throws OdpsException, IOException {
-        boolean task = odpsService.taskHospitalRestaurantDistance(type, distances, compareCompany);
+    public <T> Boolean invokeODPSTask(T otype, InnConstantODPSTables.TaskHospitalRestaurantDistance type,
+                                      Boolean compareCompany, String sqlParam) throws OdpsException, IOException {
+        boolean task = odpsService.taskHospitalRestaurantDistance(otype, type, compareCompany, sqlParam);
         return task;
     }
 
     @Override
-    public Boolean queryFromODPSAndSaveToDB() throws OdpsException, IOException {
-        int pageSize = 20000;
+    public Boolean queryFromODPSAndSaveToDB() throws OdpsException, IOException, TimeoutException {
         String tableName = "out_hospital_restaurant_distance";
-        Boolean clearTable = baseService.clearTable(tableName);// 清空表
-        if (clearTable) {
-        }
-        List<Map> datas;
-        int pageNum = 1;
-        do {
-            datas = odpsService.queryFromODPS(tableName, pageNum, pageSize);// 从ODPS拿数据
-            Boolean save = saveOutHospitalRestaurantDistanceToDB(datas);// 保存到DB
-            if (!save) {
-                return false;
-            }
-            if (CollectionUtils.isEmpty(datas)) {
-                break;
-            }
-            pageNum++;
-        } while (true);
-        return true;
+        baseService.clearTable(tableName);// 清空表
+        return odpsService.getAllAndSaveToDB(tableName, (dataList) -> {
+            return saveOutHospitalRestaurantDistanceToDB(dataList);// 保存到DB
+        });
     }
 
 }

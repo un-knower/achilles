@@ -60,11 +60,10 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public PageInfo<Map<String, Object>> queryFromDB(String statement, Object parameter, Integer pageNum,
-                                                     Integer pageSize) {
+    public <T> PageInfo<T> queryFromDB(String statement, Object parameter, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize, true);
-        List<Map<String, Object>> selectList = sqlSession.selectList(statement, parameter);
-        return new PageInfo<Map<String, Object>>(selectList);
+        List<T> selectList = sqlSession.selectList(statement, parameter);
+        return new PageInfo<T>(selectList);
     }
 
     @Override

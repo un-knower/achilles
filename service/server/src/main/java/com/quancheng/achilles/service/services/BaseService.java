@@ -25,7 +25,7 @@ public interface BaseService {
     PageInfo<Map<String, Object>> queryFromDB(String sql, Object[] params, Integer pageNum, Integer pageSize);
 
     /** 分页查询表 */
-    PageInfo<Map<String, Object>> queryFromDB(String statement, Object parameter, Integer pageNum, Integer pageSize);
+    <T> PageInfo<T> queryFromDB(String statement, Object parameter, Integer pageNum, Integer pageSize);
 
     /** 清空表内容 */
     Boolean clearTable(String tableName);

@@ -9,15 +9,17 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
 import com.aliyun.odps.OdpsException;
 import com.quancheng.achilles.dao.annotation.OdpsColumn;
 import com.quancheng.achilles.dao.constant.InnConstantODPSTables;
 import com.quancheng.achilles.dao.odps.AbstractOdpsQuery;
+import com.quancheng.achilles.dao.odps.model.HospitalInfo;
 import com.quancheng.achilles.dao.odps.model.OdpsCompanyRestaurant;
 import com.quancheng.achilles.dao.odps.model.OdpsFlyCheck;
+import com.quancheng.achilles.dao.odps.model.RestaurantInfo;
 
 import net.sf.json.JSONArray;
 
@@ -85,17 +87,30 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         return allNum;
     }
 
-    public boolean taskHospitalRestaurantDistance(InnConstantODPSTables.TaskHospitalRestaurantDistance type,
-                                                  double distances,
-                                                  boolean compareCompany) throws OdpsException, IOException {
+    public <T> boolean taskHospitalRestaurantDistance(T otype,
+                                                      InnConstantODPSTables.TaskHospitalRestaurantDistance type,
+                                                      Boolean compareCompany,
+                                                      String sqlParam) throws OdpsException, IOException {
         String comapre = "";
-        if (compareCompany) {
+        if (compareCompany != null && compareCompany) {
             comapre = "and h.company_id = r.company_id ";
         }
-        String talle = " hospital_info h left OUTER join restaurant_info r ";
-        String sql = "INSERT OVERWRITE TABLE %s"
+        String restaurantTable = "tmp_sync_restaurant_info";// 每日凌晨自动同步数据
+        String hospitalTable = "tmp_sync_hospital_info";// 每日凌晨自动同步数据
+        if (otype != null) {// 上传了数据
+            if (otype instanceof HospitalInfo) {// 上传了医院信息
+                hospitalTable = "tmp_hospital_info";
+            } else if (otype instanceof RestaurantInfo) {// 上传了餐厅信息
+                restaurantTable = "tmp_restaurant_info";
+            }
+        }
+
+        String talle = " " + hospitalTable + " h left OUTER join " + restaurantTable + " r ";
+        String sql = "INSERT OVERWRITE TABLE %s "
+                     + "select DISTINCT b.company_id,b.company_name,b.city_id,b.city_name,b.hospital_id,b.hospital_name,b.hospital_address,b.hospital_lng,b.hospital_lat,b.hospital_settable,b.restaurant_id,b.restaurant_name,b.restaurant_address,b.restaurant_lng,b.restaurant_lat,b.restaurant_settable,b.support_waimai,b.support_reserve,b.cook_style,b.consume,b.box_num,b.period,b.rate_settlement_type,b.manage_type,b.shipping_dis,b.distance"
+                     + ",b.is_within from ("
                      + "select DISTINCT a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id,a.hospital_name,a.hospital_address,a.hospital_lng,a.hospital_lat,a.hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai,a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis,a.distance"
-                     + ",case when a.support_waimai=1 and a.distances <=a.shipping_dis then 1 else 0 end as is_within from ("
+                     + ",case when a.support_waimai=1 and a.distance <=a.shipping_dis then 1 else 0 end as is_within from ("
                      + "select DISTINCT h.company_id , h.company_name , h.city_id, h.city_name"
                      + ", h.hospital_id , h.hospital_name, h.address as hospital_address"
                      + ",h.lng as hospital_lng ,h.lat as hospital_lat"
@@ -109,29 +124,24 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                      + ",case when r.manage_type = 1 then '餐前预付'  when r.manage_type = 2 then '账期周结'"
                      + " when r.manage_type = 3 then '账期月结'  when r.manage_type = 4 then '循环预付'"
                      + " when r.manage_type = 0 then 'T+n账期'  end AS manage_type , r.shipping_dis"
-                     + ",round(6378.137*1000.0*2.0*asin(sqrt(abs(pow(sin((r.lat-h.lat)*(3.1415926/ 180.0)*0.5),2) + cos(r.lat) * cos(h.lat) * pow(sin((r.lng-h.lng)*(3.1415926/ 180.0)*0.5),2))))) as distances"
-                     + "from %s " + "on h.city_id = r.city_id  %s ) a where a.distances<= %s";
+                     + ",round(6378.137*1000.0*2.0*asin(sqrt(abs(pow(sin((r.lat-h.lat)*(3.1415926/ 180.0)*0.5),2) + cos(r.lat) * cos(h.lat) * pow(sin((r.lng-h.lng)*(3.1415926/ 180.0)*0.5),2))))) AS distance"
+                     + " from %s " + "on h.city_id = r.city_id  %s )  a )  b  %s";
         if (InnConstantODPSTables.TaskHospitalRestaurantDistance.RestaurantHospital == type) {
-            talle = " tmp_restaurant_info r  left OUTER join  tmp_hospital_info h ";
+            talle = " " + restaurantTable + " r  left OUTER join  " + hospitalTable + " h ";
         }
-
-        List<Map> selectList = query(Map.class, sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle,
-                                     comapre, distances);
-        if (!CollectionUtils.isEmpty(selectList)) {
-            System.err.println(JSON.toJSONString(selectList));
+        if (StringUtils.isEmpty(sqlParam)) {
+            sqlParam = "";
+        } else {
+            sqlParam = "where " + sqlParam;
         }
-
-        return true;
+        Boolean update = update(sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle, comapre, sqlParam);
+        return update;
     }
 
     /** 清空表内容 */
-    public boolean clearODPSTable(String tableName) throws OdpsException, IOException {
+    public Boolean clearODPSTable(String tableName) throws OdpsException, IOException {
         String sql = "TRUNCATE TABLE  %s ";
-        List<Map> selectList = query(Map.class, sql, tableName);
-        if (!CollectionUtils.isEmpty(selectList)) {
-            System.err.println(JSON.toJSONString(selectList));
-        }
-        return true;
+        return update(sql, tableName);
     }
 
     /**
@@ -147,15 +157,14 @@ public class ODPSQueryService extends AbstractOdpsQuery {
     }
 
     @SuppressWarnings("rawtypes")
-    public List<Map> queryFromODPS(String tableName, Integer pageNum, Integer pageSize) throws OdpsException,
-                                                                                        IOException {
-        return queryFromODPS(tableName, null, pageNum, pageSize);
+    public List<Map> queryFromODPS(String tableName, Integer size) throws OdpsException, IOException {
+        return queryFromODPS(tableName, null, size);
     }
 
     @SuppressWarnings("rawtypes")
-    public List<Map> queryFromODPS(String tableName, Map<String, Object> param, Integer pageNum,
-                                   Integer pageSize) throws OdpsException, IOException {
-        String sql = " select * from %s %s  (%s-1)*%s,%s";
+    public List<Map> queryFromODPS(String tableName, Map<String, Object> param, Integer size) throws OdpsException,
+                                                                                              IOException {
+        String sql = " select * from %s %s limit  %s";
         String where = "";
         if (param != null && !param.isEmpty()) {
             where = "1=1";
@@ -163,7 +172,7 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                 where += " and " + col + "='" + param.get(col) + "'";
             }
         }
-        List<Map> selectList = query(Map.class, sql, tableName, where, pageNum, pageSize, pageSize);
+        List<Map> selectList = query(Map.class, sql, tableName, where, size);
         return selectList;
     }
 }

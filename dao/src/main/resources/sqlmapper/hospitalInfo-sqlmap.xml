@@ -44,16 +44,16 @@
 	INNER JOIN quancheng_db.16860_region r ON r.id = h.city  and r.deleted_at is null
 	where h.status = '1'  and c.deleted_at is null
 	<if test="companyIdList != null" >
-     and  c.id in (#{companyIdList,jdbcType=VARCHAR}) 
+     and  c.id in (${companyIdList }) 
     </if>
 	<if test="cityIdList != null" >
-      and  h.city in (#{cityIdList,jdbcType=VARCHAR}) 
+      and  h.city in (${cityIdList }) 
     </if>
     <if test="companyNameList != null" >
-     and  c.title in (#{companyNameList,jdbcType=VARCHAR}) 
+     and  c.title in (${companyNameList }) 
     </if>
     <if test="cityNameList != null" >
-      and  r.name in (#{cityNameList,jdbcType=VARCHAR}) 
+      and  r.name in (${cityNameList }) 
     </if>
   </insert>
   <insert id="batchInsert" parameterType="List" >

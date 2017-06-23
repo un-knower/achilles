@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.aliyun.odps.data.Record;
 import com.aliyun.odps.data.RecordWriter;
 
 public class UploadOdpsThread implements Callable<Boolean> {
 
+    private Logger       logger = LoggerFactory.getLogger(UploadOdpsThread.class);
     private long         id;
     private int          threadSize;
     private RecordWriter recordWriter;
@@ -28,35 +32,16 @@ public class UploadOdpsThread implements Callable<Boolean> {
         boolean result = true;
         double pageSize = Math.ceil((double) recordList.size() / (double) threadSize);
         int start = (int) (id * pageSize);
-        int end = (int) (id * pageSize);
+        int end = (int) ((id + 1) * pageSize - 1);
+        if (id == threadSize - 1) {
+            end = recordList.size() - 1;
+        }
 
-        // for (int i = 0; i < tableSchema.getColumns().size(); i++) {
-        // Column column = tableSchema.getColumn(i);
-        // switch (column.getTypeInfo().getOdpsType()) {
-        // case BIGINT:
-        // record.setBigint(i, 1L);
-        // break;
-        // case BOOLEAN:
-        // record.setBoolean(i, true);
-        // break;
-        // case DATETIME:
-        // record.setDatetime(i, new Date());
-        // break;
-        // case DOUBLE:
-        // record.setDouble(i, 0.0);
-        // break;
-        // case STRING:
-        // record.setString(i, "sample");
-        // break;
-        // default:
-        // throw new RuntimeException("Unknown column type: " + column.getTypeInfo().getTypeName());
-        // }
-        // }
         for (int i = start; i <= end; i++) {
             try {
                 recordWriter.write(recordList.get(i));
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("UploadOdpsThread [{}] have a error {}", id, e);
                 result = false;
                 break;
             }
@@ -64,7 +49,7 @@ public class UploadOdpsThread implements Callable<Boolean> {
         try {
             recordWriter.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("UploadOdpsThread [{}] close have a error {}", id, e);
         }
         return result;
     }

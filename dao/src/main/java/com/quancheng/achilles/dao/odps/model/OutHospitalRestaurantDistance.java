@@ -1,77 +1,95 @@
 package com.quancheng.achilles.dao.odps.model;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+
+import io.swagger.annotations.ApiModelProperty;
+
 public class OutHospitalRestaurantDistance {
 
+    @Id
     private Integer id;
-
+    @ApiModelProperty(value = "公司ID")
+    @Column(name = "companyId")
     private String  companyId;
-
+    @ApiModelProperty(value = "公司名")
+    @Column(name = "companyName")
     private String  companyName;
-
+    @ApiModelProperty(value = "城市ID")
+    @Column(name = "cityId")
     private String  cityId;
-
+    @ApiModelProperty(value = "城市名")
+    @Column(name = "cityName")
     private String  cityName;
-
+    @ApiModelProperty(value = "医院ID")
+    @Column(name = "hospitalId")
     private String  hospitalId;
-
+    @ApiModelProperty(value = "医院名")
+    @Column(name = "hospitalName")
     private String  hospitalName;
-
+    @ApiModelProperty(value = "医院经度")
+    @Column(name = "hospitalLng")
     private Double  hospitalLng;
-
+    @ApiModelProperty(value = "医院纬度")
+    @Column(name = "hospitalLat")
     private Double  hospitalLat;
-
-    private Integer hospitalSettable;
-
+    @ApiModelProperty(value = "医院是否可定位")
+    @Column(name = "hospitalSettable")
+    private String  hospitalSettable;
+    @ApiModelProperty(value = "餐厅ID")
+    @Column(name = "restaurantId")
     private String  restaurantId;
-
+    @ApiModelProperty(value = "餐厅名")
+    @Column(name = "restaurantName")
     private String  restaurantName;
-
+    @ApiModelProperty(value = "餐厅经度")
+    @Column(name = "restaurantLng")
     private Double  restaurantLng;
-
+    @ApiModelProperty(value = "餐厅纬度")
+    @Column(name = "restaurantLat")
     private Double  restaurantLat;
-
-    private Integer restaurantSettable;
-
+    @ApiModelProperty(value = "餐厅是否可定位")
+    @Column(name = "restaurantSettable")
+    private String  restaurantSettable;
+    @ApiModelProperty(value = "是否支持外卖")
+    @Column(name = "supportWaimai")
     private Integer supportWaimai;
-
+    @ApiModelProperty(value = "是否支持预定")
+    @Column(name = "supportReserve")
     private Integer supportReserve;
-
+    @ApiModelProperty(value = "菜系")
+    @Column(name = "cookStyle")
     private String  cookStyle;
-
+    @ApiModelProperty(value = "人均")
+    @Column(name = "consume")
     private Double  consume;
-
+    @ApiModelProperty(value = "包厢数")
+    @Column(name = "boxNum")
     private Integer boxNum;
-
-    private Integer period;
-
+    @ApiModelProperty(value = "账期（天）")
+    @Column(name = "period")
+    private Double  period;
+    @ApiModelProperty(value = "返点结算类型")
+    @Column(name = "rateSettlementType")
     private String  rateSettlementType;
-
+    @ApiModelProperty(value = "结算类型")
+    @Column(name = "manageType")
     private String  manageType;
-
+    @ApiModelProperty(value = "配送距离")
+    @Column(name = "shippingDis")
     private Double  shippingDis;
-
+    @ApiModelProperty(value = "医院餐厅距离")
+    @Column(name = "distance")
     private Double  distance;
-
+    @ApiModelProperty(value = "外卖是否在可配送范围")
+    @Column(name = "isWithin")
     private Integer isWithin;
+    @ApiModelProperty(value = "医院地址")
+    @Column(name = "hospitalAddress")
     private String  hospitalAddress;
-
+    @ApiModelProperty(value = "餐厅地址")
+    @Column(name = "restaurantAddress")
     private String  restaurantAddress;
-
-    public String getHospitalAddress() {
-        return hospitalAddress;
-    }
-
-    public void setHospitalAddress(String hospitalAddress) {
-        this.hospitalAddress = hospitalAddress == null ? null : hospitalAddress.trim();
-    }
-
-    public String getRestaurantAddress() {
-        return restaurantAddress;
-    }
-
-    public void setRestaurantAddress(String restaurantAddress) {
-        this.restaurantAddress = restaurantAddress == null ? null : restaurantAddress.trim();
-    }
 
     public Integer getId() {
         return id;
@@ -86,7 +104,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setCompanyId(String companyId) {
-        this.companyId = companyId == null ? null : companyId.trim();
+        this.companyId = companyId;
     }
 
     public String getCompanyName() {
@@ -94,7 +112,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setCompanyName(String companyName) {
-        this.companyName = companyName == null ? null : companyName.trim();
+        this.companyName = companyName;
     }
 
     public String getCityId() {
@@ -102,7 +120,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setCityId(String cityId) {
-        this.cityId = cityId == null ? null : cityId.trim();
+        this.cityId = cityId;
     }
 
     public String getCityName() {
@@ -110,7 +128,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setCityName(String cityName) {
-        this.cityName = cityName == null ? null : cityName.trim();
+        this.cityName = cityName;
     }
 
     public String getHospitalId() {
@@ -118,7 +136,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setHospitalId(String hospitalId) {
-        this.hospitalId = hospitalId == null ? null : hospitalId.trim();
+        this.hospitalId = hospitalId;
     }
 
     public String getHospitalName() {
@@ -126,7 +144,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setHospitalName(String hospitalName) {
-        this.hospitalName = hospitalName == null ? null : hospitalName.trim();
+        this.hospitalName = hospitalName;
     }
 
     public Double getHospitalLng() {
@@ -145,11 +163,11 @@ public class OutHospitalRestaurantDistance {
         this.hospitalLat = hospitalLat;
     }
 
-    public Integer getHospitalSettable() {
+    public String getHospitalSettable() {
         return hospitalSettable;
     }
 
-    public void setHospitalSettable(Integer hospitalSettable) {
+    public void setHospitalSettable(String hospitalSettable) {
         this.hospitalSettable = hospitalSettable;
     }
 
@@ -158,7 +176,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setRestaurantId(String restaurantId) {
-        this.restaurantId = restaurantId == null ? null : restaurantId.trim();
+        this.restaurantId = restaurantId;
     }
 
     public String getRestaurantName() {
@@ -166,7 +184,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setRestaurantName(String restaurantName) {
-        this.restaurantName = restaurantName == null ? null : restaurantName.trim();
+        this.restaurantName = restaurantName;
     }
 
     public Double getRestaurantLng() {
@@ -185,11 +203,11 @@ public class OutHospitalRestaurantDistance {
         this.restaurantLat = restaurantLat;
     }
 
-    public Integer getRestaurantSettable() {
+    public String getRestaurantSettable() {
         return restaurantSettable;
     }
 
-    public void setRestaurantSettable(Integer restaurantSettable) {
+    public void setRestaurantSettable(String restaurantSettable) {
         this.restaurantSettable = restaurantSettable;
     }
 
@@ -214,7 +232,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setCookStyle(String cookStyle) {
-        this.cookStyle = cookStyle == null ? null : cookStyle.trim();
+        this.cookStyle = cookStyle;
     }
 
     public Double getConsume() {
@@ -233,11 +251,11 @@ public class OutHospitalRestaurantDistance {
         this.boxNum = boxNum;
     }
 
-    public Integer getPeriod() {
+    public Double getPeriod() {
         return period;
     }
 
-    public void setPeriod(Integer period) {
+    public void setPeriod(Double period) {
         this.period = period;
     }
 
@@ -246,7 +264,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setRateSettlementType(String rateSettlementType) {
-        this.rateSettlementType = rateSettlementType == null ? null : rateSettlementType.trim();
+        this.rateSettlementType = rateSettlementType;
     }
 
     public String getManageType() {
@@ -254,7 +272,7 @@ public class OutHospitalRestaurantDistance {
     }
 
     public void setManageType(String manageType) {
-        this.manageType = manageType == null ? null : manageType.trim();
+        this.manageType = manageType;
     }
 
     public Double getShippingDis() {
@@ -280,4 +298,21 @@ public class OutHospitalRestaurantDistance {
     public void setIsWithin(Integer isWithin) {
         this.isWithin = isWithin;
     }
+
+    public String getHospitalAddress() {
+        return hospitalAddress;
+    }
+
+    public void setHospitalAddress(String hospitalAddress) {
+        this.hospitalAddress = hospitalAddress;
+    }
+
+    public String getRestaurantAddress() {
+        return restaurantAddress;
+    }
+
+    public void setRestaurantAddress(String restaurantAddress) {
+        this.restaurantAddress = restaurantAddress;
+    }
+
 }
