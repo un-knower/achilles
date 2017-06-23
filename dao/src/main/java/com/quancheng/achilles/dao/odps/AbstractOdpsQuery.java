@@ -234,29 +234,29 @@ public abstract class AbstractOdpsQuery {
             long count = downloadSession.getRecordCount();
             System.out.println("RecordCount is: " + count);
             ExecutorService pool = Executors.newFixedThreadPool(threadNum);
-            // ArrayList<Callable<Long>> callers = new ArrayList<Callable<Long>>();
             List<Future<List<Map<String, Object>>>> futureList;
             int burck = 40000;
             double page = Math.ceil((double) count / (double) burck);
             downloadNum = 0l;
-            int tmpIndex = -1;
+            int idNum = 0;
             for (int p = 0; p < page - 1; p++) {
                 futureList = new ArrayList<>();
                 long step = burck / threadNum;
-                int index = p * (threadNum - 1);
                 for (int i = 0; i < threadNum - 1; i++) {
-                    getDownloadList(pool, downloadSession, futureList, index + i, step);
+                    getDownloadList(pool, downloadSession, futureList, idNum, i, downloadNum, step);
+                    idNum++;
                 }
-                tmpIndex = index + threadNum - 1;
-                getDownloadList(pool, downloadSession, futureList, tmpIndex, burck - ((threadNum - 1) * step));
+                getDownloadList(pool, downloadSession, futureList, idNum, threadNum - 1, downloadNum,
+                                burck - ((threadNum - 1) * step));
                 Boolean save = saveDownloadList(futureList, saveToDB);
+                idNum++;
                 if (!save) {
                     return save;
                 }
             }
             futureList = new ArrayList<>();
             long step = (long) (count - burck * (page - 1));
-            getDownloadList(pool, downloadSession, futureList, tmpIndex + 1, step);
+            getDownloadList(pool, downloadSession, futureList, idNum, 0, downloadNum, step);
             Boolean save = saveDownloadList(futureList, saveToDB);
             if (!save) {
                 return save;
@@ -285,10 +285,12 @@ public abstract class AbstractOdpsQuery {
     }
 
     private void getDownloadList(ExecutorService pool, DownloadSession downloadSession,
-                                 List<Future<List<Map<String, Object>>>> futureList, int id,
-                                 long step) throws TunnelException, IOException {
-        RecordReader recordReader = downloadSession.openRecordReader(step * id, step);
-        futureList.add(pool.submit(new DownloadOdpsThread(id, recordReader, downloadSession.getSchema())));
+                                 List<Future<List<Map<String, Object>>>> futureList, int idNum, int index,
+                                 Long startIndex, long step) throws TunnelException, IOException {
+        startIndex = startIndex + (index * step);
+        System.err.println("getDownloadList Thread:" + idNum + "  startIndex: " + startIndex + " size:" + step);
+        RecordReader recordReader = downloadSession.openRecordReader(startIndex, step);
+        futureList.add(pool.submit(new DownloadOdpsThread(idNum, recordReader, downloadSession.getSchema())));
     }
 
     protected boolean insert(String tableName, List<Map<String, Object>> datas) throws OdpsException, IOException,
