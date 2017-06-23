@@ -2,29 +2,44 @@ package com.quancheng.achilles.dao.odps;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import com.aliyun.odps.Column;
 import com.aliyun.odps.Instance;
 import com.aliyun.odps.Odps;
 import com.aliyun.odps.OdpsException;
+import com.aliyun.odps.TableSchema;
 import com.aliyun.odps.data.Record;
+import com.aliyun.odps.data.RecordWriter;
 import com.aliyun.odps.task.SQLTask;
+import com.aliyun.odps.tunnel.TableTunnel;
+import com.aliyun.odps.tunnel.TableTunnel.UploadSession;
+import com.aliyun.odps.tunnel.TunnelException;
 import com.quancheng.achilles.dao.annotation.OdpsColumn;
+import com.quancheng.achilles.util.TimeUtil;
 
 import net.sf.json.JSONArray;
 
 public abstract class AbstractOdpsQuery {
 
-    long interval = 3000l;
+    private Logger logger   = LoggerFactory.getLogger(AbstractOdpsQuery.class);
+    long           interval = 3000l;
     @Autowired
-    Odps config;
+    Odps           config;
 
     protected JSONArray query(Map<String, Object> map, String table) throws OdpsException, IOException {
         return query(buildSql(map, table));
@@ -125,5 +140,92 @@ public abstract class AbstractOdpsQuery {
             ja.add(RecordToJsonUitl.json(record));
         }
         return ja;
+    }
+
+    private List<Record> listMapToListRecord(UploadSession uploadSession,
+                                             List<Map<String, Object>> datas) throws ParseException {
+        List<Record> list = new ArrayList<>();
+        TableSchema schema = uploadSession.getSchema();
+        Record record;
+        for (Map<String, Object> m : datas) {
+            record = uploadSession.newRecord();
+            for (int i = 0; i < schema.getColumns().size(); i++) {
+                Column column = schema.getColumn(i);
+                String name = column.getName();
+                Object valO = m.get(name);
+                String val = valO.toString();
+                if (StringUtils.isEmpty(val)) {
+                    // record.setString(i, val);
+                    continue;
+                }
+                switch (column.getTypeInfo().getOdpsType()) {
+                    case BIGINT:
+                        record.setBigint(i, Long.valueOf(val));
+                        break;
+                    case BOOLEAN:
+                        record.setBoolean(i, Boolean.valueOf(val));
+                        break;
+                    case DATETIME:
+                        Date time = null;
+                        if (!val.contains("-") && val.trim().length() == 10) {
+                            time = new Date(Long.valueOf(val));
+                        } else if (val.trim().length() == 10) {
+                            time = TimeUtil.parseDate("yyyy-MM-dd", val);
+                        } else {
+                            time = TimeUtil.parseDate("yyyy-MM-dd hh:mm:ss", val);
+                        }
+                        record.setDatetime(i, time);
+                        break;
+                    case DOUBLE:
+                        record.setDouble(i, Double.valueOf(val));
+                        break;
+                    case STRING:
+                        record.setString(i, val);
+                        break;
+                    default:
+                        throw new RuntimeException("Unknown column type: " + column.getTypeInfo().getTypeName());
+                }
+            }
+            list.add(record);
+        }
+        return list;
+    }
+
+    private int             threadNum = 5;
+    private ExecutorService pool      = Executors.newFixedThreadPool(threadNum);
+
+    protected boolean insert(String tableName, List<Map<String, Object>> datas) throws OdpsException, IOException,
+                                                                                ParseException {
+        boolean result = true;
+        try {
+            TableTunnel tunnel = new TableTunnel(getConfig());
+            UploadSession uploadSession = tunnel.createUploadSession(getConfig().getDefaultProject(), tableName);
+            System.out.println("Session Status is : " + uploadSession.getStatus().toString());
+
+            ArrayList<Callable<Boolean>> callers = new ArrayList<Callable<Boolean>>();
+            for (int i = 0; i < threadNum; i++) {
+                RecordWriter recordWriter = uploadSession.openRecordWriter(i);
+                callers.add(new UploadOdpsThread(i, threadNum, recordWriter,
+                                                 listMapToListRecord(uploadSession, datas)));
+            }
+            pool.invokeAll(callers);
+            pool.shutdown();
+            Long[] blockList = new Long[threadNum];
+            for (int i = 0; i < threadNum; i++)
+                blockList[i] = Long.valueOf(i);
+            uploadSession.commit(blockList);
+            System.out.println("upload success!");
+        } catch (TunnelException e) {
+            result = false;
+            logger.error("insert {} have a error.{} ", tableName, e);
+        } catch (IOException e) {
+            result = false;
+            logger.error("insert {} have a error.{} ", tableName, e);
+        } catch (InterruptedException e) {
+            result = false;
+            logger.error("insert {} have a error.{} ", tableName, e);
+        }
+
+        return result;
     }
 }

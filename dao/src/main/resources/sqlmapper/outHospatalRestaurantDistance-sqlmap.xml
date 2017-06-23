@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="OutHospatalRestaurantDistanceMapper" >
+  <resultMap id="BaseResultMap" type="com.quancheng.achilles.dao.odps.model.OutHospatalRestaurantDistance" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="city_id" property="cityId" jdbcType="VARCHAR" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="hospital_id" property="hospitalId" jdbcType="VARCHAR" />
+    <result column="hospital_name" property="hospitalName" jdbcType="VARCHAR" />
+    <result column="hospital_lng" property="hospitalLng" jdbcType="DOUBLE" />
+    <result column="hospital_lat" property="hospitalLat" jdbcType="DOUBLE" />
+    <result column="hospital_settable" property="hospitalSettable" jdbcType="INTEGER" />
+    <result column="restaurant_id" property="restaurantId" jdbcType="VARCHAR" />
+    <result column="restaurant_name" property="restaurantName" jdbcType="VARCHAR" />
+    <result column="restaurant_lng" property="restaurantLng" jdbcType="DOUBLE" />
+    <result column="restaurant_lat" property="restaurantLat" jdbcType="DOUBLE" />
+    <result column="restaurant_settable" property="restaurantSettable" jdbcType="INTEGER" />
+    <result column="support_waimai" property="supportWaimai" jdbcType="INTEGER" />
+    <result column="support_reserve" property="supportReserve" jdbcType="INTEGER" />
+    <result column="cook_style" property="cookStyle" jdbcType="VARCHAR" />
+    <result column="consume" property="consume" jdbcType="DOUBLE" />
+    <result column="box_num" property="boxNum" jdbcType="INTEGER" />
+    <result column="period" property="period" jdbcType="INTEGER" />
+    <result column="rate_settlement_type" property="rateSettlementType" jdbcType="VARCHAR" />
+    <result column="manage_type" property="manageType" jdbcType="VARCHAR" />
+    <result column="shipping_dis" property="shippingDis" jdbcType="DOUBLE" />
+    <result column="distance" property="distance" jdbcType="DOUBLE" />
+    <result column="is_within" property="isWithin" jdbcType="INTEGER" />
+    <result column="hospital_address" property="hospitalAddress" jdbcType="LONGVARCHAR" />
+    <result column="restaurant_address" property="restaurantAddress" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, company_name, city_id, city_name, hospital_id, hospital_name,hospital_address, hospital_lng, 
+    hospital_lat, hospital_settable, restaurant_id, restaurant_name,restaurant_address, restaurant_lng, 
+    restaurant_lat, restaurant_settable, support_waimai, support_reserve, cook_style, 
+    consume, box_num, period, rate_settlement_type, manage_type, shipping_dis, distance, 
+    is_within
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from out_hospatal_restaurant_distance
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from out_hospatal_restaurant_distance
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="batchInsert" parameterType="List" >
+    insert into out_hospatal_restaurant_distance (id, company_id, company_name, 
+      city_id, city_name, hospital_id, 
+      hospital_name, hospital_lng, hospital_lat, 
+      hospital_settable, restaurant_id, restaurant_name, 
+      restaurant_lng, restaurant_lat, restaurant_settable, 
+      support_waimai, support_reserve, cook_style, 
+      consume, box_num, period, 
+      rate_settlement_type, manage_type, shipping_dis, 
+      distance, is_within, hospital_address, 
+      restaurant_address)
+    values
+    <foreach collection="list" item="item"  separator="," >
+     (#{item.id,jdbcType=INTEGER}, #{item.companyId,jdbcType=VARCHAR}, #{item.companyName,jdbcType=VARCHAR}, 
+      #{item.cityId,jdbcType=VARCHAR}, #{item.cityName,jdbcType=VARCHAR}, #{item.hospitalId,jdbcType=VARCHAR}, 
+      #{item.hospitalName,jdbcType=VARCHAR}, #{item.hospitalLng,jdbcType=DOUBLE}, #{item.hospitalLat,jdbcType=DOUBLE}, 
+      #{item.hospitalSettable,jdbcType=INTEGER}, #{item.restaurantId,jdbcType=VARCHAR}, #{item.restaurantName,jdbcType=VARCHAR}, 
+      #{item.restaurantLng,jdbcType=DOUBLE}, #{item.restaurantLat,jdbcType=DOUBLE}, #{item.restaurantSettable,jdbcType=INTEGER}, 
+      #{item.supportWaimai,jdbcType=INTEGER}, #{item.supportReserve,jdbcType=INTEGER}, #{item.cookStyle,jdbcType=VARCHAR}, 
+      #{item.consume,jdbcType=DOUBLE}, #{item.boxNum,jdbcType=INTEGER}, #{item.period,jdbcType=INTEGER}, 
+      #{item.rateSettlementType,jdbcType=VARCHAR}, #{item.manageType,jdbcType=VARCHAR}, #{item.shippingDis,jdbcType=DOUBLE}, 
+      #{item.distance,jdbcType=DOUBLE}, #{item.isWithin,jdbcType=INTEGER}, #{item.hospitalAddress,jdbcType=LONGVARCHAR}, 
+      #{item.restaurantAddress,jdbcType=LONGVARCHAR})
+      </foreach>
+  </insert>
+      
+  <insert id="insertSelective" parameterType="com.quancheng.achilles.dao.odps.model.OutHospatalRestaurantDistance" >
+    insert into out_hospatal_restaurant_distance
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="cityName != null" >
+        city_name,
+      </if>
+      <if test="hospitalId != null" >
+        hospital_id,
+      </if>
+      <if test="hospitalName != null" >
+        hospital_name,
+      </if>
+      <if test="hospitalLng != null" >
+        hospital_lng,
+      </if>
+      <if test="hospitalLat != null" >
+        hospital_lat,
+      </if>
+      <if test="hospitalSettable != null" >
+        hospital_settable,
+      </if>
+      <if test="restaurantId != null" >
+        restaurant_id,
+      </if>
+      <if test="restaurantName != null" >
+        restaurant_name,
+      </if>
+      <if test="restaurantLng != null" >
+        restaurant_lng,
+      </if>
+      <if test="restaurantLat != null" >
+        restaurant_lat,
+      </if>
+      <if test="restaurantSettable != null" >
+        restaurant_settable,
+      </if>
+      <if test="supportWaimai != null" >
+        support_waimai,
+      </if>
+      <if test="supportReserve != null" >
+        support_reserve,
+      </if>
+      <if test="cookStyle != null" >
+        cook_style,
+      </if>
+      <if test="consume != null" >
+        consume,
+      </if>
+      <if test="boxNum != null" >
+        box_num,
+      </if>
+      <if test="period != null" >
+        period,
+      </if>
+      <if test="rateSettlementType != null" >
+        rate_settlement_type,
+      </if>
+      <if test="manageType != null" >
+        manage_type,
+      </if>
+      <if test="shippingDis != null" >
+        shipping_dis,
+      </if>
+      <if test="distance != null" >
+        distance,
+      </if>
+      <if test="isWithin != null" >
+        is_within,
+      </if>
+      <if test="hospitalAddress != null" >
+        hospital_address,
+      </if>
+      <if test="restaurantAddress != null" >
+        restaurant_address,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null" >
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalId != null" >
+        #{hospitalId,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalName != null" >
+        #{hospitalName,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalLng != null" >
+        #{hospitalLng,jdbcType=DOUBLE},
+      </if>
+      <if test="hospitalLat != null" >
+        #{hospitalLat,jdbcType=DOUBLE},
+      </if>
+      <if test="hospitalSettable != null" >
+        #{hospitalSettable,jdbcType=INTEGER},
+      </if>
+      <if test="restaurantId != null" >
+        #{restaurantId,jdbcType=VARCHAR},
+      </if>
+      <if test="restaurantName != null" >
+        #{restaurantName,jdbcType=VARCHAR},
+      </if>
+      <if test="restaurantLng != null" >
+        #{restaurantLng,jdbcType=DOUBLE},
+      </if>
+      <if test="restaurantLat != null" >
+        #{restaurantLat,jdbcType=DOUBLE},
+      </if>
+      <if test="restaurantSettable != null" >
+        #{restaurantSettable,jdbcType=INTEGER},
+      </if>
+      <if test="supportWaimai != null" >
+        #{supportWaimai,jdbcType=INTEGER},
+      </if>
+      <if test="supportReserve != null" >
+        #{supportReserve,jdbcType=INTEGER},
+      </if>
+      <if test="cookStyle != null" >
+        #{cookStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="consume != null" >
+        #{consume,jdbcType=DOUBLE},
+      </if>
+      <if test="boxNum != null" >
+        #{boxNum,jdbcType=INTEGER},
+      </if>
+      <if test="period != null" >
+        #{period,jdbcType=INTEGER},
+      </if>
+      <if test="rateSettlementType != null" >
+        #{rateSettlementType,jdbcType=VARCHAR},
+      </if>
+      <if test="manageType != null" >
+        #{manageType,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingDis != null" >
+        #{shippingDis,jdbcType=DOUBLE},
+      </if>
+      <if test="distance != null" >
+        #{distance,jdbcType=DOUBLE},
+      </if>
+      <if test="isWithin != null" >
+        #{isWithin,jdbcType=INTEGER},
+      </if>
+      <if test="hospitalAddress != null" >
+        #{hospitalAddress,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="restaurantAddress != null" >
+        #{restaurantAddress,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+</mapper>
