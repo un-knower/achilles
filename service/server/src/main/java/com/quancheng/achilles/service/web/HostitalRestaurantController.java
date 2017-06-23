@@ -92,26 +92,28 @@ public class HostitalRestaurantController {
 
         Object otype = null;
         try {
-            if (isUpload != null && isUpload) {
-                if (!file.isEmpty()) {
-                    boolean clearTable = false;
-                    if ("restaurant".equals(excelType)) {
-                        otype = new RestaurantInfo();
-                        if (isInsertDatas != null && isInsertDatas) {
-                            if (!param.isEmpty()) {
-                                clearTable = true;
-                                distanceService.queryAndSaveRestaurantInfoToDB(param, clearTable);
-                            }
-                        }
-                    } else {
-                        otype = new HospitalInfo();
-                        if (isInsertDatas != null && isInsertDatas) {
-                            if (!param.isEmpty()) {
-                                clearTable = true;
-                                distanceService.queryAndSaveHospitalInfoToDB(param, clearTable);
-                            }
+            boolean clearTable = false;
+            if (!StringUtils.isEmpty(excelType)) {
+                if ("restaurant".equals(excelType)) {
+                    otype = new RestaurantInfo();
+                    if (isInsertDatas != null && isInsertDatas) {
+                        if (!param.isEmpty()) {
+                            clearTable = true;
+                            distanceService.queryAndSaveRestaurantInfoToDB(param, clearTable);
                         }
                     }
+                } else {
+                    otype = new HospitalInfo();
+                    if (isInsertDatas != null && isInsertDatas) {
+                        if (!param.isEmpty()) {
+                            clearTable = true;
+                            distanceService.queryAndSaveHospitalInfoToDB(param, clearTable);
+                        }
+                    }
+                }
+            }
+            if (isUpload != null && isUpload) {
+                if (!file.isEmpty()) {
                     saveExcelToDB = distanceService.saveExcelToDB(file, otype, excelCompanyId, !clearTable);
                     if (!saveExcelToDB) {
                         export.setMsg("上传失败，没保存到数据库");
