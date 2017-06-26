@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.aliyun.odps.OdpsException;
@@ -89,7 +88,7 @@ public class ODPSQueryService extends AbstractOdpsQuery {
 
     public <T> boolean taskHospitalRestaurantDistance(T otype,
                                                       InnConstantODPSTables.TaskHospitalRestaurantDistance type,
-                                                      Boolean compareCompany,
+                                                      Boolean compareCompany, Double distances, Boolean isWaimaiOk,
                                                       String sqlParam) throws OdpsException, IOException {
         String comapre = "";
         if (compareCompany != null && compareCompany) {
@@ -104,7 +103,10 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                 restaurantTable = "tmp_restaurant_info";
             }
         }
-
+        String iswaimai = "";
+        if (isWaimaiOk != null && isWaimaiOk) {
+            iswaimai = " where  b.is_within=1 ";
+        }
         String talle = " " + hospitalTable + " h left OUTER join " + restaurantTable + " r ";
         String sql = "INSERT OVERWRITE TABLE %s "
                      + "select DISTINCT b.company_id,b.company_name,b.city_id,b.city_name,b.hospital_id,b.hospital_name,b.hospital_address,b.hospital_lng,b.hospital_lat,b.hospital_settable,b.restaurant_id,b.restaurant_name,b.restaurant_address,b.restaurant_lng,b.restaurant_lat,b.restaurant_settable,b.support_waimai,b.support_reserve,b.cook_style,b.consume,b.box_num,b.period,b.rate_settlement_type,b.manage_type,b.shipping_dis,b.distance"
@@ -125,16 +127,17 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                      + " when r.manage_type = 3 then '账期月结'  when r.manage_type = 4 then '循环预付'"
                      + " when r.manage_type = 0 then 'T+n账期'  end AS manage_type , r.shipping_dis"
                      + ",round(6378.137*1000.0*2.0*asin(sqrt(abs(pow(sin((r.lat-h.lat)*(3.1415926/ 180.0)*0.5),2) + cos(r.lat) * cos(h.lat) * pow(sin((r.lng-h.lng)*(3.1415926/ 180.0)*0.5),2))))) AS distance"
-                     + " from %s " + "on h.city_id = r.city_id  %s )  a )  b  %s";
+                     + " from %s " + "on h.city_id = r.city_id  %s  %s)  a where a.distance <= %s )  b %s";
         if (InnConstantODPSTables.TaskHospitalRestaurantDistance.RestaurantHospital == type) {
             talle = " " + restaurantTable + " r  left OUTER join  " + hospitalTable + " h ";
         }
-        if (StringUtils.isEmpty(sqlParam)) {
-            sqlParam = "";
-        } else {
-            sqlParam = "where " + sqlParam;
-        }
-        Boolean update = update(sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle, comapre, sqlParam);
+        // if (StringUtils.isEmpty(sqlParam)) {
+        // sqlParam = "";
+        // } else {
+        // sqlParam = "where " + sqlParam;
+        // }
+        Boolean update = update(sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle, comapre, sqlParam,
+                                distances, iswaimai);
         return update;
     }
 
