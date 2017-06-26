@@ -172,12 +172,19 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
                          StringUtils.isEmpty(map.get("hospitalName")) ? map.get("restaurantName") : map.get("hospitalName"));
             String cityName = map.get("cityName").replaceAll("直辖", "").replaceAll("市", "");
             mapParam.put("cityName", cityName);
-            mapParam.put("address", cityName + map.get("address"));
+            String address = map.get("address");
+            mapParam.put("address", StringUtils.isEmpty(address) ? "" : cityName + address);
             Map<String, Double> mapLocation = UtilClassHelper.getLatAndLngByAddressFromBaidu(mapParam);
             if (mapLocation != null) {
-                map.put("lng", mapLocation.get("lng").toString());
-                map.put("lat", mapLocation.get("lat").toString());
-                map.put("settable", "1");
+                Double lng = mapLocation.get("lng");
+                Double lat = mapLocation.get("lat");
+                if (lng != null && lat != null) {
+                    map.put("lng", mapLocation.get("lng").toString());
+                    map.put("lat", mapLocation.get("lat").toString());
+                    map.put("settable", "1");
+                } else {
+                    map.put("settable", "0");
+                }
             }
             String cityId = cityInfo.get(cityName);
             if (!StringUtils.isEmpty(cityId)) {
