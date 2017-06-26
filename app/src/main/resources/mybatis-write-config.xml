@@ -26,11 +26,12 @@
     </environments>
     <mappers>
         <mapper resource="sqlmapper/Sync-sqlmap.xml"/>
-        <mapper resource="sqlmapper/companyReport-sqlmap.xml"/>
-        <mapper resource="sqlmapper/companyRestaurantsSource-sqlmap.xml"/>
-        <mapper resource="sqlmapper/companyRestaurantsStatistics-sqlmap.xml"/>
-        <mapper resource="sqlmapper/companyShelfRestaurants-sqlmap.xml"/>
-        <mapper resource="sqlmapper/companyHospitalRestaurantStatistics-sqlmap.xml"/>
+        <mapper resource="sqlmapper/Order-sqlmap.xml"/>
+<!--         <mapper resource="sqlmapper/companyReport-sqlmap.xml"/> -->
+        <mapper resource="sqlmapper/sj-companyRestaurantsSource-sqlmap.xml"/>
+        <mapper resource="sqlmapper/sj-companyRestaurantsStatistics-sqlmap.xml"/>
+        <mapper resource="sqlmapper/sj-companyShelfRestaurants-sqlmap.xml"/>
+        <mapper resource="sqlmapper/sj-companyHospitalRestaurantStatistics-sqlmap.xml"/>
 		<mapper resource="sqlmapper/sj-user-cost-sqlmap.xml"/>
 		<mapper resource="sqlmapper/sj-flycheck-sqlmap.xml"/>
     </mappers>
