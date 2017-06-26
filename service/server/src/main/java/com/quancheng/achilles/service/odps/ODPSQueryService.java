@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.aliyun.odps.OdpsException;
@@ -94,13 +95,16 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         if (compareCompany != null && compareCompany) {
             comapre = "and h.company_id = r.company_id ";
         }
+        String all = "";
         String restaurantTable = "tmp_sync_restaurant_info";// 每日凌晨自动同步数据
         String hospitalTable = "tmp_sync_hospital_info";// 每日凌晨自动同步数据
         if (otype != null) {// 上传了数据
             if (otype instanceof HospitalInfo) {// 上传了医院信息
                 hospitalTable = "tmp_hospital_info";
+                all = "INSERT OVERWRITE TABLE  %s  select h.company_id,h.company_name,h.city_id,h.city_name,h.hospital_id, h.hospital_name,h.address as hospital_address,h.lng as hospital_lng,h.lat ashospital_lat,h.settable as hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai, a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis, a.distance,a.is_within from tmp_hospital_info h left outer  join out_hospital_restaurant_distance a  on a.hospital_name =h.hospital_name and a.city_id =h.city_id ";
             } else if (otype instanceof RestaurantInfo) {// 上传了餐厅信息
                 restaurantTable = "tmp_restaurant_info";
+                all = "INSERT OVERWRITE TABLE  %s  select a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id,a.hospital_name,a.hospital_address,a.hospital_lng,a.hospital_lat,a.hospital_settable,h.restaurant_id,h.restaurant_name,h.address as restaurant_address,h.lng as restaurant_lng,h.lat as restaurant_lat,h.settable as restaurant_settable,h.support_waimai,h.support_reserve,h.cook_style,h.consume,h.box_num,h.period,h.rate_settlement_type,h.manage_type,h.shipping_dis,h.distance,a.is_within from tmp_restaurant_info h left outer  join out_hospital_restaurant_distance a on a.restaurant_name =h.restaurant_name and a.city_id =h.city_id ";
             }
         }
         String iswaimai = "";
@@ -126,8 +130,8 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                      + ",case when r.manage_type = 1 then '餐前预付'  when r.manage_type = 2 then '账期周结'"
                      + " when r.manage_type = 3 then '账期月结'  when r.manage_type = 4 then '循环预付'"
                      + " when r.manage_type = 0 then 'T+n账期'  end AS manage_type , r.shipping_dis"
-                     + ",round(6378.137*1000.0*2.0*asin(sqrt(abs(pow(sin((r.lat-h.lat)*(3.1415926/ 180.0)*0.5),2) + cos(r.lat) * cos(h.lat) * pow(sin((r.lng-h.lng)*(3.1415926/ 180.0)*0.5),2))))) AS distance"
-                     + " from %s " + "on h.city_id = r.city_id  %s  %s)  a where a.distance <= %s )  b %s";
+                     + ",round(6378.137*1000.0*2.0*asin(sqrt(abs(pow(sin((r.lat-h.lat)*(3.1415926/ 180.0)*0.5),2) + cos((3.1415926/ 180.0)*r.lat) * cos((3.1415926/ 180.0)*h.lat) * pow(sin((r.lng-h.lng)*(3.1415926/ 180.0)*0.5),2))))) AS distance"
+                     + " from %s " + "on h.city_id = r.city_id  %s  %s)  a where a.distance <= %s )  b %s ";
         if (InnConstantODPSTables.TaskHospitalRestaurantDistance.RestaurantHospital == type) {
             talle = " " + restaurantTable + " r  left OUTER join  " + hospitalTable + " h ";
         }
@@ -138,6 +142,9 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         // }
         Boolean update = update(sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle, comapre, sqlParam,
                                 distances, iswaimai);
+        if (!StringUtils.isEmpty(all)) {
+            update = update(all, InnConstantODPSTables.outHospitalRestaurantDistance);
+        }
         return update;
     }
 
