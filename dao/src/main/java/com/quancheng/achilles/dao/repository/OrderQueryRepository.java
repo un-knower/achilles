@@ -2,9 +2,8 @@ package com.quancheng.achilles.dao.repository;
 
 import java.util.List;
 import java.util.Map;
-
+import javax.annotation.Resource;
 import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.quancheng.achilles.dao.model.OrderRecordVo;
@@ -16,7 +15,8 @@ import com.quancheng.achilles.dao.model.OrderRecordVo;
 @Repository
 public class OrderQueryRepository {
 
-    @Autowired
+    @Resource(name="writeSqlSession")
+//    @Autowired
     private SqlSession sqlSession;
 
     public List<OrderRecordVo> queryPageOrders(Map<String, Object> map) {

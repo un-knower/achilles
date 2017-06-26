@@ -60,14 +60,6 @@ public class DBConfiguration {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 
-    @Bean(name = "quanchengDBReadDataSource")
-    @Primary
-    @ConfigurationProperties(prefix = "spring.datasource.ro")
-    public DataSource quanchengDBReadDataSource() {
-        DataSource ds = DataSourceBuilder.create().build();
-        return ds;
-    }
-
     @Bean(name = "quanchengDBWriteDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.writedb")
     public DataSource quanchengDBWriteDataSource() {
