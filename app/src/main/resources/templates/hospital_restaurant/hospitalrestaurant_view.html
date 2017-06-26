@@ -66,7 +66,7 @@
 												th:selected="${companyList!=null and #arrays.contains(companyList,x.companyId)}"></option>
 										</select>
 									</div>
-									<div class="col-md-2">
+									<!-- 	<div class="col-md-2">
 										<select class="selectpicker" data-style="form-control"
 											onchange="setExcelTypeName(this)" name="excelType"
 											title="选择数据类型" data-live-search="false"
@@ -74,8 +74,17 @@
 											<option value="hospital">医院</option>
 											<option value="restaurant">餐厅</option>
 										</select>
+									</div> -->
+									<div class="col-md-1">
+										<input type="checkbox" name="excelType" class="chexcelType"
+											checked="checked" onchange="setExcelTypeName(this)"
+											value="hospital" onclick="checkboxclick(this)" /> 医院
 									</div>
-
+									<div class="col-md-1">
+										<input type="checkbox" name="excelType" class="chexcelType"
+											onchange="setExcelTypeName(this)" value="restaurant"
+											onclick="checkboxclick(this)" /> 餐厅
+									</div>
 
 									<div class="col-md-2">
 										<button type="button" id="excelfileinput"
@@ -197,15 +206,21 @@
 			setInterval("startRequest()", 1000);
 		});
 		function startRequest() {
-			$.post("/api/ops/hospitalrestaurant/getStatus",{},function(result){
-					if(result){
-						$('#bnt_submit').attr("disabled",true); 
-						$('#bnt_submit').html('任务执行中,稍后再试<i class="fa fa-spin fa-spinner"></i> '); 
-					}else{
-						$('#bnt_submit').attr("disabled",false); 
-						$('#bnt_submit').html("提交计算并下载"); 
-					}
-				  });
+			$
+					.post(
+							"/api/ops/hospitalrestaurant/getStatus",
+							{},
+							function(result) {
+								if (result) {
+									$('#bnt_submit').attr("disabled", true);
+									$('#bnt_submit')
+											.html(
+													'任务执行中,稍后再试<i class="fa fa-spin fa-spinner"></i> ');
+								} else {
+									$('#bnt_submit').attr("disabled", false);
+									$('#bnt_submit').html("提交计算并下载");
+								}
+							});
 		}
 		$("#excelfileinput").click(function() {
 			$("#excelfile").click();
@@ -215,16 +230,20 @@
 			$("#showName").html(name);
 		});
 		function setExcelTypeName(obj) {
-			$("#excelTypeName").html($(obj).find("option:selected").text());
+			if($(obj).attr("value")=='hospital'){
+				$("#excelTypeName").html("医院");
+			}else{
+				$("#excelTypeName").html("餐厅");
+			}
 		}
 
 		function checkboxclick(obj) {
-		/* 	var result = new Array(); */
+			/* 	var result = new Array(); */
 			$("[class = " + $(obj).attr("class") + "]:checkbox").each(
 					function() {
 						if ($(this).is(":checked")) {
 							$(this).attr("checked", !$(this).attr("checked"));
-						/* 	result.push($(this).attr("value")); */
+							/* 	result.push($(this).attr("value")); */
 						}
 					});
 			/*  alert(result.join(",")); */

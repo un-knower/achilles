@@ -58,7 +58,8 @@ public interface HospitalRestaurantDistanceService {
      * @param <T>
      */
     <T> Boolean invokeODPSTask(T otype, InnConstantODPSTables.TaskHospitalRestaurantDistance type,
-                               Boolean compareCompany, String sqlParam) throws OdpsException, IOException;
+                               Boolean compareCompany, Double distances, Boolean isWaimaiOk,
+                               String sqlParam) throws OdpsException, IOException;
 
     /** 从ODPS拿到结果保存到DB */
     Boolean queryFromODPSAndSaveToDB() throws OdpsException, IOException, TimeoutException;
