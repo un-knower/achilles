@@ -98,7 +98,6 @@ public class ODPSQueryService extends AbstractOdpsQuery {
             allComapre = "and h.company_id = a.company_id ";
         }
         String allSql = "INSERT OVERWRITE TABLE  %s  select h.company_id,h.company_name,h.city_id,h.city_name,h.hospital_id, h.hospital_name,h.address as hospital_address,h.lng as hospital_lng,h.lat as hospital_lat,h.settable as hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai, a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis, a.distance,a.is_within from  %s  on a.hospital_name =h.hospital_name and a.city_id =h.city_id %s %s";
-        String allFrom;
         String restaurantTable = "tmp_sync_restaurant_info";// 每日凌晨自动同步数据
         String hospitalTable = "tmp_sync_hospital_info";// 每日凌晨自动同步数据
         if (otype != null) {// 上传了数据
@@ -152,6 +151,9 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         Boolean update = update(sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle, comapre, sqlParam,
                                 distances, iswaimai);
         if (!StringUtils.isEmpty(allSql)) {
+            if (InnConstantODPSTables.TaskHospitalRestaurantDistance.HospitalRestaurant == type) {
+                sqlParam = "";
+            }
             update = update(allSql, InnConstantODPSTables.outHospitalRestaurantDistance, allTalle, allComapre,
                             sqlParam);
         }
