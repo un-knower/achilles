@@ -92,10 +92,12 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                                                       Boolean compareCompany, Double distances, Boolean isWaimaiOk,
                                                       String sqlParam) throws OdpsException, IOException {
         String comapre = "";
+        String allComapre = "";
         if (compareCompany != null && compareCompany) {
             comapre = "and h.company_id = r.company_id ";
+            allComapre = "and h.company_id = a.company_id ";
         }
-        String allSql = "INSERT OVERWRITE TABLE  %s  select h.company_id,h.company_name,h.city_id,h.city_name,h.hospital_id, h.hospital_name,h.address as hospital_address,h.lng as hospital_lng,h.lat as hospital_lat,h.settable as hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai, a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis, a.distance,a.is_within from  %s  on a.hospital_name =h.hospital_name and a.city_id =h.city_id %s";
+        String allSql = "INSERT OVERWRITE TABLE  %s  select h.company_id,h.company_name,h.city_id,h.city_name,h.hospital_id, h.hospital_name,h.address as hospital_address,h.lng as hospital_lng,h.lat as hospital_lat,h.settable as hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai, a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis, a.distance,a.is_within from  %s  on a.hospital_name =h.hospital_name and a.city_id =h.city_id %s %s";
         String allFrom;
         String restaurantTable = "tmp_sync_restaurant_info";// 每日凌晨自动同步数据
         String hospitalTable = "tmp_sync_hospital_info";// 每日凌晨自动同步数据
@@ -135,8 +137,11 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                      + " from %s " + "on h.city_id = r.city_id  %s  %s)  a where a.distance <= %s )  b %s ";
         if (InnConstantODPSTables.TaskHospitalRestaurantDistance.RestaurantHospital == type) {
             talle = " " + restaurantTable + " r  left OUTER join  " + hospitalTable + " h ";
-            allSql = "INSERT OVERWRITE TABLE  %s  select a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id, a.hospital_name,a.address as hospital_address,a.lng as hospital_lng,a.lat as hospital_lat,a.settable as hospital_settable,r.restaurant_id,r.restaurant_name,r.address as restaurant_address,r.lng as restaurant_lng,r.lat as restaurant_lat,r.settable as restaurant_settable,r.support_waimai, r.support_reserve,r.cook_style,r.consume,r.box_num,r.period,r.rate_settlement_type,r.manage_type,r.shipping_dis, a.distance,a.is_within from  %s  on r.restaurant_name =a.restaurant_name and a.city_id =r.city_id %s";
+            allSql = "INSERT OVERWRITE TABLE  %s  select a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id, a.hospital_name,a.address as hospital_address,a.lng as hospital_lng,a.lat as hospital_lat,a.settable as hospital_settable,r.restaurant_id,r.restaurant_name,r.address as restaurant_address,r.lng as restaurant_lng,r.lat as restaurant_lat,r.settable as restaurant_settable,r.support_waimai, r.support_reserve,r.cook_style,r.consume,r.box_num,r.period,r.rate_settlement_type,r.manage_type,r.shipping_dis, a.distance,a.is_within from  %s  on r.restaurant_name =a.restaurant_name and a.city_id =r.city_id %s  %s";
             allTalle = " " + restaurantTable + " r left outer  join out_hospital_restaurant_distance a  ";
+            if (compareCompany != null && compareCompany) {
+                allComapre = "and r.company_id = a.company_id ";
+            }
         }
 
         // if (StringUtils.isEmpty(sqlParam)) {
@@ -147,7 +152,8 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         Boolean update = update(sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle, comapre, sqlParam,
                                 distances, iswaimai);
         if (!StringUtils.isEmpty(allSql)) {
-            update = update(allSql, InnConstantODPSTables.outHospitalRestaurantDistance, allTalle, sqlParam);
+            update = update(allSql, InnConstantODPSTables.outHospitalRestaurantDistance, allTalle, allComapre,
+                            sqlParam);
         }
         return update;
     }
