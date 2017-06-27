@@ -95,23 +95,24 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         if (compareCompany != null && compareCompany) {
             comapre = "and h.company_id = r.company_id ";
         }
-        String all = "";
+        String allSql = "INSERT OVERWRITE TABLE  %s  select h.company_id,h.company_name,h.city_id,h.city_name,h.hospital_id, h.hospital_name,h.address as hospital_address,h.lng as hospital_lng,h.lat as hospital_lat,h.settable as hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai, a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis, a.distance,a.is_within from  %s  on a.hospital_name =h.hospital_name and a.city_id =h.city_id %s";
+        String allFrom;
         String restaurantTable = "tmp_sync_restaurant_info";// 每日凌晨自动同步数据
         String hospitalTable = "tmp_sync_hospital_info";// 每日凌晨自动同步数据
         if (otype != null) {// 上传了数据
             if (otype instanceof HospitalInfo) {// 上传了医院信息
                 hospitalTable = "tmp_hospital_info";
-                all = "INSERT OVERWRITE TABLE  %s  select h.company_id,h.company_name,h.city_id,h.city_name,h.hospital_id, h.hospital_name,h.address as hospital_address,h.lng as hospital_lng,h.lat ashospital_lat,h.settable as hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai, a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis, a.distance,a.is_within from tmp_hospital_info h left outer  join out_hospital_restaurant_distance a  on a.hospital_name =h.hospital_name and a.city_id =h.city_id ";
             } else if (otype instanceof RestaurantInfo) {// 上传了餐厅信息
                 restaurantTable = "tmp_restaurant_info";
-                all = "INSERT OVERWRITE TABLE  %s  select a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id,a.hospital_name,a.hospital_address,a.hospital_lng,a.hospital_lat,a.hospital_settable,h.restaurant_id,h.restaurant_name,h.address as restaurant_address,h.lng as restaurant_lng,h.lat as restaurant_lat,h.settable as restaurant_settable,h.support_waimai,h.support_reserve,h.cook_style,h.consume,h.box_num,h.period,h.rate_settlement_type,h.manage_type,h.shipping_dis,h.distance,a.is_within from tmp_restaurant_info h left outer  join out_hospital_restaurant_distance a on a.restaurant_name =h.restaurant_name and a.city_id =h.city_id ";
             }
         }
         String iswaimai = "";
         if (isWaimaiOk != null && isWaimaiOk) {
             iswaimai = " where  b.is_within=1 ";
         }
+
         String talle = " " + hospitalTable + " h left OUTER join " + restaurantTable + " r ";
+        String allTalle = " " + hospitalTable + " h left outer  join out_hospital_restaurant_distance a  ";
         String sql = "INSERT OVERWRITE TABLE %s "
                      + "select DISTINCT b.company_id,b.company_name,b.city_id,b.city_name,b.hospital_id,b.hospital_name,b.hospital_address,b.hospital_lng,b.hospital_lat,b.hospital_settable,b.restaurant_id,b.restaurant_name,b.restaurant_address,b.restaurant_lng,b.restaurant_lat,b.restaurant_settable,b.support_waimai,b.support_reserve,b.cook_style,b.consume,b.box_num,b.period,b.rate_settlement_type,b.manage_type,b.shipping_dis,b.distance"
                      + ",b.is_within from ("
@@ -134,7 +135,10 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                      + " from %s " + "on h.city_id = r.city_id  %s  %s)  a where a.distance <= %s )  b %s ";
         if (InnConstantODPSTables.TaskHospitalRestaurantDistance.RestaurantHospital == type) {
             talle = " " + restaurantTable + " r  left OUTER join  " + hospitalTable + " h ";
+            allSql = "INSERT OVERWRITE TABLE  %s  select a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id, a.hospital_name,a.address as hospital_address,a.lng as hospital_lng,a.lat as hospital_lat,a.settable as hospital_settable,r.restaurant_id,r.restaurant_name,r.address as restaurant_address,r.lng as restaurant_lng,r.lat as restaurant_lat,r.settable as restaurant_settable,r.support_waimai, r.support_reserve,r.cook_style,r.consume,r.box_num,r.period,r.rate_settlement_type,r.manage_type,r.shipping_dis, a.distance,a.is_within from  %s  on r.restaurant_name =a.restaurant_name and a.city_id =r.city_id %s";
+            allTalle = " " + restaurantTable + " r left outer  join out_hospital_restaurant_distance a  ";
         }
+
         // if (StringUtils.isEmpty(sqlParam)) {
         // sqlParam = "";
         // } else {
@@ -142,8 +146,8 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         // }
         Boolean update = update(sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle, comapre, sqlParam,
                                 distances, iswaimai);
-        if (!StringUtils.isEmpty(all)) {
-            update = update(all, InnConstantODPSTables.outHospitalRestaurantDistance);
+        if (!StringUtils.isEmpty(allSql)) {
+            update = update(allSql, InnConstantODPSTables.outHospitalRestaurantDistance, allTalle, sqlParam);
         }
         return update;
     }
