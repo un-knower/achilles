@@ -125,7 +125,7 @@ public class HostitalRestaurantController {
             EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, request.getRemoteUser(),
                                                distances, isWaimaiOk, waimai, reserve));
             // isUsed = !submit.get(30, TimeUnit.MINUTES);
-            response.sendRedirect("/ops/hospitalrestaurant/view");
+
         } catch (Exception e) {
             export.setStatus("-1");
             export.setMsg("error");
@@ -134,6 +134,11 @@ public class HostitalRestaurantController {
         }
         // setModelAndView(mv);
         // return mv.addObject("status", export);
+        try {
+            response.sendRedirect("/ops/hospitalrestaurant/view");
+        } catch (IOException e) {
+            logger.error("upload sendRedirect have a error {}", e);
+        }
     }
 
     class Handel implements Callable<Boolean> {

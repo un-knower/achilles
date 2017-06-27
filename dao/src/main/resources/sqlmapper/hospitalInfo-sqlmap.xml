@@ -34,7 +34,7 @@
 	 	, h.address
 		, h.lng
 		, h.lat
-		, case when h.lng is not null and h.lat is not null then 1
+		, case when h.lng is not null and h.lat is not null and h.lng !="" and h.lat !="" then 1
 		  else 0 end as settable
 	FROM quancheng_db.16860_client c
 	LEFT OUTER JOIN quancheng_db.16860_hospital_clients hc
