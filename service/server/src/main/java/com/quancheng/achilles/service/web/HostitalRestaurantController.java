@@ -125,7 +125,7 @@ public class HostitalRestaurantController {
             EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, request.getRemoteUser(),
                                                distances, isWaimaiOk, waimai, reserve));
             // isUsed = !submit.get(30, TimeUnit.MINUTES);
-            response.sendRedirect("/ops/hospitalrestaurant/view");
+
         } catch (Exception e) {
             export.setStatus("-1");
             export.setMsg("error");
@@ -134,6 +134,11 @@ public class HostitalRestaurantController {
         }
         // setModelAndView(mv);
         // return mv.addObject("status", export);
+        try {
+            response.sendRedirect("/ops/hospitalrestaurant/view");
+        } catch (IOException e) {
+            logger.error("upload sendRedirect have a error {}", e);
+        }
     }
 
     class Handel implements Callable<Boolean> {
@@ -176,11 +181,12 @@ public class HostitalRestaurantController {
                 } else {
                     taskTypeO = InnConstantODPSTables.TaskHospitalRestaurantDistance.HospitalRestaurant;
                 }
-                distanceService.invokeODPSTask(otype, taskTypeO, compareCompany,
-                                               getSqlParam("b.", distances, isWaimaiOk, waimai, reserve));
+                distanceService.invokeODPSTask(otype, taskTypeO, compareCompany, distances, isWaimaiOk,
+                                               getSqlParam("r.", waimai, reserve));
                 distanceService.queryFromODPSAndSaveToDB();
                 export(distances, isWaimaiOk, waimai, reserve, username);
             } catch (IOException | OdpsException | ParseException | TimeoutException | ExecutionException e) {
+                HostitalRestaurantController.isUsed = false;
                 logger.error("upload have a error {}", e);
             }
             return true;
@@ -188,15 +194,27 @@ public class HostitalRestaurantController {
 
     }
 
+    public String getSqlParam(String prefix, String waimai, String reserve) {
+        return getSqlParam(prefix, null, null, waimai, reserve);
+    }
+
+    public String getSqlParam(Boolean isWaimaiOk, String waimai, String reserve) {
+        return getSqlParam("", null, isWaimaiOk, waimai, reserve);
+    }
+
     public String getSqlParam(Double distances, Boolean isWaimaiOk, String waimai, String reserve) {
         return getSqlParam("", distances, isWaimaiOk, waimai, reserve);
     }
 
     public String getSqlParam(String prefix, Double distances, Boolean isWaimaiOk, String waimai, String reserve) {
-        String queryParam = prefix + "distance <= " + distances;
-        if (isWaimaiOk != null && isWaimaiOk) {
-            queryParam = queryParam + " and " + prefix + "is_within=1";
+        String queryParam = "";
+        if (distances != null) {
+            queryParam = prefix + "distance <= " + distances;
         }
+        if (isWaimaiOk != null && isWaimaiOk) {
+            queryParam = queryParam + prefix + "is_within=1 ";
+        }
+
         String re = "and";
         String bian = "";
         String bian1 = "";
