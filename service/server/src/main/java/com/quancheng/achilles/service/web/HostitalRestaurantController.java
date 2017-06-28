@@ -112,8 +112,13 @@ public class HostitalRestaurantController {
                     }
                 }
             }
+            String excelName = "医院餐厅距离计算详情";
             if (isUpload != null && isUpload) {
                 if (!file.isEmpty()) {
+                    String originalFilename = file.getOriginalFilename();
+                    if (!StringUtils.isEmpty(originalFilename)) {
+                        excelName = excelName + "(" + originalFilename.split("\\.")[0] + ")";
+                    }
                     saveExcelToDB = distanceService.saveExcelToDB(file, otype, excelCompanyId, !clearTable);
                     if (!saveExcelToDB) {
                         export.setMsg("上传失败，没保存到数据库");
@@ -123,7 +128,7 @@ public class HostitalRestaurantController {
                 }
             }
             EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, request.getRemoteUser(),
-                                               distances, isWaimaiOk, waimai, reserve));
+                                               excelName, distances, isWaimaiOk, waimai, reserve));
             // isUsed = !submit.get(30, TimeUnit.MINUTES);
 
         } catch (Exception e) {
@@ -152,9 +157,10 @@ public class HostitalRestaurantController {
         private Boolean isWaimaiOk;
         private String  waimai;
         private String  reserve;
+        private String  excelName;
 
         public Handel(String taskType, String excelType, Boolean compareCompany, Object otype, String username,
-                      Double distances, Boolean isWaimaiOk, String waimai, String reserve){
+                      String excelName, Double distances, Boolean isWaimaiOk, String waimai, String reserve){
             this.taskType = taskType;
             this.excelType = excelType;
             this.compareCompany = compareCompany;
@@ -164,6 +170,7 @@ public class HostitalRestaurantController {
             this.isWaimaiOk = isWaimaiOk;
             this.waimai = waimai;
             this.reserve = reserve;
+            this.excelName = excelName;
         }
 
         @Override
@@ -184,7 +191,8 @@ public class HostitalRestaurantController {
                 distanceService.invokeODPSTask(otype, taskTypeO, compareCompany, distances, isWaimaiOk,
                                                getSqlParam("r.", waimai, reserve));
                 distanceService.queryFromODPSAndSaveToDB();
-                export(distances, isWaimaiOk, waimai, reserve, username);
+
+                export(distances, isWaimaiOk, waimai, reserve, username, excelName);
             } catch (IOException | OdpsException | ParseException | TimeoutException | ExecutionException e) {
                 HostitalRestaurantController.isUsed = false;
                 logger.error("upload have a error {}", e);
@@ -243,17 +251,20 @@ public class HostitalRestaurantController {
         return queryParam;
     }
 
-    public BaseResponse export(Double distances, Boolean isWaimaiOk, String waimai, String reserve, String username) {
+    public BaseResponse export(Double distances, Boolean isWaimaiOk, String waimai, String reserve, String username,
+                               String excelName) {
         Map<String, Object> exportParam = new HashMap<>();
         exportParam.put("param", getSqlParam(distances, isWaimaiOk, waimai, reserve));
         class AsyncUploadToOSS implements Runnable {
 
             private String              username;
             private Map<String, Object> param;
+            private String              excelName;
 
-            public AsyncUploadToOSS(Map<String, Object> param, String username){
+            public AsyncUploadToOSS(Map<String, Object> param, String username, String excelName){
                 this.param = param;
                 this.username = username;
+                this.excelName = excelName;
             }
 
             @Override
@@ -272,11 +283,11 @@ public class HostitalRestaurantController {
                     }
                 }
                 String filePath = eb.saveOnServer();
-                ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath, "医院餐厅距离信息", username);
+                ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath, excelName, username);
                 HostitalRestaurantController.isUsed = false;
             }
         }
-        EXECUTOR_SERVICE.execute(new AsyncUploadToOSS(exportParam, username));
+        EXECUTOR_SERVICE.execute(new AsyncUploadToOSS(exportParam, username, excelName));
         return new BaseResponse();
     }
 
