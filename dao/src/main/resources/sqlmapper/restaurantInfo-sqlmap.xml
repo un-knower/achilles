@@ -45,7 +45,7 @@
 		, ali.address
 		, ali.lng
 		, ali.lat
-		, case when ali.lng is not null and ali.lat is not null and h.lng !="" and h.lat !="" then 1
+		, case when ali.lng is not null and ali.lat is not null and ali.lng !="" and ali.lat !="" then 1
 		  else 0 end as settable
 		, case when awrds.restaurant_id IS NULL THEN '0'
 			else '1' end as support_waimai
