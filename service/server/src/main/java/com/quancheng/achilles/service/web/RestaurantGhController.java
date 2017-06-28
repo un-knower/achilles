@@ -81,7 +81,7 @@ public class RestaurantGhController extends ControllerAbstract{
         Map<Object, Object> mapstate = InnConstantRestStateEnum.parseSources();
         Map<Object, Object> mapPriority = parsePriority();
         for (RestaurantGonghai restaurantGonghai : list) {
-            restaurantGonghai.setRestaurantState("0".equals(restaurantGonghai.getRestaurantState())?"是":"否");
+            restaurantGonghai.setRestaurantState("0".equals(restaurantGonghai.getRestaurantState())?"启用":"禁用");
             restaurantGonghai.setGonghaiStatus(mapstate.get(restaurantGonghai.getGonghaiStatus())==null?null:mapstate.get(restaurantGonghai.getGonghaiStatus()).toString());
             restaurantGonghai.setSupportReserve("0".equals(restaurantGonghai.getSupportReserve())?"是":"否");
             restaurantGonghai.setSupportTakeoutOfFood("0".equals(restaurantGonghai.getSupportTakeoutOfFood())?"是":"否");
