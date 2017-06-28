@@ -35,6 +35,7 @@ SELECT
   gh.id as ghid,
   ol.id as olid,
   ol.name AS store_name,
+  ol.invoice_title as rest_invoice_title,
   gh.city,
   restaurant_citys.`name` as city_display,
   gh.area,

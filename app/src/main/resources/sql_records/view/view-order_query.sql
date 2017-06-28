@@ -63,6 +63,7 @@ WHERE
         os_costcenter.structure_name as costcenter,
         CONVERT (`rants`.`name` USING utf8) AS `restaurantName`,
         `rants`.`id` AS `restaurantId`,
+        rants.invoice_title as rest_invoice_title,
         `mer`.`name` AS `merchantName`,
         `sal`.`sales_id` AS `salesId`,
         `reg`.`name` AS `cityName`,
@@ -104,7 +105,14 @@ WHERE
         convert(ali.address using utf8) AS restaurantAddress,
         `o`.is_hall AS isHall,
         `o`.message AS userComment,
-        opc.bank_card as cardNumber
+        opc.bank_card as cardNumber,
+        ali.id as rest_area_id,
+        reg_area.name as rest_area_name,
+        asset.bank_name as merchant_bank_name,
+        asset.bank_account as merchant_bank_account,
+        asset.account_type as merchant_account_type,
+        asset.bank_account as merchant_bank_account,
+        asset.bank_account as merchant_bank_account,
 FROM `16860_order` `o`
     LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
     LEFT JOIN v_inn_order_rate_money rate_money ON rate_money.order_num= o.order_num
@@ -127,12 +135,13 @@ FROM `16860_order` `o`
     LEFT JOIN `api_sales_rest` `sal` ON `sal`.`restaurant_id` = `rants`.`id`and sal.deleted_at is NULL
     LEFT JOIN `api_merchants` `mer` ON `rants`.`merchant_id` = `mer`.`id`
     LEFT JOIN `v_inn_order_restaurant_yuding` `restmin` ON `o`.`restaurant_id` = `restmin`.`resid`
-    left join `v_inn_order_rating` oraa on oraa.order_num = o.order_num
+    LEFT JOIN `v_inn_order_rating` oraa on oraa.order_num = o.order_num
     LEFT JOIN `16860_order_rating` `ora` ON oraa.id=ora.id
     LEFT JOIN `api_assets` `asset` ON `asset`.`id` = `rants`.`asset_id`
     LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`
+    LEFT JOIN `16860_region` `reg_area` ON `reg_area`.`id` =ali.area_id
     LEFT JOIN v_inn_order_pay_card opc ON   o.order_num = opc.order_num
-    left join v_inn_reversion_receive_time viwrt on  `o`.id=viwrt.record_id
+    LEFT JOIN v_inn_reversion_receive_time viwrt on  `o`.id=viwrt.record_id
     )
 UNION ALL
    (
@@ -151,6 +160,7 @@ UNION ALL
                 os_costcenter.structure_name as costcenter,
                 CONVERT (`rants`.`name` USING utf8) AS `restaurantName`,
                 `rants`.`id` AS `restaurantId`,
+                rants.invoice_title as rest_invoice_title,
                 `mer`.`name` AS `merchantName`,
                 `sal`.`sales_id` AS `salesId`,
                 `reg`.`name` AS `cityName`,
@@ -192,7 +202,11 @@ UNION ALL
                 convert(ali.address using utf8) AS restaurantAddress,
                 NULL AS isHall,
                 CONVERT (`o`.comment USING utf8) as userComment,
-                opc.bank_card as cardNumber
+                opc.bank_card as cardNumber,
+                ali.area_id as rest_area_id,
+                reg_area.name as rest_area_name,
+                asset.bank_name as merchant_bank_name,
+                asset.bank_account as merchant_bank_account
 FROM `api_orders` `o`
     LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
     LEFT JOIN v_inn_order_rate_money rate_money ON rate_money.order_num= o.order_num
@@ -220,6 +234,7 @@ FROM `api_orders` `o`
     LEFT JOIN `v_inn_order_rating` oraa on oraa.order_num = o.order_num
     LEFT JOIN `16860_order_rating` `ora` ON oraa.id=ora.id
     LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`
+    LEFT JOIN `16860_region` `reg_area` ON `reg_area`.`id` =ali.area_id
     LEFT JOIN v_inn_order_pay_card opc ON   o.order_num = opc.order_num
     LEFT JOIN v_inn_waimai_receive_time viwrt  on `o`.id=viwrt.record_id)
 UNION ALL
@@ -239,6 +254,7 @@ UNION ALL
             os_costcenter.structure_name as costcenter,
             `o`.`restaurant_name` AS `restaurantName`,
             NULL AS `restaurantId`,
+            NULL AS `rest_invoice_title`,
             NULL AS `merchantName`,
             NULL AS `salesId`,
             `reg`.`name` AS `cityName`,
@@ -280,7 +296,11 @@ UNION ALL
 			`o`.restaurant_address AS restaurantAddress,
 			NULL AS isHall,
 			NULL AS userComment,
-			NULL as  cardNumber
+			NULL as  cardNumber,
+			o.area_id as rest_area_id,
+			o.area as rest_area_name,
+			NULL as merchant_bank_name,
+            NULL as merchant_bank_account
    FROM
         `16860_offstaff_order` `o`
         LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
