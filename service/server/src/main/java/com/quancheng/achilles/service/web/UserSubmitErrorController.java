@@ -93,7 +93,7 @@ public class UserSubmitErrorController extends ControllerAbstract {
                 Pageable pageables = null;
                 while (page.hasNext()) {
                     pageables = page.nextPageable();
-                    mv = appReportErrors(submitUserName, submitPhone, restaurantName, cityIds, timeType, begin, end, applyCompanys, pageSize, pageNum, false, templateId, mv);
+                    mv = appReportErrors(submitUserName, submitPhone, restaurantName, cityIds, timeType, begin, end, applyCompanys, pageSize,pageables.getPageNumber(), false, templateId, mv);
                     page = (Page<AppRestaurantReportedWrong>) mv.getModel().get("page");
                     eb.append(page.getContent());
                     mv.clear();
