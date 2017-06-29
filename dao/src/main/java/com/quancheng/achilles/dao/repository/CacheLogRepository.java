@@ -1,12 +1,7 @@
 package com.quancheng.achilles.dao.repository;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.ibatis.session.SqlSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -17,7 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CacheLogRepository {
 
-	private Logger logger = LoggerFactory.getLogger(CacheLogRepository.class);
     @Qualifier("writeSqlSession")
     @Autowired
     private SqlSession           sqlSession;
@@ -64,27 +58,10 @@ public class CacheLogRepository {
         
         if (id == 8) {
             sqlSession.update("dropVisitLogTemptable");
-//            sqlSession.update("insertVisitLogTemptable");
-            doinsert("insertVisitLogTemptable");
+            sqlSession.update("insertVisitLogTemptable");
+//            doinsert("insertVisitLogTemptable");
         }
         sqlSession.update("updateInnCacheLog", id);
         return getRefreshTimeById(id);
-    }
-    
-    private void doinsert(String table){
-    		Map<String,Integer> paramaters = new HashMap<>();
-    		int pageSize=5000;
-    		int count = sqlSession.selectOne("getVisitLogViewCount");
-    		paramaters.put("pagesize", pageSize);
-    		int pageCount = count%pageSize==0?count/pageSize:count/pageSize+1;
-    		for(int page=0;page<pageCount;page++){
-    			paramaters.put("page", page);
-    			try {
-					sqlSession.update(table,paramaters);
-				} catch (Exception e) {
-					logger.error("update data {}, at page  {} error!",table,page);
-					logger.error(" {} ",e);
-				}
-    		}
     }
 }

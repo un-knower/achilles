@@ -154,7 +154,9 @@
                             </thead>
                            <tbody>
                               <tr th:each="item : ${page.content}">
-                                <td th:each="col : ${templateColumnKeys}" th:text="*{item[col]}"></td>
+                                <td  th:each="col : ${templateColumnKeys}">
+                                    <div style="width: 150px;" th:text="*{item[col]}"></div>
+                                </td>
                                 <td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
                               </tr>
                             </tbody>

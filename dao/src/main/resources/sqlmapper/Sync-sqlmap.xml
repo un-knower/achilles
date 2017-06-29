@@ -91,7 +91,7 @@
 		truncate table tmp_inn_visit_log 
 	</update>
 	<update id="insertVisitLogTemptable" >
-		INSERT INTO tmp_inn_visit_log SELECT * FROM quancheng_db.v_inn_visit_log t order by t.restaurant_id  limit #{page},#{pagesize}
+		INSERT INTO tmp_inn_visit_log SELECT * FROM quancheng_db.v_inn_visit_log    
 	</update>
 	
 	<select id="getVisitLogViewCount" parameterType="map" resultType="int">

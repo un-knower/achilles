@@ -25,7 +25,7 @@
 				<div class="row bg-title">
 					<!-- .page title -->
 					<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-						<h4 class="page-title">医院餐厅距离信息导出</h4>
+						<h4 class="page-title">医院餐厅距离计算</h4>
 					</div>
 					<!-- /.page title -->
 					<!-- .breadcrumb -->
@@ -33,59 +33,122 @@
 						<ol class="breadcrumb">
 							<li><a th:href="@{/}">首页</a></li>
 							<li><a th:href="@{/ops}">运营数据</a></li>
-							<li class="active"><a th:href="@{#}">医院餐厅距离信息导出</a></li>
+							<li class="active"><a th:href="@{#}">医院餐厅距离计算</a></li>
 						</ol>
 					</div>
 					<!-- /.breadcrumb -->
 				</div>
 				<!-- .row -->
 				<div class="row">
-					<form id="query-form" th:action="@{/ops/hospitalrestaurant/upload}"
-						enctype="multipart/form-data" method="post">
+					<form id="query-form" th:action="@{/ops/hospitalrestaurant/upload}" enctype="multipart/form-data" method="post">
 						<div class="col-md-12">
-							<div class="white-box">
-								<div class="row">Excel表头字段对照信息：</div>
-								<div class="row">
-									医院/餐厅ID:hospitalId/restaurantId,医院/餐厅名称:hospitalName/restaurantName(必有),城市名称:cityName(必有),地址:address(必有),公司ID:companyId,公司名称:companyName
-								</div>
+							<div class="panel panel-info">
+								<div class="panel-heading">导入Excel表头模版-必看</div>
+								<div class="panel-wrapper collapse in">
+						          <ul class="nav customtab nav-tabs" role="tablist">
+                                    <li role="presentation" class="nav-item active" aria-expanded="false">
+                                        <a href="#home1" class="nav-link" aria-controls="home" role="tab" data-toggle="tab" aria-expanded="true">
+                                            <span class="visible-xs"><i class="ti-home"></i></span>
+                                            <span class="hidden-xs">医院</span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="nav-item">
+                                        <a href="#profile1" class="nav-link" aria-controls="messages" role="tab" data-toggle="tab">
+                                            <span class="visible-xs"><i class="ti-email"></i></span> 
+                                            <span class="hidden-xs">餐厅</span>
+                                        </a>
+                                    </li>
+                                  </ul>
+								  <div class="panel-body">
+								    <div class="tab-content m-t-0" >
+								        <div id="home1" class="tab-pane fade active in" role="tabpanel">
+								            <div style="font-size: 10px;">
+								            医院Id:hospitalId 医院名称:hospitalName(必填),城市名称:cityName(必填),地址:address(提高坐标计算精度),企业ID:companyId,企业名称:companyName
+										    </div>
+										    <table class="table table-bordered table-hover">
+			                                    <thead>
+			                                      <tr>
+			                                        <th>hospitalId</th>
+			                                        <th>hospitalName</th>
+			                                        <th>cityName</th>
+			                                        <th>address</th>
+			                                        <th>companyId</th>
+			                                        <th>companyName</th>
+			                                      </tr>
+			                                    </thead>
+			                                    <tbody>
+			                                     <tr>
+			                                        <td></td>
+			                                        <td>华中科技大学同济医学院附属协和医院西区</td>
+			                                        <td>武汉</td>
+			                                        <td>湖北省武汉市蔡甸区经济技术开发区神龙大道58号</td>
+			                                        <td></td>
+			                                        <td></td>
+			                                      </tr>
+			                                    </tbody>
+			                                  </table>
+		                                  </div>
+		                                  <div id="profile1" class="tab-pane fade" role="tabpanel">
+		                                      <div style="font-size: 10px;">餐厅ID:restaurantId,餐厅名称:restaurantName(必填),城市名称:cityName(必填),地址:address(提高坐标计算精度),企业ID:companyId,企业名称:companyName
+		                                     </div> <table class="table table-bordered table-hover">
+			                                    <thead>
+			                                      <tr>
+			                                        <th>restaurantId</th>
+			                                        <th>restaurantName</th>
+			                                        <th>cityName</th>
+			                                        <th>address</th>
+			                                        <th>companyId</th>
+			                                        <th>companyName</th>
+			                                      </tr>
+			                                    </thead>
+			                                    <tbody>
+			                                     <tr>
+			                                        <td></td>
+			                                        <td>七可苗家酸菜鸡(经开店)</td>
+			                                        <td>武汉</td>
+			                                        <td>万达广场A区S3栋1-2层F16号</td>
+			                                        <td></td>
+			                                        <td></td>
+			                                      </tr>
+			                                    </tbody>
+			                                  </table>
+		                                  </div>
+	                                  </div>
+								  </div>  
+		                        </div>
 							</div>
 						</div>
 						<div class="col-md-12">
 							<div class="white-box">
 								<div class="row">
-									<div class="col-md-2">
-										<input name="isUpload" type="checkbox" checked="checked"
-											value="true" />上传Excel
-									</div>
 									<div class="col-md-3">
 										<select class="selectpicker" data-style="form-control"
-											name="excelCompanyId" title="选择上传Excel所属企业"
+											name="excelCompanyId" title="导入excel数据所属企业"
 											data-live-search="true">
 											<option th:each="x : ${companyList}"
 												th:value="${x.companyId}" th:text="${x.companyName}"
 												th:selected="${companyList!=null and #arrays.contains(companyList,x.companyId)}"></option>
 										</select>
 									</div>
-									<!-- 	<div class="col-md-2">
-										<select class="selectpicker" data-style="form-control"
-											onchange="setExcelTypeName(this)" name="excelType"
-											title="选择数据类型" data-live-search="false"
-											th:selected="${excelType!=null}">
-											<option value="hospital">医院</option>
-											<option value="restaurant">餐厅</option>
-										</select>
-									</div> -->
-									<div class="col-md-1">
-										<input type="checkbox" name="excelType" class="chexcelType"
-											checked="checked" onchange="setExcelTypeName(this)"
-											value="hospital" onclick="checkboxclick(this)" /> 医院
+									<div class="col-md-2">
+									   <div>
+									   <input type="radio" name="excelType" class="chexcelType"
+                                            checked="checked" onchange="setExcelTypeName(this)"
+                                            value="hospital" onclick="checkboxclick(this)" /> 医院
+									   </div>
+										<div>
+										  <input type="radio" name="excelType" class="chexcelType"
+                                            onchange="setExcelTypeName(this)" value="restaurant"
+                                            onclick="checkboxclick(this)" /> 餐厅
+										</div>
 									</div>
-									<div class="col-md-1">
-										<input type="checkbox" name="excelType" class="chexcelType"
-											onchange="setExcelTypeName(this)" value="restaurant"
-											onclick="checkboxclick(this)" /> 餐厅
-									</div>
-
+									<div class="col-md-2">
+                                        <input name="isUpload" type="checkbox" checked="checked" id="input_excel_data_for_cal" value="true" />
+                                        <span id="importexcel_flag">导入excel数据计算</span>
+                                    </div>
+									<div class="col-md-2">
+                                        <span id="showName"></span>
+                                    </div>
 									<div class="col-md-2">
 										<button type="button" id="excelfileinput"
 											class="btn btn-block btn-primary waves-effect waves-light"
@@ -93,9 +156,6 @@
 										<input type="file" name="file" id="excelfile"
 											style="display: none;" />
 									</div>
-									<div class="col-md-3">
-										<span id="showName"></span>
-									</div>
 								</div>
 							</div>
 						</div>
@@ -103,31 +163,41 @@
 							<div class="white-box">
 								<div class="row">
 									<div class="col-md-3">
-										<input name="compareCompany" type="checkbox" checked="checked"
-											value="true" />使用公司关联计算
+										<input name="compareCompany" type="checkbox" checked="checked" value="true" />是否使用所属企业数据计算
 									</div>
 									<div class="col-md-2">
-										<input name="isInsertDatas" type="checkbox" value="true" />
-										插入新<span id="excelTypeName">数据</span>
+										<input name="isInsertDatas" type="checkbox" value="true" id="isInsertDatas"/>
+										使用线上<span id="excelTypeName">医院数据</span>
 									</div>
-									<div class="col-md-3">
-										<select class="selectpicker" data-style="form-control"
-											multiple="multiple" name="companyIds" title="选择数据所属企业"
+									<div class="col-md-3" style="display: none;">
+										<select class="selectpicker" data-style="form-control" id="companyIds" 
+											multiple="multiple" name="companyIds" title="数据所属企业"
 											data-live-search="true">
 											<option th:each="x : ${companyList}"
 												th:value="${x.companyId}" th:text="${x.companyName}"
 												th:selected="${companyIds!=null and #arrays.contains(companyIds,x.companyId)}"></option>
 										</select>
 									</div>
-									<div class="col-md-3">
+									<div class="col-md-3" style="display: none;">
 										<select class="selectpicker" data-style="form-control"
-											multiple="multiple" name="cityIds" title="选择数据所属城市"
+											multiple="multiple" name="cityIds" title="选择数据所属城市" id="cityIds" 
 											data-live-search="true">
 											<option th:each="x : ${cityList}" th:value="${x.id}"
 												th:text="${x.name}"
 												th:selected="${cityIds!=null and #arrays.contains(cityIds,x.id)}"></option>
 										</select>
 									</div>
+								</div>
+								<div class="row" style="border-top: 1px solid #cccccc;margin-top: 2px;font-size: 10px;">
+									   <div class="col-md-3">
+									       决定参与计算的餐厅或医院属于什么企业
+	                                    </div>
+	                                    <div class="col-md-2">
+	                                           额外从线上库拉取医院/餐厅数据+导入excel的医院/餐厅数据进行计算
+	                                    </div>
+	                                    <div class="col-md-6" id="tip_isInsertDatas" style="display: none;">
+	                                       过滤参与计算的线上数据所属企业和城市，如果不筛选就是所有企业和城市的数据参与计算
+	                                    </div>
 								</div>
 							</div>
 						</div>
@@ -146,7 +216,7 @@
 									</div>
 									<div class="col-md-1">
 										<input type="checkbox" name="waimai" class="chkwaimai"
-											value="waimai" onclick="checkboxclick(this)" /> 外卖
+											value="waimai" onclick="checkboxclick(this)" /> 可外卖
 									</div>
 									<div class="col-md-1">
 										<input type="checkbox" name="waimai" class="chkwaimai"
@@ -154,11 +224,11 @@
 									</div>
 									<div class="col-md-2">
 										<input type="checkbox" name="isWaimaiOk" value="true"
-											onclick="checkboxclick()" /> 外卖在配送范围
+											onclick="checkboxclick()" /> 外卖可送范围内
 									</div>
 									<div class="col-md-1">
 										<input type="checkbox" name="reserve" class="chkreserve"
-											value="reserve" onclick="checkboxclick(this)" /> 预定
+											value="reserve" onclick="checkboxclick(this)" /> 可预定
 									</div>
 									<div class="col-md-1">
 										<input type="checkbox" name="reserve" class="chkreserve"
@@ -172,11 +242,10 @@
 							<div class="white-box">
 								<div class="row">
 									<div class="col-md-2">
-										<input name="distances" class="form-control search"
-											th:value="3000" placeholder="距离范围（米）" />
+										<input name="distances" class="form-control search"  value="3000" placeholder="距离范围（米）" />
 									</div>
 									<div class="col-md-3">
-										<button type="submit" id="bnt_submit"
+										<button  id="bnt_submit" type="button"
 											class="btn btn-block btn-primary waves-effect waves-light"
 											style="height: 38px">提交计算并下载</button>
 									</div>
@@ -202,20 +271,57 @@
 	<div class="foot_scripts" id="foot_scripts"
 		th:replace="fragments/foot_scripts :: foot_scripts"></div>
 	<script type="text/javascript">
+	/*<![CDATA[*/
 		$(document).ready(function() {
 			setInterval("startRequest()", 1000);
+			$("#input_excel_data_for_cal").on(
+					"click",
+					function(obj){
+		                if($("#input_excel_data_for_cal").is(":checked")){
+		                    $("#excelfileinput").show();
+		                    $("#showName").show();
+		                }else{
+		                    $("#excelfileinput").hide();
+		                    $("#showName").hide();
+		                }
+		            }		
+			);
+			$("#isInsertDatas").on(
+                    "click",
+                    function(obj){
+                        if($("#isInsertDatas").is(":checked")){
+                            $("#companyIds").parent().show();
+                            $("#cityIds").parent().show();
+                            $("#tip_isInsertDatas"). show();
+                        }else{
+                            $("#companyIds").parent().hide();
+                            $("#cityIds").parent().hide();
+                            $("#tip_isInsertDatas"). hide();
+                        }
+                    }       
+            );
+			$("#bnt_submit").on("click",function(event){
+				var filepath = $("#excelfile").val();
+				var isInsertDatas = $("#isInsertDatas").is(":checked");
+				var input_excel_data_for_cal = $("#input_excel_data_for_cal").is(":checked");
+				if(!isInsertDatas && !input_excel_data_for_cal){
+					event.preventDefault();
+					sweetAlert("异常", "没有可计算数据", "error");
+				}else if(input_excel_data_for_cal && filepath ==""){
+					event.preventDefault();
+					sweetAlert("异常", "请选择文件", "error");
+				}else{
+					$('#query-form').submit();
+				}
+			});
 		});
 		function startRequest() {
-			$
-					.post(
-							"/api/ops/hospitalrestaurant/getStatus",
+			$.post( "/api/ops/hospitalrestaurant/getStatus",
 							{},
 							function(result) {
 								if (result) {
 									$('#bnt_submit').attr("disabled", true);
-									$('#bnt_submit')
-											.html(
-													'任务执行中,稍后再试<i class="fa fa-spin fa-spinner"></i> ');
+									$('#bnt_submit') .html( '任务执行中,稍后稍等<i class="fa fa-spin fa-spinner"></i> ');
 								} else {
 									$('#bnt_submit').attr("disabled", false);
 									$('#bnt_submit').html("提交计算并下载");
@@ -248,6 +354,7 @@
 					});
 			/*  alert(result.join(",")); */
 		}
+		 /*]]>*/
 	</script>
 </body>
 </html>

@@ -1,15 +1,12 @@
 package com.quancheng.achilles.dao.modelwrite;
 
-import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -19,9 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @Entity
 @Table(name = "tmp_restaurant_query")
-public class RestaurantGonghai implements Serializable {
-
-    private static final long serialVersionUID = -3801799321665711586L;
+public class RestaurantGonghai  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,14 +26,6 @@ public class RestaurantGonghai implements Serializable {
     @ApiModelProperty(value = "公海任务ID")
     private Long              ghRestaurantId;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     @Column(name = "olid")
     @ApiModelProperty(value = "餐厅ID")
     private Long    olRestaurantId;
@@ -47,6 +34,10 @@ public class RestaurantGonghai implements Serializable {
     @ApiModelProperty(value = "餐厅名称")
     private String  storeName;
 
+//    @Column(name = "rest_invoice_title")
+//    @ApiModelProperty(value = "餐厅发票抬头")
+//    private String  restInvoiceTitle;
+    
     @Column(name = "city")
     @ApiModelProperty(value = "城市Id")
     private String  city;
@@ -531,4 +522,18 @@ public class RestaurantGonghai implements Serializable {
 	public void setBoxNum(Integer boxNum) {
 		this.boxNum = boxNum;
 	}
+
+//    public String getRestInvoiceTitle() {
+//        return restInvoiceTitle;
+//    }
+//
+//    public void setRestInvoiceTitle(String restInvoiceTitle) {
+//        this.restInvoiceTitle = restInvoiceTitle;
+//    }
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
 }

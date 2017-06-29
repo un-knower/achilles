@@ -34,7 +34,7 @@ from api_feijian_case fe LEFT JOIN api_feijian_rule rule on rule.id=fe.rule_id
                          left join `16860_organizational_structure` `os_costcenter` on(((`member`.`cost_center_id` = `os_costcenter`.`id`) and (`os_costcenter`.`structure_type` = 'costcenter')))
                          left join `16860_organizational_structure` `os_region` on(((`os_region`.`id` = `member`.`region_id`) and (`os_region`.`structure_type` = 'region')))
                          LEFT JOIN 16860_order o on o.user_id= u.id
-                         LEFT JOIN 16860_quality_check ch on  ch.order_id=o.id
+                         LEFT JOIN 16860_quality_check ch on  ch.order_num=o.order_num
                          LEFT JOIN 16860_quality_check_result  r on  r.quality_check_id=ch.id
                          LEFT JOIN 16860_region region on  region.id=o.city_id
                          where  rule.check_field_id='uid' ;
@@ -74,7 +74,7 @@ from api_feijian_case fe  INNER JOIN  api_feijian_rule rule on rule.id=fe.rule_i
                           LEFT JOIN api_restaurants reta on reta.id= fe.target_id
                           LEFT JOIN api_restaurants_master api_rest_master ON api_rest_master.id = reta.gonghai_id
                           LEFT JOIN 16860_order o on o.order_num=  CONVERT (fe.`case` USING utf8)                
-                          LEFT JOIN 16860_quality_check ch on  ch.order_id=o.id
+                          LEFT JOIN 16860_quality_check ch on  ch.order_num=o.order_num
                           LEFT JOIN 16860_quality_check_result  r on  r.quality_check_id=ch.id
                           LEFT JOIN api_lbs_infos infos on infos.id=reta.lbs_id
                           LEFT JOIN 16860_region region on  region.id=infos.city_id
