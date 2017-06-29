@@ -192,7 +192,7 @@ public class HostitalRestaurantController {
                                                getSqlParam("r.", waimai, reserve));
                 distanceService.queryFromODPSAndSaveToDB();
 
-                export(distances, isWaimaiOk, waimai, reserve, username, excelName);
+                export(1, distances, isWaimaiOk, waimai, reserve, username, excelName);
             } catch (IOException | OdpsException | ParseException | TimeoutException | ExecutionException e) {
                 HostitalRestaurantController.isUsed = false;
                 logger.error("upload have a error {}", e);
@@ -251,8 +251,8 @@ public class HostitalRestaurantController {
         return queryParam;
     }
 
-    public BaseResponse export(Double distances, Boolean isWaimaiOk, String waimai, String reserve, String username,
-                               String excelName) {
+    public BaseResponse export(int index, Double distances, Boolean isWaimaiOk, String waimai, String reserve,
+                               String username, String excelName) {
         Map<String, Object> exportParam = new HashMap<>();
         exportParam.put("param", getSqlParam(distances, isWaimaiOk, waimai, reserve));
         class AsyncUploadToOSS implements Runnable {
@@ -269,15 +269,26 @@ public class HostitalRestaurantController {
 
             @Override
             public void run() {
+                int maxSize = 900000;
+                Integer pageSize = 8000;
+                double pageNum = Math.ceil((double) maxSize / pageSize);
+                int indexSize = (int) ((index - 1) * pageNum);
 
                 DownloadBuilder<OutHospitalRestaurantDistance> eb = new DownloadBuilder<>(OutHospitalRestaurantDistance.class);
-                Integer pageSize = 10000;
+
                 PageInfo<OutHospitalRestaurantDistance> outInfo = distanceService.queryOutHospitalRestaurantDistanceFromDB(param,
-                                                                                                                           1,
+                                                                                                                           indexSize
+                                                                                                                                  + 1,
                                                                                                                            pageSize);
+                double page = Math.ceil((double) (outInfo.getTotal() - (index - 1) * maxSize) / maxSize);
+                int size = outInfo.getPages();
+                if (page > 1) {
+                    export(index + 1, distances, isWaimaiOk, waimai, reserve, username, excelName + "-" + index);
+                    size = (int) (index * pageNum);
+                }
                 eb.append(outInfo.getList());
-                if (outInfo.getPages() > 1) {
-                    for (int i = 2; i <= outInfo.getPages(); i++) {
+                if ((outInfo.getPages() - indexSize) > 1) {
+                    for (int i = (indexSize + 2); i <= size; i++) {
                         outInfo = distanceService.queryOutHospitalRestaurantDistanceFromDB(param, i, pageSize);
                         eb.append(outInfo.getList());
                     }
