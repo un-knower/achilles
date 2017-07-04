@@ -2,7 +2,6 @@ package com.quancheng.achilles.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.quancheng.achilles.dao.modelwrite.QuanlityCheckRecord;
 import com.quancheng.achilles.service.constants.ErrorKeys;
 import com.quancheng.achilles.service.constants.FlyCheckErrorReason;
 

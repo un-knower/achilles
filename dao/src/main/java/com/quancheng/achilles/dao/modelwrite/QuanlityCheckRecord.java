@@ -1,8 +1,6 @@
 package com.quancheng.achilles.dao.modelwrite;
 
-import java.io.Serializable;
 import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,10 +18,9 @@ import io.swagger.annotations.ApiModelProperty;
  * @version 创建时间：2016年9月8日上午10:05:30
  */
 @Entity
-@Table(name = "tmp_flecheck_record")
-public class QuanlityCheckRecord implements Serializable {
+@Table(name = "tmp_flycheck_record")
+public class QuanlityCheckRecord  {
 
-    private static final long serialVersionUID = -1719191623630472940L;
     /**
      * 只读，不需要生成Id
      */
@@ -60,10 +56,17 @@ public class QuanlityCheckRecord implements Serializable {
     @Column(name = "job_num")
     @ApiModelProperty(value = "订单人工号")
     private String            jobNum;
+    
     /** 订单人工号 */
     @Column(name = "order_money")
     @ApiModelProperty(value = "订单金额")
     private String orderMoney;
+    
+    @Column(name = "order_predict_cost")
+    @ApiModelProperty(value = "预计消费金额")
+    private String orderPredictCost;
+    
+    
     /** 检查方式 */
     @Column(name = "check_mode")
     @ApiModelProperty(value = "检查方式")
@@ -237,6 +240,14 @@ public class QuanlityCheckRecord implements Serializable {
 
     public void setOrderMoney(String orderMoney) {
         this.orderMoney = orderMoney;
+    }
+
+    public String getOrderPredictCost() {
+        return orderPredictCost;
+    }
+
+    public void setOrderPredictCost(String orderPredictCost) {
+        this.orderPredictCost = orderPredictCost;
     }
 
     /** 异常原因子啊异常内容里面:abnormal_type */

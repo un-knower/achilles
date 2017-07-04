@@ -34,9 +34,9 @@ public class RestaurantGonghai  {
     @ApiModelProperty(value = "餐厅名称")
     private String  storeName;
 
-//    @Column(name = "rest_invoice_title")
-//    @ApiModelProperty(value = "餐厅发票抬头")
-//    private String  restInvoiceTitle;
+    @Column(name = "rest_invoice_title")
+    @ApiModelProperty(value = "餐厅发票抬头")
+    private String  restInvoiceTitle;
     
     @Column(name = "city")
     @ApiModelProperty(value = "城市Id")
@@ -523,13 +523,13 @@ public class RestaurantGonghai  {
 		this.boxNum = boxNum;
 	}
 
-//    public String getRestInvoiceTitle() {
-//        return restInvoiceTitle;
-//    }
-//
-//    public void setRestInvoiceTitle(String restInvoiceTitle) {
-//        this.restInvoiceTitle = restInvoiceTitle;
-//    }
+    public String getRestInvoiceTitle() {
+        return restInvoiceTitle;
+    }
+
+    public void setRestInvoiceTitle(String restInvoiceTitle) {
+        this.restInvoiceTitle = restInvoiceTitle;
+    }
     public String getId() {
         return id;
     }
