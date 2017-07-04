@@ -8,7 +8,7 @@ SELECT
     visit_log.address,
     visit_log.visit_person,
     visit_log.visit_person_phone,
-    api_rest.`status`,
+    visit_log.`rest_status`,
     visit_log.visit_content,
     api_proj.prj_names,
     sales.`name` as sale_name,

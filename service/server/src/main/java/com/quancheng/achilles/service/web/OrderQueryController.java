@@ -262,13 +262,7 @@ public class OrderQueryController extends ControllerAbstract{
             return null;
         }
         List<String> list = new ArrayList<>();
-        if ("35".equals(payType)) {
-            list.add("35");
-            list.add("线上");
-        } else if ("36".equals(payType)) {
-            list.add("36");
-            list.add("线下");
-        }
+        list.add(payType);
         return list;
     }
 
