@@ -78,6 +78,21 @@ public class HostitalRestaurantController {
                                   @ApiParam(value = "选择插入公司列表") @RequestParam(value = "companyIds", required = false) String[] companyIds,
                                   @ApiParam(value = "选择插入城市列表") @RequestParam(value = "cityIds", required = false) String[] cityIds,
                                   HttpServletRequest request, HttpServletResponse response, ModelAndView mv) {
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                upload(file, isUpload, excelType, excelCompanyId, distances, isInsertDatas, taskType, waimai,
+                       isWaimaiOk, reserve, compareCompany, companyIds, cityIds, request, response, mv);
+            }
+        }).start();
+
+    }
+
+    public void upload(MultipartFile file, Boolean isUpload, String excelType, String excelCompanyId, Double distances,
+                       Boolean isInsertDatas, String taskType, String waimai, Boolean isWaimaiOk, String reserve,
+                       Boolean compareCompany, String[] companyIds, String[] cityIds, HttpServletRequest request,
+                       HttpServletResponse response, ModelAndView mv) {
         isUsed = true;
         mv.setViewName("hospital_restaurant/hospitalrestaurant_view");
         BaseResponse export = new BaseResponse("-1", "fail");
