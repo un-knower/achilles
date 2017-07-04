@@ -86,7 +86,11 @@ public class HostitalRestaurantController {
                        isWaimaiOk, reserve, compareCompany, companyIds, cityIds, request, response, mv);
             }
         }).start();
-
+        try {
+            response.sendRedirect("/ops/hospitalrestaurant/view");
+        } catch (IOException e) {
+            logger.error("upload sendRedirect have a error {}", e);
+        }
     }
 
     public void upload(MultipartFile file, Boolean isUpload, String excelType, String excelCompanyId, Double distances,
@@ -154,11 +158,7 @@ public class HostitalRestaurantController {
         }
         // setModelAndView(mv);
         // return mv.addObject("status", export);
-        try {
-            response.sendRedirect("/ops/hospitalrestaurant/view");
-        } catch (IOException e) {
-            logger.error("upload sendRedirect have a error {}", e);
-        }
+
     }
 
     class Handel implements Callable<Boolean> {
