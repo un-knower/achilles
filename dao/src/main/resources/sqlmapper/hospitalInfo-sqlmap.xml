@@ -41,7 +41,7 @@
 	ON c.id = hc.client_id and hc.deleted_at is null
 	LEFT OUTER JOIN quancheng_db.16860_hospitals h
 	ON h.id = hc.hospital_id and h.deleted_at is null
-	INNER JOIN quancheng_db.16860_region r ON r.id = h.city  and r.deleted_at is null
+	LEFT OUTER JOIN quancheng_db.16860_region r ON r.id = h.city  and r.deleted_at is null
 	where h.status = '1'  and c.deleted_at is null
 	<if test="companyIdList != null" >
      and  c.id in (${companyIdList }) 

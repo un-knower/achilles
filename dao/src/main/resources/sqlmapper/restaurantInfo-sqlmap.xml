@@ -84,7 +84,7 @@
 	ON awrds.restaurant_id = ar.id
 	LEFT OUTER JOIN quancheng_db.api_lbs_infos ali
 	ON ar.lbs_id = ali.id and ali.deleted_at is null
-	INNER JOIN quancheng_db.16860_region r
+	LEFT OUTER JOIN quancheng_db.16860_region r
 	ON r.id = ali.city_id and r.deleted_at is null
 	WHERE c.deleted_at IS NULL
 	AND ar.status = 0

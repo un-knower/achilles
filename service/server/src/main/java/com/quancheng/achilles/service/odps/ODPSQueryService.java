@@ -133,7 +133,7 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                      + " when r.manage_type = 3 then '账期月结'  when r.manage_type = 4 then '循环预付'"
                      + " when r.manage_type = 0 then 'T+n账期'  end AS manage_type , r.shipping_dis"
                      + ",round(6378.137*1000.0*2.0*asin(sqrt(abs(pow(sin((r.lat-h.lat)*(3.1415926/ 180.0)*0.5),2) + cos((3.1415926/ 180.0)*r.lat) * cos((3.1415926/ 180.0)*h.lat) * pow(sin((r.lng-h.lng)*(3.1415926/ 180.0)*0.5),2))))) AS distance"
-                     + " from %s " + "on h.city_id = r.city_id  %s  %s)  a where a.distance <= %s )  b %s ";
+                     + " from %s " + "on h.city_id = r.city_id  %s  %s)  a where a.distance <= %s %s)  b %s ";
         if (InnConstantODPSTables.TaskHospitalRestaurantDistance.RestaurantHospital == type) {
             talle = " " + restaurantTable + " r  left OUTER join  " + hospitalTable + " h ";
             allSql = "INSERT OVERWRITE TABLE  %s  select a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id, a.hospital_name,a.hospital_address,a.hospital_lng,a.hospital_lat,a.hospital_settable,r.restaurant_id,r.restaurant_name,r.address as restaurant_address,r.lng as restaurant_lng,r.lat as restaurant_lat,r.settable as restaurant_settable,r.support_waimai, r.support_reserve,r.cook_style,r.consume,r.box_num,r.period,r.rate_settlement_type,r.manage_type,r.shipping_dis, a.distance,a.is_within from  %s  on r.restaurant_name =a.restaurant_name and a.city_id =r.city_id %s  %s";
@@ -146,13 +146,23 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         // if (StringUtils.isEmpty(sqlParam)) {
         // sqlParam = "";
         // } else {
+        String sqlParam1 = sqlParam;
+        String sqlParam2 = "";
+        if (sqlParam.contains("or")) {
+            sqlParam2 = sqlParam.replaceAll("r\\.", "a.");
+            sqlParam1 = "";
+        }
         // sqlParam = "where " + sqlParam;
         // }
-        Boolean update = update(sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle, comapre, sqlParam,
-                                distances, iswaimai);
+        Boolean update = update(sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle, comapre, sqlParam1,
+                                distances, sqlParam2, iswaimai);
         if (!StringUtils.isEmpty(allSql)) {
             if (InnConstantODPSTables.TaskHospitalRestaurantDistance.HospitalRestaurant == type) {
                 sqlParam = "";
+            } else {
+                if (sqlParam.contains("or")) {
+                    sqlParam = " where 1=1 " + sqlParam;
+                }
             }
             update = update(allSql, InnConstantODPSTables.outHospitalRestaurantDistance, allTalle, allComapre,
                             sqlParam);
