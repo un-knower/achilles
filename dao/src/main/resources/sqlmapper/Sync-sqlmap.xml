@@ -58,10 +58,10 @@
 	</update>
 
 	<update id="dropCheckRecordTemptable">
-		truncate table tmp_flecheck_record
+		truncate table tmp_flycheck_record
 	</update>
 	<update id="createNewCheckRecordTemptable">
-		insert into tmp_flecheck_record  SELECT * FROM quancheng_db.v_inn_flycheckrecord 
+		insert into tmp_flycheck_record  SELECT * FROM quancheng_db.v_inn_flycheckrecord 
 	</update>
 
 	<!-- payment -->

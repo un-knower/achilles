@@ -132,6 +132,28 @@ public class OrderRecordVo {
     private String isHall;
     @ApiModelProperty(value = "用餐人备注")
     private String userComment;
+    @ApiModelProperty(value = "餐厅所在区域id")
+    private String rest_area_id;
+    @ApiModelProperty(value = "餐厅所在区域")
+    private String rest_area_name;
+    @ApiModelProperty(value = "商家开户银行")
+    private String merchant_bank_name;
+    @ApiModelProperty(value = "商家银行帐号")
+    private String merchant_bank_account;
+    @ApiModelProperty(value = "对公/对私")
+    private String merchant_account_type;
+    @ApiModelProperty(value = "打款凭证")
+    private String had_credence;
+    @ApiModelProperty(value = "返点发票")
+    private String had_invoice;
+    @ApiModelProperty(value = "代收款证明")
+    private String  had_voucher;
+    
+    @ApiModelProperty(value = "餐厅厅发票抬头")
+    private String  rest_invoice_title;
+    
+    @ApiModelProperty(value = "支付渠道")
+    private String  pay_type;
     
     public String getOrderSatus() {
         return orderSatus;
@@ -618,4 +640,83 @@ public class OrderRecordVo {
 		this.restaurantAddress = restaurantAddress;
 	}
 
+    public String getRest_area_id() {
+        return rest_area_id;
+    }
+
+    public void setRest_area_id(String rest_area_id) {
+        this.rest_area_id = rest_area_id;
+    }
+
+    public String getRest_area_name() {
+        return rest_area_name;
+    }
+
+    public void setRest_area_name(String rest_area_name) {
+        this.rest_area_name = rest_area_name;
+    }
+
+    public String getMerchant_bank_name() {
+        return merchant_bank_name;
+    }
+
+    public void setMerchant_bank_name(String merchant_bank_name) {
+        this.merchant_bank_name = merchant_bank_name;
+    }
+
+    public String getMerchant_bank_account() {
+        return merchant_bank_account;
+    }
+
+    public void setMerchant_bank_account(String merchant_bank_account) {
+        this.merchant_bank_account = merchant_bank_account;
+    }
+
+    public String getMerchant_account_type() {
+        return merchant_account_type;
+    }
+
+    public void setMerchant_account_type(String merchant_account_type) {
+        this.merchant_account_type = merchant_account_type;
+    }
+
+    public String getHad_credence() {
+        return had_credence;
+    }
+
+    public void setHad_credence(String had_credence) {
+        this.had_credence = had_credence;
+    }
+
+    public String getHad_invoice() {
+        return had_invoice;
+    }
+
+    public void setHad_invoice(String had_invoice) {
+        this.had_invoice = had_invoice;
+    }
+
+    public String getHad_voucher() {
+        return had_voucher;
+    }
+
+    public void setHad_voucher(String had_voucher) {
+        this.had_voucher = had_voucher;
+    }
+
+    public String getRest_invoice_title() {
+        return rest_invoice_title;
+    }
+
+    public void setRest_invoice_title(String rest_invoice_title) {
+        this.rest_invoice_title = rest_invoice_title;
+    }
+
+    public String getPay_type() {
+        return pay_type;
+    }
+
+    public void setPay_type(String pay_type) {
+        this.pay_type = pay_type;
+    }
 }

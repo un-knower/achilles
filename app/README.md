@@ -459,7 +459,7 @@ app是个标准的springboot工程,目前是基于1.4.0版本。
     tmp_client_query : 
     tmp_division : 
     tmp_division_client : 
-    tmp_flecheck_record : 
+    tmp_flycheck_record : 
     tmp_gsk_hosp_0815 : 
     tmp_gsk_hosp_0921 : 
     tmp_hospital1130_new : 

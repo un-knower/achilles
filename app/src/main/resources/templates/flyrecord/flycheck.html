@@ -123,10 +123,12 @@
                                 <th width="8%">检查类型</th>
                                 <th>订单号</th>
                                 <th>订单金额</th>
+                                <th>预计金额</th>
                                 <th>飞检原因</th>
                                 <th width="8%">是否异常</th>
                                 <th width="8%">异常原因</th>
                                 <th width="40%">异常内容</th>
+                                <th width="10%">预计消费金额</th>
                                 <th class="text-nowrap" style="display: none">Action</th>
                               </tr>
                             </thead>
@@ -142,11 +144,13 @@
                                 <td th:text="${item.checkMode}"></td>
                                 <td th:text="${item.checkType}"></td>
                                 <td th:text="${item.orderNum}"></td>
-                                 <td th:text="${item.orderMoney}"></td>
+                                <td th:text="${item.orderMoney}"></td>
+                                <td th:text="${item.orderPredictCost}"></td>
                                 <td th:text="${item.checkReason}"></td>
                                 <td th:text="${item.status}"></td>
                                 <td th:text="${item.abnormalType}"></td>
-                                 <td width="40%" th:text="${item.checkItem}"  style="width:600px;word-wrap:break-word;word-break:break-all"></td>
+                                <td width="40%" th:text="${item.checkItem}"  style="width:600px;word-wrap:break-word;word-break:break-all"></td>
+                                <th th:text="${item.orderPredictCost}"></th>
                                 <td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
                               </tr>
                             </tbody>

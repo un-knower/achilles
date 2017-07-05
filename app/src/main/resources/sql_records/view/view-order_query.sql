@@ -5,11 +5,15 @@ create or replace view v_inn_order_rate as
 SELECT sittlement.order_num,max(sittlement.rates) as rates
 FROM quancheng_db.api_settlement sittlement 
 group by sittlement.order_num;
-
+/*
+ * 返点金额、had_credence是否有打款凭证、had_invoice是否有返点发票
+ * */
 create or replace view v_inn_order_rate_money as 
-SELECT sittlement.order_num,sum(sittlement.rebate) as rate_money
+SELECT sittlement.order_num,sum(sittlement.rebate) as rate_money,
+case when max(iscredence)=2 then '有' else '无'end  as had_credence ,
+case when max(is_invoice)=1 then '有' else '无'end  as  had_invoice
 FROM quancheng_db.api_finance_order sittlement 
-where status =20
+where status =20 and deleted_at is null
 group by sittlement.order_num;
 
 create or replace view v_inn_order_rating as 
@@ -20,9 +24,11 @@ where ora.is_new=1
   -- 订单支付卡号
 create or replace view v_inn_order_pay_card as 
 SELECT 
-    order_num, GROUP_CONCAT(distinct bank_card) as bank_card
+    order_num, GROUP_CONCAT(distinct bank_card) as bank_card,
+    case when max(type)=1 then '银商'when  max(type)=2 then '易宝' when  max(type)=3 then '支付宝' end  as pay_type
 FROM
     16860_order_payment
+    where is_paid=1
 GROUP BY order_num;        
  
 --外卖接单时间(可能,最早响应时间)
@@ -69,7 +75,7 @@ WHERE
         `reg`.`name` AS `cityName`,
         'yuding' AS `serviceType`,
         '编内' AS `orderType`,
-        `o`.`order_state` AS `payType`,
+        case `o`.`order_state` when 35 then '线上' when 36 then  '线下' end AS `payType`  ,
         `o`.`report_reason` AS `reportReason`,
         `o`.`is_rooms` AS `isRoom`,
         FROM_UNIXTIME(`o`.`create_time` ) AS `createTime`,
@@ -110,9 +116,11 @@ WHERE
         reg_area.name as rest_area_name,
         asset.bank_name as merchant_bank_name,
         asset.bank_account as merchant_bank_account,
-        asset.account_type as merchant_account_type,
-        asset.bank_account as merchant_bank_account,
-        asset.bank_account as merchant_bank_account,
+        case asset.account_type when 1 then '对私' when 2 then '对公' end  as merchant_account_type,
+        rate_money.had_credence as had_credence,/*是否有打款凭证*/
+        rate_money.had_invoice as had_invoice,/*是否有返点发票*/
+        case when busi.voucher  is not null then '有'  else '无' end as had_voucher, /*代收款证明*/
+        opc.pay_type 
 FROM `16860_order` `o`
     LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
     LEFT JOIN v_inn_order_rate_money rate_money ON rate_money.order_num= o.order_num
@@ -131,6 +139,7 @@ FROM `16860_order` `o`
         AND `os_region`.`structure_type` = 'region'
     LEFT JOIN `16860_ucenter` `u` ON `u`.`id` = `m`.`uid`
     LEFT JOIN `api_restaurants` `rants` ON `o`.`restaurant_id` = `rants`.`id`
+    LEFT JOIN  `api_businesses` busi on busi.id=rants.business_id and busi.deleted_at is null
     LEFT JOIN `api_lbs_infos` ali ON rants.lbs_id=ali.id
     LEFT JOIN `api_sales_rest` `sal` ON `sal`.`restaurant_id` = `rants`.`id`and sal.deleted_at is NULL
     LEFT JOIN `api_merchants` `mer` ON `rants`.`merchant_id` = `mer`.`id`
@@ -166,7 +175,7 @@ UNION ALL
                 `reg`.`name` AS `cityName`,
                 'waimai' AS `serviceType`,
                 '编内' AS `orderType`,
-                '线下' AS `payType`,
+                case `o`.`status` when 2002 then '线上' when 2003 then  '线下' end AS `payType`,
                 NULL AS `reportReason`,
                 NULL AS `isRoom`,
                 `o`.`created_at` AS `createTime`,
@@ -206,7 +215,12 @@ UNION ALL
                 ali.area_id as rest_area_id,
                 reg_area.name as rest_area_name,
                 asset.bank_name as merchant_bank_name,
-                asset.bank_account as merchant_bank_account
+                asset.bank_account as merchant_bank_account,
+                case asset.account_type when 1 then '对私' when 2 then '对公' end as merchant_account_type,
+                rate_money.had_credence as had_credence, /*是否有打款凭证*/
+                rate_money.had_invoice as had_invoice,/*是否有返点发票*/
+                case when busi.voucher  is not null then '有'  else '无' end as had_voucher, /*代收款证明*/
+                opc.pay_type 
 FROM `api_orders` `o`
     LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
     LEFT JOIN v_inn_order_rate_money rate_money ON rate_money.order_num= o.order_num
@@ -225,6 +239,7 @@ FROM `api_orders` `o`
         AND `os_region`.`structure_type` = 'region'
     LEFT JOIN `16860_ucenter` `u` ON `u`.`id` = `m`.`uid`
     LEFT JOIN `api_restaurants` `rants` ON `o`.`restaurant_id` = `rants`.`id`
+    LEFT JOIN  `api_businesses` busi on busi.id=rants.business_id and busi.deleted_at is null
     LEFT JOIN `api_lbs_infos` ali ON `rants`.lbs_id=ali.id
     LEFT JOIN `api_sales_rest` `sal` ON `sal`.`restaurant_id` = `rants`.`id` and sal.deleted_at is NULL
     LEFT JOIN `api_merchants` `mer` ON `rants`.`merchant_id` = `mer`.`id`
@@ -300,7 +315,12 @@ UNION ALL
 			o.area_id as rest_area_id,
 			o.area as rest_area_name,
 			NULL as merchant_bank_name,
-            NULL as merchant_bank_account
+            NULL as merchant_bank_account,
+            NULL as merchant_account_type,
+            rate_money.had_credence as had_credence,
+            rate_money.had_invoice as had_invoice,
+            null as had_voucher, /*代收款证明*/
+            null as pay_type 
    FROM
         `16860_offstaff_order` `o`
         LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
