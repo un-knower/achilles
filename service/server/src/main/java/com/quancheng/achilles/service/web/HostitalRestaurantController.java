@@ -79,14 +79,10 @@ public class HostitalRestaurantController {
                                   @ApiParam(value = "选择插入城市列表") @RequestParam(value = "cityIds", required = false) String[] cityIds,
                                   HttpServletRequest request, HttpServletResponse response, ModelAndView mv) {
         String remoteUser = request.getRemoteUser();
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                upload(file, isUpload, excelType, excelCompanyId, distances, isInsertDatas, taskType, waimai,
-                       isWaimaiOk, reserve, compareCompany, companyIds, cityIds, remoteUser);
-            }
-        }).start();
+        EXECUTOR_SERVICE.execute(() -> {
+            upload(file, isUpload, excelType, excelCompanyId, distances, isInsertDatas, taskType, waimai, isWaimaiOk,
+                   reserve, compareCompany, companyIds, cityIds, remoteUser);
+        });
         try {
             response.sendRedirect("/ops/hospitalrestaurant/view");
         } catch (IOException e) {
