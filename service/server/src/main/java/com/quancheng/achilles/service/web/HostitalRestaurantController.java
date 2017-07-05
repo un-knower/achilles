@@ -78,12 +78,13 @@ public class HostitalRestaurantController {
                                   @ApiParam(value = "选择插入公司列表") @RequestParam(value = "companyIds", required = false) String[] companyIds,
                                   @ApiParam(value = "选择插入城市列表") @RequestParam(value = "cityIds", required = false) String[] cityIds,
                                   HttpServletRequest request, HttpServletResponse response, ModelAndView mv) {
+        String remoteUser = request.getRemoteUser();
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 upload(file, isUpload, excelType, excelCompanyId, distances, isInsertDatas, taskType, waimai,
-                       isWaimaiOk, reserve, compareCompany, companyIds, cityIds, request, response, mv);
+                       isWaimaiOk, reserve, compareCompany, companyIds, cityIds, remoteUser);
             }
         }).start();
         try {
@@ -95,10 +96,8 @@ public class HostitalRestaurantController {
 
     public void upload(MultipartFile file, Boolean isUpload, String excelType, String excelCompanyId, Double distances,
                        Boolean isInsertDatas, String taskType, String waimai, Boolean isWaimaiOk, String reserve,
-                       Boolean compareCompany, String[] companyIds, String[] cityIds, HttpServletRequest request,
-                       HttpServletResponse response, ModelAndView mv) {
+                       Boolean compareCompany, String[] companyIds, String[] cityIds, String remoteUser) {
         isUsed = true;
-        mv.setViewName("hospital_restaurant/hospitalrestaurant_view");
         BaseResponse export = new BaseResponse("-1", "fail");
         Boolean saveExcelToDB = false;
         Map<String, String> param = new HashMap<>();
@@ -146,8 +145,8 @@ public class HostitalRestaurantController {
                     export.setMsg("上传失败，因为文件是空的.");
                 }
             }
-            EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, request.getRemoteUser(),
-                                               excelName, distances, isWaimaiOk, waimai, reserve));
+            EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, remoteUser, excelName,
+                                               distances, isWaimaiOk, waimai, reserve));
             // isUsed = !submit.get(30, TimeUnit.MINUTES);
 
         } catch (Exception e) {
