@@ -59,27 +59,27 @@ public class DownloadOdpsThread implements Callable<List<Map<String, Object>>> {
             switch (typeInfo.getOdpsType()) {
                 case BIGINT: {
                     Long v = record.getBigint(i);
-                    colValue = v == null ? null : v.toString();
+                    colValue = v == null ? null : (v.toString().equals("") ? null : v.toString());
                     break;
                 }
                 case BOOLEAN: {
                     Boolean v = record.getBoolean(i);
-                    colValue = v == null ? null : v.toString();
+                    colValue = v == null ? null : (v.toString().equals("") ? null : v.toString());
                     break;
                 }
                 case DATETIME: {
                     Date v = record.getDatetime(i);
-                    colValue = v == null ? null : v.toString();
+                    colValue = v == null ? null : (v.toString().equals("") ? null : v.toString());
                     break;
                 }
                 case DOUBLE: {
                     Double v = record.getDouble(i);
-                    colValue = v == null ? null : v.toString();
+                    colValue = v == null ? null : (v.toString().equals("") ? null : v.toString());
                     break;
                 }
                 case STRING: {
                     String v = record.getString(i);
-                    colValue = v == null ? null : v.toString();
+                    colValue = v == null ? null : (v.toString().equals("") ? null : v.toString());
                     break;
                 }
                 default:
