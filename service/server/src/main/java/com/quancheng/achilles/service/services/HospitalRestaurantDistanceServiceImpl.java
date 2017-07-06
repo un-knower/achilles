@@ -304,8 +304,8 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
     }
 
     @Override
-    public Boolean deleteODPSTable(String ODPSTableName) {
-        return deleteODPSTable(ODPSTableName);
+    public Boolean deleteODPSTable(String ODPSTableName) throws OdpsException, IOException {
+        return odpsService.deleteODPSTable(ODPSTableName);
     }
 
 }
