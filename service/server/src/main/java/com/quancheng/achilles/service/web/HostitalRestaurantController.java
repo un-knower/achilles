@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -186,6 +187,7 @@ public class HostitalRestaurantController {
         @Override
         public Boolean call() {
             try {
+                String uuid = UUID.randomUUID().toString().replaceAll("-", "");
                 if ("restaurant".equals(excelType)) {
                     distanceService.syncDBToODPS("restaurant_info", "tmp_restaurant_info", true);
                 } else {
@@ -198,11 +200,11 @@ public class HostitalRestaurantController {
                 } else {
                     taskTypeO = InnConstantODPSTables.TaskHospitalRestaurantDistance.HospitalRestaurant;
                 }
-                distanceService.invokeODPSTask(otype, taskTypeO, compareCompany, distances, isWaimaiOk,
+                distanceService.invokeODPSTask(uuid, otype, taskTypeO, compareCompany, distances, isWaimaiOk,
                                                getSqlParam("r.", waimai, reserve));
-                distanceService.queryFromODPSAndSaveToDB();
+                distanceService.queryFromODPSAndSaveToDB(uuid);
 
-                export(1, distances, isWaimaiOk, waimai, reserve, username, excelName);
+                export(1, uuid, distances, isWaimaiOk, waimai, reserve, username, excelName);
             } catch (IOException | OdpsException | ParseException | TimeoutException | ExecutionException e) {
                 HostitalRestaurantController.isUsed = false;
                 logger.error("upload have a error {}", e);
@@ -261,17 +263,19 @@ public class HostitalRestaurantController {
         return queryParam;
     }
 
-    public BaseResponse export(int index, Double distances, Boolean isWaimaiOk, String waimai, String reserve,
-                               String username, String excelName) {
+    public BaseResponse export(int index, String uuid, Double distances, Boolean isWaimaiOk, String waimai,
+                               String reserve, String username, String excelName) {
         Map<String, Object> exportParam = new HashMap<>();
         exportParam.put("param", getSqlParam(distances, isWaimaiOk, waimai, reserve));
         class AsyncUploadToOSS implements Runnable {
 
+            private String              uuid;
             private String              username;
             private Map<String, Object> param;
             private String              excelName;
 
-            public AsyncUploadToOSS(Map<String, Object> param, String username, String excelName){
+            public AsyncUploadToOSS(String uuid, Map<String, Object> param, String username, String excelName){
+                this.uuid = uuid;
                 this.param = param;
                 this.username = username;
                 this.excelName = excelName;
@@ -293,7 +297,7 @@ public class HostitalRestaurantController {
                 double page = Math.ceil((double) (outInfo.getTotal() - (index - 1) * maxSize) / maxSize);
                 int size = outInfo.getPages();
                 if (page > 1) {
-                    export(index + 1, distances, isWaimaiOk, waimai, reserve, username, excelName + "-" + index);
+                    export(index + 1, uuid, distances, isWaimaiOk, waimai, reserve, username, excelName + "-" + index);
                     size = (int) (index * pageNum);
                 }
                 eb.append(outInfo.getList());
@@ -306,9 +310,11 @@ public class HostitalRestaurantController {
                 String filePath = eb.saveOnServer();
                 ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath, excelName, username);
                 HostitalRestaurantController.isUsed = false;
+                String ODPSTableName = "out_hospital_restaurant_distance" + "_" + uuid;
+                distanceService.deleteODPSTable(ODPSTableName);
             }
         }
-        EXECUTOR_SERVICE.execute(new AsyncUploadToOSS(exportParam, username, excelName));
+        EXECUTOR_SERVICE.execute(new AsyncUploadToOSS(uuid, exportParam, username, excelName));
         return new BaseResponse();
     }
 

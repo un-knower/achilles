@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -196,6 +197,18 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
             if (!StringUtils.isEmpty(companyId)) {
                 map.put("companyId", companyId);
             }
+            String idName = "";
+            if (type instanceof HospitalInfo) {
+                idName = "hospitalId";
+            } else if (type instanceof RestaurantInfo) {
+                idName = "restaurantId";
+            }
+            String idVal = map.get(idName);
+            if (idVal == null) {
+                map.put(idName, UUID.randomUUID().toString().replaceAll("-", ""));
+            }
+
+            map.put("companyId", companyId);
             // String jsonString = JSON.toJSONString(map);
             String jsonString = JsonUtil.objectToJsonByGson(map);
             try {
@@ -274,19 +287,25 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
     }
 
     @Override
-    public <T> Boolean invokeODPSTask(T otype, InnConstantODPSTables.TaskHospitalRestaurantDistance type,
+    public <T> Boolean invokeODPSTask(String uuid, T otype, InnConstantODPSTables.TaskHospitalRestaurantDistance type,
                                       Boolean compareCompany, Double distances, Boolean isWaimaiOk,
                                       String sqlParam) throws OdpsException, IOException {
-        return odpsService.taskHospitalRestaurantDistance(otype, type, compareCompany, distances, isWaimaiOk, sqlParam);
+        return odpsService.taskHospitalRestaurantDistance(uuid, otype, type, compareCompany, distances, isWaimaiOk,
+                                                          sqlParam);
     }
 
     @Override
-    public Boolean queryFromODPSAndSaveToDB() throws OdpsException, IOException, TimeoutException {
+    public Boolean queryFromODPSAndSaveToDB(String uuid) throws OdpsException, IOException, TimeoutException {
         String tableName = "out_hospital_restaurant_distance";
         baseService.clearTable(tableName);// 清空表
-        return odpsService.getAllAndSaveToDB(tableName, (dataList) -> {
+        return odpsService.getAllAndSaveToDB(tableName + "_" + uuid, (dataList) -> {
             return saveOutHospitalRestaurantDistanceToDB(dataList);// 保存到DB
         });
+    }
+
+    @Override
+    public Boolean deleteODPSTable(String ODPSTableName) {
+        return deleteODPSTable(ODPSTableName);
     }
 
 }

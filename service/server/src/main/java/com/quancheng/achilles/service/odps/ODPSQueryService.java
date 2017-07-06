@@ -87,7 +87,7 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         return allNum;
     }
 
-    public <T> boolean taskHospitalRestaurantDistance(T otype,
+    public <T> boolean taskHospitalRestaurantDistance(String uuid, T otype,
                                                       InnConstantODPSTables.TaskHospitalRestaurantDistance type,
                                                       Boolean compareCompany, Double distances, Boolean isWaimaiOk,
                                                       String sqlParam) throws OdpsException, IOException {
@@ -97,7 +97,7 @@ public class ODPSQueryService extends AbstractOdpsQuery {
             comapre = "and h.company_id = r.company_id ";
             allComapre = "and h.company_id = a.company_id ";
         }
-        String allSql = "INSERT OVERWRITE TABLE  %s  select DISTINCT h.company_id,h.company_name,h.city_id,h.city_name,h.hospital_id, h.hospital_name,h.address as hospital_address,h.lng as hospital_lng,h.lat as hospital_lat,h.settable as hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai, a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis, a.distance,a.is_within from  %s  on a.hospital_name =h.hospital_name and a.city_id =h.city_id %s %s";
+        String allSql = "INSERT OVERWRITE TABLE  %s  select DISTINCT h.company_id,h.company_name,h.city_id,h.city_name,h.hospital_id, h.hospital_name,h.address as hospital_address,h.lng as hospital_lng,h.lat as hospital_lat,h.settable as hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai, a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis, a.distance,a.is_within from  %s  on a.hospital_id =h.hospital_id and a.city_id =h.city_id %s %s";
         String restaurantTable = "tmp_sync_restaurant_info";// 每日凌晨自动同步数据
         String hospitalTable = "tmp_sync_hospital_info";// 每日凌晨自动同步数据
         if (otype != null) {// 上传了数据
@@ -111,9 +111,9 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         if (isWaimaiOk != null && isWaimaiOk) {
             iswaimai = " where  b.is_within=1 ";
         }
-
+        String tableName = InnConstantODPSTables.outHospitalRestaurantDistance + "_" + uuid;
         String talle = " " + hospitalTable + " h left OUTER join " + restaurantTable + " r ";
-        String allTalle = " " + hospitalTable + " h left outer  join out_hospital_restaurant_distance a  ";
+        String allTalle = " " + hospitalTable + " h left outer  join " + tableName + " a  ";
         String sql = "INSERT OVERWRITE TABLE %s "
                      + "select DISTINCT b.company_id,b.company_name,b.city_id,b.city_name,b.hospital_id,b.hospital_name,b.hospital_address,b.hospital_lng,b.hospital_lat,b.hospital_settable,b.restaurant_id,b.restaurant_name,b.restaurant_address,b.restaurant_lng,b.restaurant_lat,b.restaurant_settable,b.support_waimai,b.support_reserve,b.cook_style,b.consume,b.box_num,b.period,b.rate_settlement_type,b.manage_type,b.shipping_dis,b.distance"
                      + ",b.is_within from ("
@@ -136,8 +136,8 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                      + " from %s " + "on h.city_id = r.city_id  %s  %s)  a where a.distance <= %s %s)  b %s ";
         if (InnConstantODPSTables.TaskHospitalRestaurantDistance.RestaurantHospital == type) {
             talle = " " + restaurantTable + " r  left OUTER join  " + hospitalTable + " h ";
-            allSql = "INSERT OVERWRITE TABLE  %s  select DISTINCT a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id, a.hospital_name,a.hospital_address,a.hospital_lng,a.hospital_lat,a.hospital_settable,r.restaurant_id,r.restaurant_name,r.address as restaurant_address,r.lng as restaurant_lng,r.lat as restaurant_lat,r.settable as restaurant_settable,r.support_waimai, r.support_reserve,r.cook_style,r.consume,r.box_num,r.period,r.rate_settlement_type,r.manage_type,r.shipping_dis, a.distance,a.is_within from  %s  on r.restaurant_name =a.restaurant_name and a.city_id =r.city_id %s  %s";
-            allTalle = " " + restaurantTable + " r left outer  join out_hospital_restaurant_distance a  ";
+            allSql = "INSERT OVERWRITE TABLE  %s  select DISTINCT a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id, a.hospital_name,a.hospital_address,a.hospital_lng,a.hospital_lat,a.hospital_settable,r.restaurant_id,r.restaurant_name,r.address as restaurant_address,r.lng as restaurant_lng,r.lat as restaurant_lat,r.settable as restaurant_settable,r.support_waimai, r.support_reserve,r.cook_style,r.consume,r.box_num,r.period,r.rate_settlement_type,r.manage_type,r.shipping_dis, a.distance,a.is_within from  %s  on r.restaurant_id =a.restaurant_id and a.city_id =r.city_id %s  %s";
+            allTalle = " " + restaurantTable + " r left outer  join " + tableName + " a  ";
             if (compareCompany != null && compareCompany) {
                 allComapre = "and r.company_id = a.company_id ";
             }
@@ -154,8 +154,28 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         }
         // sqlParam = "where " + sqlParam;
         // }
-        Boolean update = update(sql, InnConstantODPSTables.outHospitalRestaurantDistance, talle, comapre, sqlParam1,
-                                distances, sqlParam2, iswaimai);
+
+        String createTable = "CREATE TABLE  %s (" + "company_id STRING COMMENT '公司id',"
+                             + "company_name STRING COMMENT '司名称'," + "city_id STRING COMMENT '城市id',"
+                             + " city_name STRING COMMENT '城市名称'," + " hospital_id STRING COMMENT '医院id',"
+                             + " hospital_name STRING COMMENT '医院名称'," + " hospital_address STRING COMMENT '医院地址',"
+                             + " hospital_lng DOUBLE COMMENT '医院经度'," + " hospital_lat DOUBLE COMMENT '医院纬度',"
+                             + " hospital_settable STRING COMMENT '医院是否可定位（0不可，1可）',"
+                             + " restaurant_id STRING COMMENT '餐厅id'," + " restaurant_name STRING COMMENT '餐厅名称',"
+                             + " restaurant_address STRING COMMENT '餐厅地址'," + " restaurant_lng DOUBLE COMMENT '餐厅经度',"
+                             + " restaurant_lat DOUBLE COMMENT '餐厅纬度',"
+                             + " restaurant_settable STRING COMMENT '餐厅是否可定位（0不可，1可）',"
+                             + " support_waimai STRING COMMENT '是否支持外卖（0不可，1可）',"
+                             + " support_reserve STRING COMMENT '是否支持外预定（0不可，1可）'," + " cook_style STRING COMMENT '菜系',"
+                             + " consume DOUBLE COMMENT '人均'," + " box_num BIGINT COMMENT '包厢数',"
+                             + " period DOUBLE COMMENT '账期（天）',"
+                             + " rate_settlement_type STRING COMMENT '返点结算类型: 1返点现结 5返点月结',"
+                             + " manage_type STRING COMMENT '结算类型：t+n账期：0，餐前预付：1，账期周结：2，账期月结：3，循环预付：4',"
+                             + " shipping_dis DOUBLE COMMENT '配送距离'," + " distance DOUBLE COMMENT '医院餐厅之间距离',"
+                             + " is_within STRING COMMENT '是否在配送范围内（0不在，1在）'" + ")" + "COMMENT '医院餐厅距离结果表'"
+                             + "LIFECYCLE 100000";
+        Boolean update = update(createTable, tableName);
+        update = update(sql, tableName, talle, comapre, sqlParam1, distances, sqlParam2, iswaimai);
         if (!StringUtils.isEmpty(allSql)) {
             if (InnConstantODPSTables.TaskHospitalRestaurantDistance.HospitalRestaurant == type) {
                 sqlParam = "";
@@ -164,8 +184,7 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                     sqlParam = " where 1=1 " + sqlParam;
                 }
             }
-            update = update(allSql, InnConstantODPSTables.outHospitalRestaurantDistance, allTalle, allComapre,
-                            sqlParam);
+            update = update(allSql, tableName, allTalle, allComapre, sqlParam);
         }
         return update;
     }
@@ -173,6 +192,12 @@ public class ODPSQueryService extends AbstractOdpsQuery {
     /** 清空表内容 */
     public Boolean clearODPSTable(String tableName) throws OdpsException, IOException {
         String sql = "TRUNCATE TABLE  %s ";
+        return update(sql, tableName);
+    }
+
+    /** 删除表 */
+    public Boolean deleteODPSTable(String tableName) throws OdpsException, IOException {
+        String sql = "DROP TABLE IF EXISTS %s ";
         return update(sql, tableName);
     }
 
