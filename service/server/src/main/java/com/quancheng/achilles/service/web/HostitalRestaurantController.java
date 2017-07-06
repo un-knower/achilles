@@ -311,7 +311,11 @@ public class HostitalRestaurantController {
                 ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath, excelName, username);
                 HostitalRestaurantController.isUsed = false;
                 String ODPSTableName = "out_hospital_restaurant_distance" + "_" + uuid;
-                distanceService.deleteODPSTable(ODPSTableName);
+                try {
+                    distanceService.deleteODPSTable(ODPSTableName);
+                } catch (OdpsException | IOException e) {
+                    logger.error("deleteODPSTable have a error {}", e);
+                }
             }
         }
         EXECUTOR_SERVICE.execute(new AsyncUploadToOSS(uuid, exportParam, username, excelName));

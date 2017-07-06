@@ -75,6 +75,6 @@ public interface HospitalRestaurantDistanceService {
                                                                                      Integer pageNum, Integer pageSize);
 
     /** 删除表 */
-    Boolean deleteODPSTable(String ODPSTableName);
+    Boolean deleteODPSTable(String ODPSTableName) throws OdpsException, IOException;
 
 }
