@@ -204,7 +204,7 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
                 idName = "restaurantId";
             }
             String idVal = map.get(idName);
-            if (idVal == null) {
+            if (idVal == null || idVal.trim().equals("")) {
                 map.put(idName, UUID.randomUUID().toString().replaceAll("-", ""));
             }
 
