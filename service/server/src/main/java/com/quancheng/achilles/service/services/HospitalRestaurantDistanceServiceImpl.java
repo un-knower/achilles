@@ -174,7 +174,7 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
             String cityName = map.get("cityName").replaceAll("直辖", "").replaceAll("市", "");
             mapParam.put("cityName", cityName);
             String address = map.get("address");
-            mapParam.put("address", StringUtils.isEmpty(address) ? "" : cityName + address);
+            mapParam.put("address", StringUtils.isEmpty(address) ? "" : address);
             Map<String, Double> mapLocation = UtilClassHelper.getLatAndLngByAddressFromBaidu(mapParam);
             if (mapLocation != null) {
                 Double lng = mapLocation.get("lng");
