@@ -335,7 +335,7 @@ public class Member implements Serializable {
     }
 
     public Float getActFrequency() {
-        return (float) (Math.round(orderCount * 30 / getRegDays() * 100) / 100);
+        return (float) (Math.round(getOrderCount() * 30 / getRegDays() * 100) / 100);
     }
 
     public Float getPerMonth() {
