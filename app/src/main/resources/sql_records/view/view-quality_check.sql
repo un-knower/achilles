@@ -14,12 +14,12 @@ fe.created_at,
 fe.expire,
 fe.`case` as fei_case ,
 ch.check_date,rule.title,
-`os_branch`.`structure_name` AS `branch`,
-`os_businessunit`.`structure_name` AS `businessunit`,
-`os_sector`.`structure_name` AS `sector`,
-`os_region`.`structure_name` AS `region`,
-`os_productgroup`.`structure_name` AS `productgroup`,
- os_costcenter.structure_name as costcenter,
+`viofc`.`branch` AS `branch`,
+`viofc`.`bus` AS `businessunit`,
+`viofc`.`sector` AS `sector`,
+`viofc`.`region` AS `region`,
+`viofc`.`productgroup` AS `productgroup`,
+ viofc.cost_center as costcenter,
  CASE WHEN rule.care=1 THEN    '不限次数' 
  WHEN rule.care=2 THEN CONCAT(rule.times,'次') 
  ELSE '' END AS file_number
@@ -27,12 +27,7 @@ from api_feijian_case fe LEFT JOIN api_feijian_rule rule on rule.id=fe.rule_id
                          LEFT JOIN 16860_member member on fe.target_id=member.uid
                          LEFT JOIN 16860_client client on client.id=member.cid
                          LEFT JOIN 16860_ucenter u on u.id=member.uid
-                         left join `16860_organizational_structure` `os_branch` on(((`member`.`branch_id` = `os_branch`.`id`) and (`os_branch`.`structure_type` = 'branch')))
-                         left join `16860_organizational_structure` `os_businessunit` on(((`member`.`businessunit_id` = `os_businessunit`.`id`) and (`os_businessunit`.`structure_type` = 'businessunit')))
-                         left join `16860_organizational_structure` `os_sector` on(((`member`.`sector_id` = `os_sector`.`id`) and (`os_sector`.`structure_type` = 'sector'))) 
-                         left join `16860_organizational_structure` `os_productgroup` on(((`member`.`productgroup_id` = `os_productgroup`.`id`) and (`os_productgroup`.`structure_type` = 'productgroup')))
-                         left join `16860_organizational_structure` `os_costcenter` on(((`member`.`cost_center_id` = `os_costcenter`.`id`) and (`os_costcenter`.`structure_type` = 'costcenter')))
-                         left join `16860_organizational_structure` `os_region` on(((`os_region`.`id` = `member`.`region_id`) and (`os_region`.`structure_type` = 'region')))
+                         LEFT JOIN v_inn_org_for_company viofc on member.uid==viofc.uid
                          LEFT JOIN 16860_order o on o.user_id= u.id
                          LEFT JOIN 16860_quality_check ch on  ch.order_num=o.order_num
                          LEFT JOIN 16860_quality_check_result  r on  r.quality_check_id=ch.id

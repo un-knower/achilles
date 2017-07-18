@@ -68,7 +68,7 @@ SELECT
   order_info.count_order,
   qua_ck_err_times.err_times,
   ROUND(rest_user_max.rest_user_max_cost/order_info.count_money,2) AS user_concentration,
-  sales.`name` as sales_name,
+  case when ol.id is not null then sales.`name` else ast.user_name end as sales_name,
   CASE WHEN awrd.restaurant_id IS NULL THEN'1' ELSE '0' END as support_takeout_of_food,
   CASE WHEN sup_reserve.restaurant_id IS NULL THEN '1' ELSE '0' END support_reserve,
   null  AS own_companys_id,
@@ -94,6 +94,7 @@ LEFT JOIN v_inn_quanlity_error_times qua_ck_err_times ON qua_ck_err_times.restau
 LEFT JOIN v_inn_restaurant_user_cost_total_max rest_user_max ON rest_user_max.restaurant_id=ol.id
 LEFT JOIN api_sales_rest asr ON asr.restaurant_id=ol.id AND asr.deleted_at IS NULL
 LEFT JOIN api_sales sales on asr.sales_id=sales.id AND sales.deleted_at is null
+LEFT JOIN api_sales_task ast on gh.id=ast.restaurant_id and ast.deleted_at is null
 LEFT JOIN v_inn_is_support_reserve sup_reserve ON sup_reserve.restaurant_id=ol.id
 LEFT JOIN v_inn_restaurant_rate  rest_rate ON rest_rate.rateable_id=ol.asset_id
 LEFT JOIN api_yuding ay ON ay.restaurant_id=ol.id

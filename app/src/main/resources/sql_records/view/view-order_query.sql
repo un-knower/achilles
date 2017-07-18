@@ -1,20 +1,51 @@
-create or replace view  `v_inn_order_restaurant_offstaff` AS select min(`16860_offstaff_order`.`create_time`) AS `minRestTime`,`16860_offstaff_order`.`restaurant_name` AS `resid` from `16860_offstaff_order` group by `16860_offstaff_order`.`restaurant_name`;
-create or replace view  `v_inn_order_restaurant_yuding` AS select min(`16860_order`.`create_time`) AS `minRestTime`,`16860_order`.`restaurant_id` AS `resid` from `16860_order` group by `16860_order`.`restaurant_id`;
-create or replace view `v_inn_order_restaurant_waimai` AS select min(`api_orders`.`created_at`) AS `minRestTime`,`api_orders`.`restaurant_id` AS `resid` from `api_orders` group by `api_orders`.`restaurant_id`;
-create or replace view v_inn_order_rate as 
-SELECT sittlement.order_num,max(sittlement.rates) as rates
-FROM quancheng_db.api_settlement sittlement 
-group by sittlement.order_num;
+CREATE OR REPLACE VIEW `v_inn_order_restaurant_offstaff` AS
+    SELECT 
+        MIN(`16860_offstaff_order`.`create_time`) AS `minRestTime`,
+        `16860_offstaff_order`.`restaurant_name` AS `resid`
+    FROM
+        `16860_offstaff_order`
+    GROUP BY `16860_offstaff_order`.`restaurant_name`;
+CREATE OR REPLACE VIEW `v_inn_order_restaurant_yuding` AS
+    SELECT 
+        MIN(`16860_order`.`create_time`) AS `minRestTime`,
+        `16860_order`.`restaurant_id` AS `resid`
+    FROM
+        `16860_order`
+    GROUP BY `16860_order`.`restaurant_id`;
+CREATE OR REPLACE VIEW `v_inn_order_restaurant_waimai` AS
+    SELECT 
+        MIN(`api_orders`.`created_at`) AS `minRestTime`,
+        `api_orders`.`restaurant_id` AS `resid`
+    FROM
+        `api_orders`
+    GROUP BY `api_orders`.`restaurant_id`;
+
+CREATE OR REPLACE VIEW v_inn_order_rate AS
+    SELECT 
+        sittlement.order_num, MAX(sittlement.rates) AS rates
+    FROM
+        quancheng_db.api_settlement sittlement
+    GROUP BY sittlement.order_num;
 /*
  * 返点金额、had_credence是否有打款凭证、had_invoice是否有返点发票
  * */
-create or replace view v_inn_order_rate_money as 
-SELECT sittlement.order_num,sum(sittlement.rebate) as rate_money,
-case when max(iscredence)=2 then '有' else '无'end  as had_credence ,
-case when max(is_invoice)=1 then '有' else '无'end  as  had_invoice
-FROM quancheng_db.api_finance_order sittlement 
-where status =20 and deleted_at is null
-group by sittlement.order_num;
+CREATE OR REPLACE VIEW v_inn_order_rate_money AS
+    SELECT 
+        sittlement.order_num,
+        SUM(sittlement.rebate) AS rate_money,
+        CASE
+            WHEN MAX(iscredence) = 2 THEN '有'
+            ELSE '无'
+        END AS had_credence,
+        CASE
+            WHEN MAX(is_invoice) = 1 THEN '有'
+            ELSE '无'
+        END AS had_invoice
+    FROM
+        quancheng_db.api_finance_order sittlement
+    WHERE
+        status = 20 AND deleted_at IS NULL
+    GROUP BY sittlement.order_num;
 
 create or replace view v_inn_order_rating as 
 select max(id) as id, ora.order_num  from 16860_order_rating ora
@@ -61,12 +92,12 @@ WHERE
         `m`.`job_num` AS `jobNum`,
         `u`.`email` AS `email`,
         `u`.`mobile` AS `mobile`,
-        `os_branch`.`structure_name` AS `branch`,
-        `os_businessunit`.`structure_name` AS `businessunit`,
-        `os_sector`.`structure_name` AS `sector`,
-        `os_region`.`structure_name` AS `region`,
-        `os_productgroup`.`structure_name` AS `productgroup`,
-        os_costcenter.structure_name as costcenter,
+        `viofc`.`branch` AS `branch`,
+        `viofc`.`bus` AS `businessunit`,
+        `viofc`.`sector` AS `sector`,
+        `viofc`.`region` AS `region`,
+        `viofc`.`productgroup` AS `productgroup`,
+        viofc.cost_center as costcenter,
         CONVERT (`rants`.`name` USING utf8) AS `restaurantName`,
         `rants`.`id` AS `restaurantId`,
         rants.invoice_title as rest_invoice_title,
@@ -94,7 +125,7 @@ WHERE
         NULL AS `address`,
         IF((`restmin`.`minRestTime` = `o`.`create_time` ), 1, 0 ) AS `isRestaurantFirst`,
         CASE `asset`.`manage_type` WHEN 0 THEN '账期' WHEN 1 THEN '预付' WHEN 2 THEN '账期' WHEN 3 THEN '账期'  WHEN 4 THEN '预付' END   AS `manageType`,
-        IF ((`ora`.`score` > 0), 1, 0) AS `isScore`,
+        IF ((`ora`.`id`is not null), 1, 0) AS `isScore`,
         `ora`.`score` AS `score`,
         ifnull(`ora`.`create_time`, 0) AS `orderRateCreateTime`,
         ifnull(`ora`.`dish_score`, 0) AS `dishScore`,
@@ -116,7 +147,8 @@ WHERE
         reg_area.name as rest_area_name,
         asset.bank_name as merchant_bank_name,
         asset.bank_account as merchant_bank_account,
-        case asset.account_type when 1 then '对私' when 2 then '对公' end  as merchant_account_type,
+        -- case asset.account_type when 1 then '对私' when 2 then '对公' end  as merchant_account_type,
+        case asset.account_type when length(bank_account_name)<=12 then '对私' when length(bank_account_name)>12 then '对公' end as merchant_account_type,
         rate_money.had_credence as had_credence,/*是否有打款凭证*/
         rate_money.had_invoice as had_invoice,/*是否有返点发票*/
         case when busi.voucher  is not null then '有'  else '无' end as had_voucher, /*代收款证明*/
@@ -125,18 +157,7 @@ FROM `16860_order` `o`
     LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
     LEFT JOIN v_inn_order_rate_money rate_money ON rate_money.order_num= o.order_num
     LEFT JOIN `16860_member` `m` ON `o`.`user_id` = `m`.`uid`
-    LEFT JOIN `16860_organizational_structure` `os_branch` ON `m`.`branch_id` = `os_branch`.`id`
-        AND `os_branch`.`structure_type` = 'branch'
-    LEFT JOIN `16860_organizational_structure` `os_businessunit` ON `m`.`businessunit_id` = `os_businessunit`.`id`
-        AND `os_businessunit`.`structure_type` = 'businessunit'
-    LEFT JOIN `16860_organizational_structure` `os_sector` ON `m`.`sector_id` = `os_sector`.`id`
-        AND `os_sector`.`structure_type` = 'sector'
-    LEFT JOIN `16860_organizational_structure` `os_productgroup` ON `m`.`productgroup_id` = `os_productgroup`.`id`
-        AND `os_productgroup`.`structure_type` = 'productgroup'
-    LEFT JOIN `16860_organizational_structure` `os_costcenter` ON `m`.`cost_center_id` = `os_costcenter`.`id`
-        AND `os_costcenter`.`structure_type` = 'costcenter'
-    LEFT JOIN `16860_organizational_structure` `os_region` ON `os_region`.`id` = `m`.`region_id`
-        AND `os_region`.`structure_type` = 'region'
+    LEFT JOIN  v_inn_org_for_company viofc on m.uid=viofc.uid
     LEFT JOIN `16860_ucenter` `u` ON `u`.`id` = `m`.`uid`
     LEFT JOIN `api_restaurants` `rants` ON `o`.`restaurant_id` = `rants`.`id`
     LEFT JOIN  `api_businesses` busi on busi.id=rants.business_id and busi.deleted_at is null
@@ -161,12 +182,12 @@ UNION ALL
                 `m`.`job_num` AS `jobNum`,
                 `u`.`email` AS `email`,
                 `u`.`mobile` AS `mobile`,
-                `os_branch`.`structure_name` AS `branch`,
-                `os_businessunit`.`structure_name` AS `businessunit`,
-                `os_sector`.`structure_name` AS `sector`,
-                `os_region`.`structure_name` AS `region`,
-                `os_productgroup`.`structure_name` AS `productgroup`,
-                os_costcenter.structure_name as costcenter,
+                `viofc`.`branch` AS `branch`,
+		        `viofc`.`bus` AS `businessunit`,
+		        `viofc`.`sector` AS `sector`,
+		        `viofc`.`region` AS `region`,
+		        `viofc`.`productgroup` AS `productgroup`,
+		        viofc.cost_center as costcenter,
                 CONVERT (`rants`.`name` USING utf8) AS `restaurantName`,
                 `rants`.`id` AS `restaurantId`,
                 rants.invoice_title as rest_invoice_title,
@@ -216,7 +237,8 @@ UNION ALL
                 reg_area.name as rest_area_name,
                 asset.bank_name as merchant_bank_name,
                 asset.bank_account as merchant_bank_account,
-                case asset.account_type when 1 then '对私' when 2 then '对公' end as merchant_account_type,
+                -- case asset.account_type when 1 then '对私' when 2 then '对公' end as merchant_account_type,
+                case asset.account_type when length(bank_account_name)<=12 then '对私' when length(bank_account_name)>12 then '对公' end as merchant_account_type,
                 rate_money.had_credence as had_credence, /*是否有打款凭证*/
                 rate_money.had_invoice as had_invoice,/*是否有返点发票*/
                 case when busi.voucher  is not null then '有'  else '无' end as had_voucher, /*代收款证明*/
@@ -225,18 +247,7 @@ FROM `api_orders` `o`
     LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
     LEFT JOIN v_inn_order_rate_money rate_money ON rate_money.order_num= o.order_num
     LEFT JOIN `16860_member` `m` ON `o`.`user_id` = `m`.`uid`
-    LEFT JOIN `16860_organizational_structure` `os_branch` ON `m`.`branch_id` = `os_branch`.`id`
-        AND `os_branch`.`structure_type` = 'branch'
-    LEFT JOIN `16860_organizational_structure` `os_businessunit` ON `m`.`businessunit_id` = `os_businessunit`.`id`
-        AND `os_businessunit`.`structure_type` = 'businessunit'
-    LEFT JOIN `16860_organizational_structure` `os_sector` ON `m`.`sector_id` = `os_sector`.`id`
-        AND `os_sector`.`structure_type` = 'sector'
-    LEFT JOIN `16860_organizational_structure` `os_productgroup` ON `m`.`productgroup_id` = `os_productgroup`.`id`
-        AND `os_productgroup`.`structure_type` = 'productgroup'
-    LEFT JOIN `16860_organizational_structure` `os_costcenter` ON `m`.`cost_center_id` = `os_costcenter`.`id`
-        AND `os_costcenter`.`structure_type` = 'costcenter'
-    LEFT JOIN `16860_organizational_structure` `os_region` ON `os_region`.`id` = `m`.`region_id`
-        AND `os_region`.`structure_type` = 'region'
+    LEFT JOIN v_inn_org_for_company viofc on m.uid=viofc.uid
     LEFT JOIN `16860_ucenter` `u` ON `u`.`id` = `m`.`uid`
     LEFT JOIN `api_restaurants` `rants` ON `o`.`restaurant_id` = `rants`.`id`
     LEFT JOIN  `api_businesses` busi on busi.id=rants.business_id and busi.deleted_at is null
@@ -261,12 +272,12 @@ UNION ALL
             `m`.`job_num` AS `jobNum`,
             `u`.`email` AS `email`,
             `u`.`mobile` AS `mobile`,
-            `os_branch`.`structure_name` AS `branch`,
-            `os_businessunit`.`structure_name` AS `businessunit`,
-            `os_sector`.`structure_name` AS `sector`,
-            `os_region`.`structure_name` AS `region`,
-            `os_productgroup`.`structure_name` AS `productgroup`,
-            os_costcenter.structure_name as costcenter,
+            `viofc`.`branch` AS `branch`,
+	        `viofc`.`bus` AS `businessunit`,
+	        `viofc`.`sector` AS `sector`,
+	        `viofc`.`region` AS `region`,
+	        `viofc`.`productgroup` AS `productgroup`,
+	        viofc.cost_center as costcenter,
             `o`.`restaurant_name` AS `restaurantName`,
             NULL AS `restaurantId`,
             NULL AS `rest_invoice_title`,
@@ -326,18 +337,7 @@ UNION ALL
         LEFT JOIN v_inn_order_rate setment ON setment.order_num = o.order_num
         LEFT JOIN v_inn_order_rate_money rate_money ON rate_money.order_num= o.order_num
         LEFT JOIN `16860_member` `m` ON `o`.`user_id` = `m`.`uid`
-        LEFT JOIN `16860_organizational_structure` `os_branch` ON `m`.`branch_id` = `os_branch`.`id`
-            AND `os_branch`.`structure_type` = 'branch'
-        LEFT JOIN `16860_organizational_structure` `os_businessunit` ON `m`.`businessunit_id` = `os_businessunit`.`id`
-            AND `os_businessunit`.`structure_type` = 'businessunit'
-        LEFT JOIN `16860_organizational_structure` `os_sector` ON `m`.`sector_id` = `os_sector`.`id`
-            AND `os_sector`.`structure_type` = 'sector'
-        LEFT JOIN `16860_organizational_structure` `os_productgroup` ON `m`.`productgroup_id` = `os_productgroup`.`id`
-            AND `os_productgroup`.`structure_type` = 'productgroup'
-        LEFT JOIN `16860_organizational_structure` `os_costcenter` ON `m`.`cost_center_id` = `os_costcenter`.`id`
-            AND `os_costcenter`.`structure_type` = 'costcenter'
-        LEFT JOIN `16860_organizational_structure` `os_region` ON `os_region`.`id` = `m`.`region_id`
-            AND `os_region`.`structure_type` = 'region'
+        LEFT JOIN v_inn_org_for_company viofc on m.uid=viofc.uid
         LEFT JOIN `16860_ucenter` `u` ON `u`.`id` = `m`.`uid`
         LEFT JOIN `v_inn_order_restaurant_offstaff` `restmin` ON `o`.`restaurant_name` = `restmin`.`resid`
         LEFT JOIN `16860_region` `reg` ON `reg`.`id` = `o`.`city_id`
