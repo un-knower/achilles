@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -78,14 +79,11 @@ public class HostitalRestaurantController {
                                   @ApiParam(value = "选择插入公司列表") @RequestParam(value = "companyIds", required = false) String[] companyIds,
                                   @ApiParam(value = "选择插入城市列表") @RequestParam(value = "cityIds", required = false) String[] cityIds,
                                   HttpServletRequest request, HttpServletResponse response, ModelAndView mv) {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                upload(file, isUpload, excelType, excelCompanyId, distances, isInsertDatas, taskType, waimai,
-                       isWaimaiOk, reserve, compareCompany, companyIds, cityIds, request, response, mv);
-            }
-        }).start();
+        String remoteUser = request.getRemoteUser();
+        EXECUTOR_SERVICE.execute(() -> {
+            upload(file, isUpload, excelType, excelCompanyId, distances, isInsertDatas, taskType, waimai, isWaimaiOk,
+                   reserve, compareCompany, companyIds, cityIds, remoteUser);
+        });
         try {
             response.sendRedirect("/ops/hospitalrestaurant/view");
         } catch (IOException e) {
@@ -95,10 +93,8 @@ public class HostitalRestaurantController {
 
     public void upload(MultipartFile file, Boolean isUpload, String excelType, String excelCompanyId, Double distances,
                        Boolean isInsertDatas, String taskType, String waimai, Boolean isWaimaiOk, String reserve,
-                       Boolean compareCompany, String[] companyIds, String[] cityIds, HttpServletRequest request,
-                       HttpServletResponse response, ModelAndView mv) {
+                       Boolean compareCompany, String[] companyIds, String[] cityIds, String remoteUser) {
         isUsed = true;
-        mv.setViewName("hospital_restaurant/hospitalrestaurant_view");
         BaseResponse export = new BaseResponse("-1", "fail");
         Boolean saveExcelToDB = false;
         Map<String, String> param = new HashMap<>();
@@ -146,8 +142,8 @@ public class HostitalRestaurantController {
                     export.setMsg("上传失败，因为文件是空的.");
                 }
             }
-            EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, request.getRemoteUser(),
-                                               excelName, distances, isWaimaiOk, waimai, reserve));
+            EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, remoteUser, excelName,
+                                               distances, isWaimaiOk, waimai, reserve));
             // isUsed = !submit.get(30, TimeUnit.MINUTES);
 
         } catch (Exception e) {
@@ -191,6 +187,7 @@ public class HostitalRestaurantController {
         @Override
         public Boolean call() {
             try {
+                String uuid = UUID.randomUUID().toString().replaceAll("-", "");
                 if ("restaurant".equals(excelType)) {
                     distanceService.syncDBToODPS("restaurant_info", "tmp_restaurant_info", true);
                 } else {
@@ -203,11 +200,11 @@ public class HostitalRestaurantController {
                 } else {
                     taskTypeO = InnConstantODPSTables.TaskHospitalRestaurantDistance.HospitalRestaurant;
                 }
-                distanceService.invokeODPSTask(otype, taskTypeO, compareCompany, distances, isWaimaiOk,
+                distanceService.invokeODPSTask(uuid, otype, taskTypeO, compareCompany, distances, isWaimaiOk,
                                                getSqlParam("r.", waimai, reserve));
-                distanceService.queryFromODPSAndSaveToDB();
+                distanceService.queryFromODPSAndSaveToDB(uuid);
 
-                export(1, distances, isWaimaiOk, waimai, reserve, username, excelName);
+                export(1, uuid, distances, isWaimaiOk, waimai, reserve, username, excelName);
             } catch (IOException | OdpsException | ParseException | TimeoutException | ExecutionException e) {
                 HostitalRestaurantController.isUsed = false;
                 logger.error("upload have a error {}", e);
@@ -266,17 +263,19 @@ public class HostitalRestaurantController {
         return queryParam;
     }
 
-    public BaseResponse export(int index, Double distances, Boolean isWaimaiOk, String waimai, String reserve,
-                               String username, String excelName) {
+    public BaseResponse export(int index, String uuid, Double distances, Boolean isWaimaiOk, String waimai,
+                               String reserve, String username, String excelName) {
         Map<String, Object> exportParam = new HashMap<>();
         exportParam.put("param", getSqlParam(distances, isWaimaiOk, waimai, reserve));
         class AsyncUploadToOSS implements Runnable {
 
+            private String              uuid;
             private String              username;
             private Map<String, Object> param;
             private String              excelName;
 
-            public AsyncUploadToOSS(Map<String, Object> param, String username, String excelName){
+            public AsyncUploadToOSS(String uuid, Map<String, Object> param, String username, String excelName){
+                this.uuid = uuid;
                 this.param = param;
                 this.username = username;
                 this.excelName = excelName;
@@ -298,7 +297,7 @@ public class HostitalRestaurantController {
                 double page = Math.ceil((double) (outInfo.getTotal() - (index - 1) * maxSize) / maxSize);
                 int size = outInfo.getPages();
                 if (page > 1) {
-                    export(index + 1, distances, isWaimaiOk, waimai, reserve, username, excelName + "-" + index);
+                    export(index + 1, uuid, distances, isWaimaiOk, waimai, reserve, username, excelName + "-" + index);
                     size = (int) (index * pageNum);
                 }
                 eb.append(outInfo.getList());
@@ -311,9 +310,15 @@ public class HostitalRestaurantController {
                 String filePath = eb.saveOnServer();
                 ossServiceDBUtil.uploadToOSSAndStoreUrlToDB(filePath, excelName, username);
                 HostitalRestaurantController.isUsed = false;
+                String ODPSTableName = "out_hospital_restaurant_distance" + "_" + uuid;
+                try {
+                    distanceService.deleteODPSTable(ODPSTableName);
+                } catch (OdpsException | IOException e) {
+                    logger.error("deleteODPSTable have a error {}", e);
+                }
             }
         }
-        EXECUTOR_SERVICE.execute(new AsyncUploadToOSS(exportParam, username, excelName));
+        EXECUTOR_SERVICE.execute(new AsyncUploadToOSS(uuid, exportParam, username, excelName));
         return new BaseResponse();
     }
 

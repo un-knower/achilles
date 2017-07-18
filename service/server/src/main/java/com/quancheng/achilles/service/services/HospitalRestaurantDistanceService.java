@@ -57,12 +57,12 @@ public interface HospitalRestaurantDistanceService {
      * 
      * @param <T>
      */
-    <T> Boolean invokeODPSTask(T otype, InnConstantODPSTables.TaskHospitalRestaurantDistance type,
+    <T> Boolean invokeODPSTask(String uuid, T otype, InnConstantODPSTables.TaskHospitalRestaurantDistance type,
                                Boolean compareCompany, Double distances, Boolean isWaimaiOk,
                                String sqlParam) throws OdpsException, IOException;
 
     /** 从ODPS拿到结果保存到DB */
-    Boolean queryFromODPSAndSaveToDB() throws OdpsException, IOException, TimeoutException;
+    Boolean queryFromODPSAndSaveToDB(String uuid) throws OdpsException, IOException, TimeoutException;
 
     /** 获取城市列表 */
     List<Map<String, Object>> queryCityInfo();
@@ -73,5 +73,8 @@ public interface HospitalRestaurantDistanceService {
     /** 获取结果表数据 */
     PageInfo<OutHospitalRestaurantDistance> queryOutHospitalRestaurantDistanceFromDB(Map<String, Object> param,
                                                                                      Integer pageNum, Integer pageSize);
+
+    /** 删除表 */
+    Boolean deleteODPSTable(String ODPSTableName) throws OdpsException, IOException;
 
 }
