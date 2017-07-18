@@ -19,18 +19,39 @@ SELECT
     mem.uid,
     CASE WHEN mem.`status`=1 THEN mem.uid ELSE NULL END  AS uid_active,
     os1.structure_name branch ,
-        os2.structure_name bus ,
-        os3.structure_name sector ,
-        os4.structure_name productgroup ,
-        os5.structure_name cost_center ,
-        os6.structure_name region 
+    os2.structure_name bus ,
+    os3.structure_name sector ,
+    os4.structure_name productgroup ,
+    os5.structure_name cost_center ,
+    os6.structure_name region 
 FROM 16860_member mem
-    LEFT JOIN 16860_organizational_structure os1  ON mem.branch_id = os1.id
-    LEFT JOIN 16860_organizational_structure os2  ON mem.businessunit_id = os2.id
-    LEFT JOIN 16860_organizational_structure os3  ON mem.sector_id = os3.id
-    LEFT JOIN 16860_organizational_structure os4  ON mem.productgroup_id = os4.id
+    LEFT JOIN 16860_organizational_structure os2  ON 
+        case when mem.businessunit_id =0 or  mem.businessunit_id is null 
+            then  mem.division_id=os2.old_id and  mem.division_id <>0
+            else   mem.businessunit_id=os2.id end  
+        AND `os2`.`structure_type` = 'businessunit' 
+    LEFT JOIN 16860_organizational_structure os1  ON 
+        case when  mem.branch_id =0 or  mem.branch_id is null   
+            then mem.invoice_cid = os1.old_id  and  mem.invoice_cid <>0
+            else mem.branch_id = os1.id end
+        AND `os1`.`structure_type` = 'branch' and os1.id <>0
+    LEFT JOIN 16860_organizational_structure os3  ON 
+        case when  mem.sector_id =0 or  mem.sector_id is null   
+            then mem.invoice_cid = os3.old_id and  mem.invoice_cid <>0
+            else  mem.sector_id = os3.id end
+        AND `os3`.`structure_type` = 'sector' and os3.id <>0
+    LEFT JOIN 16860_organizational_structure os4  ON 
+        case when  mem.productgroup_id =0 or  mem.productgroup_id is null   
+            then mem.invoice_cid = os4.old_id and  mem.invoice_cid <>0
+            else  mem.productgroup_id = os4.id end 
+        AND `os4`.`structure_type` = 'productgroup' 
     LEFT JOIN 16860_organizational_structure os5  ON mem.cost_center_id = os5.id
-    LEFT JOIN 16860_organizational_structure os6  ON mem.region_id = os6.id;    
+        AND `os5`.`structure_type` = 'costcenter'   
+    LEFT JOIN 16860_organizational_structure os6  ON 
+        case when  mem.region_id =0 or  mem.region_id is null    
+            then mem.division_id = os6.old_id and  mem.division_id <>0
+            else  mem.region_id = os6.id end
+        AND `os6`.`structure_type` = 'region'  ;    
 
 --线上支付订单
 CREATE OR REPLACE VIEW v_inn_client_city_user_order_info AS
@@ -46,7 +67,7 @@ SELECT
   LEFT JOIN api_restaurants ol_rest ON  ol_rest.id=168order.restaurant_id  and ol_rest.`status`=0 
   LEFT JOIN api_restaurants_master master_rest ON master_rest.id=ol_rest.gonghai_id 
   LEFT JOIN api_restaurant_master_sources arms ON master_rest.id=arms.restaurant_id AND arms.type NOT IN (1000,1005,1030)   
- where actual_people IS NOT NULL AND actual_people <> 0
+ where 168order.order_state in (35,36)
 UNION ALL
     SELECT
         CONCAT('wm',ao.id) as or_id,

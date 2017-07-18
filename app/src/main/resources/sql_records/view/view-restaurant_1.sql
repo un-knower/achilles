@@ -141,6 +141,7 @@ CREATE OR REPLACE VIEW v_inn_is_support_reserve AS SELECT
     restaurant_id
 FROM
     api_yuding
+    where  deleted_at is null
 GROUP BY
     restaurant_id;
 #11#####################################################
@@ -150,6 +151,8 @@ SELECT
 FROM
     api_waimai_restaurant_detail awrd
 LEFT JOIN api_waimai_restaurant_category awrc ON awrd.category_id = awrc.id
+WHERE
+      ISNULL(`awrd`.`deleted_at`) 
 GROUP BY
     awrd.restaurant_id;
     
