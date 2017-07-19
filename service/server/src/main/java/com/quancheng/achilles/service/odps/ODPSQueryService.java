@@ -105,7 +105,7 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         if (otype != null) {// 上传了数据
             if (otype instanceof HospitalInfo) {// 上传了医院信息
                 hospitalTable = "tmp_hospital_info";
-                restaurantWhere = "";
+                hospitalWhere = "";
             } else if (otype instanceof RestaurantInfo) {// 上传了餐厅信息
                 restaurantTable = "tmp_restaurant_info";
                 restaurantWhere = "";
