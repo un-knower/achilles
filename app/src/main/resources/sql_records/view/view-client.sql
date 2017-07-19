@@ -12,25 +12,72 @@ FROM 16860_restaurant_client 168client_rest
 GROUP BY
     168client_rest.client_id, master_rest.city;
 --企业组织架构    
-CREATE OR REPLACE VIEW v_inn_org_for_company AS 
-SELECT
-    mem.cid,
-    mem.city_id,
-    mem.uid,
-    CASE WHEN mem.`status`=1 THEN mem.uid ELSE NULL END  AS uid_active,
-    os1.structure_name branch ,
-        os2.structure_name bus ,
-        os3.structure_name sector ,
-        os4.structure_name productgroup ,
-        os5.structure_name cost_center ,
-        os6.structure_name region 
-FROM 16860_member mem
-    LEFT JOIN 16860_organizational_structure os1  ON mem.branch_id = os1.id
-    LEFT JOIN 16860_organizational_structure os2  ON mem.businessunit_id = os2.id
-    LEFT JOIN 16860_organizational_structure os3  ON mem.sector_id = os3.id
-    LEFT JOIN 16860_organizational_structure os4  ON mem.productgroup_id = os4.id
-    LEFT JOIN 16860_organizational_structure os5  ON mem.cost_center_id = os5.id
-    LEFT JOIN 16860_organizational_structure os6  ON mem.region_id = os6.id;    
+CREATE OR REPLACE VIEW `quancheng_db`.`v_inn_org_for_company` AS
+    SELECT 
+        `mem`.`cid` AS `cid`,
+        `mem`.`city_id` AS `city_id`,
+        `mem`.`uid` AS `uid`,
+        (CASE
+            WHEN (`mem`.`status` = 1) THEN `mem`.`uid`
+            ELSE NULL
+        END) AS `uid_active`,
+        `os1`.`structure_name` AS `branch`,
+        `os2`.`structure_name` AS `bus`,
+        `os3`.`structure_name` AS `sector`,
+        `os4`.`structure_name` AS `productgroup`,
+        `os5`.`structure_name` AS `cost_center`,
+        `os6`.`structure_name` AS `region`
+    FROM
+        
+    FROM
+        `quancheng_db`.`16860_member` `mem`
+        LEFT JOIN `quancheng_db`.`16860_organizational_structure` `os2` ON CASE
+            WHEN
+                `mem`.`businessunit_id` = 0
+                    OR ISNULL`mem`.`businessunit_id`
+            THEN
+                `mem`.`division_id` = `os2`.`old_id`
+            ELSE `mem`.`businessunit_id` = `os2`.`id`
+        END
+            AND `os2`.`structure_type` = 'businessunit'
+        LEFT JOIN `quancheng_db`.`16860_organizational_structure` `os1` ON CASE
+            WHEN
+                `mem`.`branch_id` = 0
+                    OR ISNULL`mem`.`branch_id`
+            THEN
+                `mem`.`invoice_cid` = `os1`.`old_id`
+            ELSE `mem`.`branch_id` = `os1`.`id`
+        END
+            AND `os1`.`structure_type` = 'branch'
+        LEFT JOIN `quancheng_db`.`16860_organizational_structure` `os3` ON CASE
+            WHEN
+                `mem`.`sector_id` = 0
+                    OR ISNULL`mem`.`sector_id`
+            THEN
+                `mem`.`invoice_cid` = `os1`.`old_id`
+            ELSE `mem`.`sector_id` = `os3`.`id`
+        END
+            AND `os3`.`structure_type` = 'sector'
+        LEFT JOIN `quancheng_db`.`16860_organizational_structure` `os4` ON CASE
+            WHEN
+                `mem`.`productgroup_id` = 0
+                    OR ISNULL`mem`.`productgroup_id`
+            THEN
+                `mem`.`invoice_cid` = `os1`.`old_id`
+            ELSE `mem`.`productgroup_id` = `os4`.`id`
+        END
+            AND `os4`.`structure_type` = 'productgroup'
+        LEFT JOIN `quancheng_db`.`16860_organizational_structure` `os5` ON `mem`.`cost_center_id` = `os5`.`id`
+            AND `os5`.`structure_type` = 'costcenter'
+        LEFT JOIN `quancheng_db`.`16860_organizational_structure` `os6` ON CASE
+            WHEN
+                `mem`.`region_id` = 0
+                    OR ISNULL`mem`.`region_id`
+            THEN
+                `mem`.`division_id` = `os1`.`old_id`
+            ELSE `mem`.`region_id` = `os6`.`id`
+        END
+            AND `os6`.`structure_type` = 'region';
 
 --线上支付订单
 CREATE OR REPLACE VIEW v_inn_client_city_user_order_info AS
