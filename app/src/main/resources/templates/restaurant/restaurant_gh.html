@@ -81,19 +81,6 @@
                                   <option th:selected="${restStatus=='1'}" value="1">禁用</option>
 	                            </select>
 	                          </div>
-<!-- 	                          <div class="col-md-2">  
-	                            <select class="selectpicker"  data-style="form-control" name="restResource">
-	                              <option th:selected="${restResource==-1}" value="-1">餐厅来源</option>
-	                              <option th:each="x : ${restResourceList}" th:text="${x.value}" th:value="${x.key}"  th:selected="${restResource==x.key}"></option>
-	                            </select>
- 	                          </div> -->
-<!--                               <div class="col-md-2"> 
-                                <select class="selectpicker"  data-style="form-control" name="recommendersCompany">
-                                  <option th:selected="${recommendersCompany==-1}" value="-1">推荐企业</option>
-                                  <option th:each="x : ${restResourceList}" th:text="${x.value}" th:value="${x.key}"  th:selected="${recommendersCompany==x.key}"></option>
-                                </select>
-                              </div> -->
-                              
                               <div class="col-md-2">
                                 <select class="selectpicker"  data-style="form-control" name="supportTakeout">
                                   <option th:selected="${supportTakeout==-1}" value="-1">是否支持外卖</option>
@@ -155,7 +142,7 @@
                            <tbody>
                               <tr th:each="item : ${page.content}">
                                 <td  th:each="col : ${templateColumnKeys}">
-                                    <div style="width: 150px;" th:text="*{item[col]}"></div>
+                                    <div style="width: 150px; word-break:break-all;" th:text="*{item[col]}"></div>
                                 </td>
                                 <td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
                               </tr>
