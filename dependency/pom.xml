@@ -60,32 +60,32 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>com.quancheng.saluki</groupId>
-            <artifactId>spring-boot-starter-saluki</artifactId>
-            <version>${saluki.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                	<artifactId>guava</artifactId>
-                	<groupId>com.google.guava</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.quancheng.saluki</groupId>
-            <artifactId>spring-boot-starter-saluki-monitor</artifactId>
-            <version>${saluki.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>com.quancheng.saluki</groupId> -->
+<!--             <artifactId>spring-boot-starter-saluki</artifactId> -->
+<!--             <version>${saluki.version}</version> -->
+<!--             <exclusions> -->
+<!--                 <exclusion> -->
+<!--                     <groupId>org.springframework.boot</groupId> -->
+<!--                     <artifactId>spring-boot-starter-logging</artifactId> -->
+<!--                 </exclusion> -->
+<!--                 <exclusion> -->
+<!--                 	<artifactId>guava</artifactId> -->
+<!--                 	<groupId>com.google.guava</groupId> -->
+<!--                 </exclusion> -->
+<!--             </exclusions> -->
+<!--         </dependency> -->
+<!--         <dependency> -->
+<!--             <groupId>com.quancheng.saluki</groupId> -->
+<!--             <artifactId>spring-boot-starter-saluki-monitor</artifactId> -->
+<!--             <version>${saluki.version}</version> -->
+<!--             <exclusions> -->
+<!--                 <exclusion> -->
+<!--                     <groupId>org.springframework.boot</groupId> -->
+<!--                     <artifactId>spring-boot-starter-logging</artifactId> -->
+<!--                 </exclusion> -->
+<!--             </exclusions> -->
+<!--         </dependency> -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
