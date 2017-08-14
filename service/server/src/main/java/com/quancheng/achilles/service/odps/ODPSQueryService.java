@@ -97,16 +97,23 @@ public class ODPSQueryService extends AbstractOdpsQuery {
             comapre = "and h.company_id = r.company_id ";
             allComapre = "and h.company_id = a.company_id ";
         }
-        String allSql = "INSERT OVERWRITE TABLE  %s  select DISTINCT h.company_id,h.company_name,h.city_id,h.city_name,h.hospital_id, h.hospital_name,h.address as hospital_address,h.lng as hospital_lng,h.lat as hospital_lat,h.settable as hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai, a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis, a.distance,a.is_within from  %s  on a.hospital_id =h.hospital_id and a.city_id =h.city_id %s %s";
         String restaurantTable = "tmp_sync_restaurant_info";// 每日凌晨自动同步数据
         String hospitalTable = "tmp_sync_hospital_info";// 每日凌晨自动同步数据
+
+        String restaurantWhere = " and r.deleted_at is null and r.status = 0 ";
+        String hospitalWhere = " and h.deleted_at is null and h.status = 1 ";
         if (otype != null) {// 上传了数据
             if (otype instanceof HospitalInfo) {// 上传了医院信息
                 hospitalTable = "tmp_hospital_info";
+                hospitalWhere = "";
             } else if (otype instanceof RestaurantInfo) {// 上传了餐厅信息
                 restaurantTable = "tmp_restaurant_info";
+                restaurantWhere = "";
             }
         }
+        String allSql = "INSERT OVERWRITE TABLE  %s  select DISTINCT h.company_id,h.company_name,h.city_id,h.city_name,h.hospital_id, h.hospital_name,h.address as hospital_address,h.lng as hospital_lng,h.lat as hospital_lat,h.settable as hospital_settable,a.restaurant_id,a.restaurant_name,a.restaurant_address,a.restaurant_lng,a.restaurant_lat,a.restaurant_settable,a.support_waimai, a.support_reserve,a.cook_style,a.consume,a.box_num,a.period,a.rate_settlement_type,a.manage_type,a.shipping_dis, a.distance,a.is_within from  %s  on a.hospital_id =h.hospital_id and a.city_id =h.city_id %s %s"
+                        + hospitalWhere;
+
         String iswaimai = "";
         if (isWaimaiOk != null && isWaimaiOk) {
             iswaimai = " where  b.is_within=1 ";
@@ -121,22 +128,17 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                      + ",case when a.support_waimai=1 and a.distance <=a.shipping_dis then 1 else 0 end as is_within from ("
                      + "select DISTINCT h.company_id , h.company_name , h.city_id, h.city_name"
                      + ", h.hospital_id , h.hospital_name, h.address as hospital_address"
-                     + ",h.lng as hospital_lng ,h.lat as hospital_lat"
-                     + ",case when h.settable=1 then '是' else '否' end  as hospital_settable"
+                     + ",h.lng as hospital_lng ,h.lat as hospital_lat" + ",h.settable as hospital_settable"
                      + ",r.restaurant_id, r.restaurant_name, r.address as restaurant_address"
-                     + ",r.lng as restaurant_lng ,r.lat as restaurant_lat"
-                     + ",case when r.settable=1 then '是'  else '否' end  as restaurant_settable"
+                     + ",r.lng as restaurant_lng ,r.lat as restaurant_lat" + ",r.settable  as restaurant_settable"
                      + ",r.support_waimai, r.support_reserve, r.cook_style  " + ",r.consume , r.box_num , r.period"
-                     + ",case when r.rate_settlement_type =1 then '返点现结'"
-                     + " when r.rate_settlement_type =5 then '返点月结'  else '' end as rate_settlement_type"
-                     + ",case when r.manage_type = 1 then '餐前预付'  when r.manage_type = 2 then '账期周结'"
-                     + " when r.manage_type = 3 then '账期月结'  when r.manage_type = 4 then '循环预付'"
-                     + " when r.manage_type = 0 then 'T+n账期'  end AS manage_type , r.shipping_dis"
+                     + ",r.rate_settlement_type" + ", r.manage_type , r.shipping_dis"
                      + ",round(6378.137*1000.0*2.0*asin(sqrt(abs(pow(sin((r.lat-h.lat)*(3.1415926/ 180.0)*0.5),2) + cos((3.1415926/ 180.0)*r.lat) * cos((3.1415926/ 180.0)*h.lat) * pow(sin((r.lng-h.lng)*(3.1415926/ 180.0)*0.5),2))))) AS distance"
-                     + " from %s " + "on h.city_id = r.city_id  %s  %s)  a where a.distance <= %s %s)  b %s ";
+                     + " from %s " + "on h.city_id = r.city_id  %s  %s %s)  a where a.distance <= %s %s)  b %s ";
         if (InnConstantODPSTables.TaskHospitalRestaurantDistance.RestaurantHospital == type) {
             talle = " " + restaurantTable + " r  left OUTER join  " + hospitalTable + " h ";
-            allSql = "INSERT OVERWRITE TABLE  %s  select DISTINCT a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id, a.hospital_name,a.hospital_address,a.hospital_lng,a.hospital_lat,a.hospital_settable,r.restaurant_id,r.restaurant_name,r.address as restaurant_address,r.lng as restaurant_lng,r.lat as restaurant_lat,r.settable as restaurant_settable,r.support_waimai, r.support_reserve,r.cook_style,r.consume,r.box_num,r.period,r.rate_settlement_type,r.manage_type,r.shipping_dis, a.distance,a.is_within from  %s  on r.restaurant_id =a.restaurant_id and a.city_id =r.city_id %s  %s";
+            allSql = "INSERT OVERWRITE TABLE  %s  select DISTINCT a.company_id,a.company_name,a.city_id,a.city_name,a.hospital_id, a.hospital_name,a.hospital_address,a.hospital_lng,a.hospital_lat,a.hospital_settable,r.restaurant_id,r.restaurant_name,r.address as restaurant_address,r.lng as restaurant_lng,r.lat as restaurant_lat,r.settable as restaurant_settable,r.support_waimai, r.support_reserve,r.cook_style,r.consume,r.box_num,r.period,r.rate_settlement_type,r.manage_type,r.shipping_dis, a.distance,a.is_within from  %s  on r.restaurant_id =a.restaurant_id and a.city_id =r.city_id %s  %s"
+                     + restaurantWhere;
             allTalle = " " + restaurantTable + " r left outer  join " + tableName + " a  ";
             if (compareCompany != null && compareCompany) {
                 allComapre = "and r.company_id = a.company_id ";
@@ -175,7 +177,8 @@ public class ODPSQueryService extends AbstractOdpsQuery {
                              + " is_within STRING COMMENT '是否在配送范围内（0不在，1在）'" + ")" + "COMMENT '医院餐厅距离结果表'"
                              + "LIFECYCLE 100000";
         Boolean update = update(createTable, tableName);
-        update = update(sql, tableName, talle, comapre, sqlParam1, distances, sqlParam2, iswaimai);
+        update = update(sql, tableName, talle, comapre, sqlParam1, restaurantWhere + hospitalWhere, distances,
+                        sqlParam2, iswaimai);
         if (!StringUtils.isEmpty(allSql)) {
             if (InnConstantODPSTables.TaskHospitalRestaurantDistance.HospitalRestaurant == type) {
                 sqlParam = "";

@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -288,5 +289,17 @@ public class UtilClassHelper {
 
         BigDecimal bg = new BigDecimal(s).setScale(decimal, RoundingMode.UP);
         return bg.doubleValue();
+    }
+
+    public static void main(String[] args) {
+        Map<String, String> mapParam = new HashMap<>();
+        String name = "艾薯(黄沙大道店)";
+        String cityName = "广州";
+        String address = "黄沙大道8号西城都荟L1层(近黄沙地铁站)";
+        mapParam.put("name", name);
+        mapParam.put("cityName", cityName);
+        mapParam.put("address", StringUtils.isEmpty(address) ? "" : address);
+        Map<String, Double> mapLocation = UtilClassHelper.getLatAndLngByAddressFromBaidu(mapParam);
+        System.err.println(mapLocation);
     }
 }

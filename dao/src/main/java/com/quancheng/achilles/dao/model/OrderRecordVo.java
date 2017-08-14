@@ -29,9 +29,9 @@ public class OrderRecordVo {
     private String  businessunit;
     @ApiModelProperty(value = "部门")
     private String  sector;
-    @ApiModelProperty(value = "产品组")
-    private String  region;
     @ApiModelProperty(value = "大区")
+    private String  region;
+    @ApiModelProperty(value = "产品组")
     private String  productgroup;
     @ApiModelProperty(value = "成本中心")
     private String  costcenter;

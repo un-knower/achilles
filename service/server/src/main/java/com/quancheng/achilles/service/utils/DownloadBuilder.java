@@ -260,14 +260,15 @@ public class DownloadBuilder<T> {
     private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private void setValue(SXSSFCell cell, Object value) {
+        String empty = null;
         if (value == null) {
-            cell.setCellValue("");
+            cell.setCellValue(empty);
         } else if (value instanceof Number) {
             cell.setCellValue(Double.parseDouble(value.toString()));
         } else if (value instanceof Date) {
             cell.setCellValue(df.format((Date) value));
         } else {
-            cell.setCellValue(value.toString());
+            cell.setCellValue(value.toString().isEmpty()?empty:value.toString());
         }
     }
 }
