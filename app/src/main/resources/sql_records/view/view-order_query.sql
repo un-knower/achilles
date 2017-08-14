@@ -69,7 +69,7 @@ SELECT
 FROM
     quancheng_db.`16860_action_log` al
 WHERE
-    al.action_id IN (12 , 13)
+    al.action_id IN (12 )
         AND al.model = 'waimai_order'
         group by record_id;
         
@@ -80,7 +80,7 @@ SELECT
 FROM
     quancheng_db.`16860_action_log` al
 WHERE
-    al.action_id IN (12 , 13)
+    al.action_id IN (12 )
         AND al.model = 'order'
         group by record_id;
 -- 线下上传的订单打款凭证和返点发票
@@ -135,7 +135,7 @@ GROUP BY op.order_id,p.`type`;
         format(( `o`.`money` / `o`.`actual_people` ), 2 ) AS `averageMoney`,
         NULL AS `address`,
         IF((`restmin`.`minRestTime` = `o`.`create_time` ), 1, 0 ) AS `isRestaurantFirst`,
-        CASE `asset`.`manage_type` WHEN 0 THEN '账期' WHEN 1 THEN '预付' WHEN 2 THEN '账期' WHEN 3 THEN '账期'  WHEN 4 THEN '预付' END   AS `manageType`,
+        CASE `asset`.`manage_type` WHEN 0 THEN 'T+n账期' WHEN 1 THEN '餐前预付' WHEN 2 THEN '账期周结' WHEN 3 THEN '账期月结'  WHEN 4 THEN '循环预付' END  AS `manageType`,
         IF ((`ora`.`id`is not null), 1, 0) AS `isScore`,
         `ora`.`score` AS `score`,
         ifnull(`ora`.`create_time`, 0) AS `orderRateCreateTime`,
@@ -159,7 +159,7 @@ GROUP BY op.order_id,p.`type`;
         asset.bank_name as merchant_bank_name,
         asset.bank_account as merchant_bank_account,
         -- case asset.account_type when 1 then '对私' when 2 then '对公' end  as merchant_account_type,
-        case asset.account_type when length(bank_account_name)<=12 then '对私' when length(bank_account_name)>12 then '对公' end as merchant_account_type,
+        case  when CHAR_LENGTH(bank_account_name)<=4 then '对私' when CHAR_LENGTH(bank_account_name)>4 then '对公' end as merchant_account_type,
         CASE WHEN (rate_money.had_credence = '无' OR rate_money.had_credence IS NULL) AND p.type IS NULL THEN  '无' WHEN rate_money.had_credence = '有' OR p.type IS NOT NULL  THEN '有' END  as had_credence, /*是否有打款凭证*/
         CASE WHEN (rate_money.had_invoice = '无'  OR rate_money.had_invoice IS NULL) AND pp.type IS NULL THEN '无' WHEN rate_money.had_invoice = '有' OR pp.type IS NOT NULL THEN '有' END  as had_invoice,/*是否有返点发票*/
         case when busi.voucher  is not null then '有'  else '无' end as had_voucher, /*代收款证明*/
@@ -227,7 +227,7 @@ UNION ALL
                 format( ( `detail`.`actual_cost` / `detail`.`actual_people` ),  2 ) AS `averageMoney`,
                 `detail`.`address` AS `address`,
                 IF((`restmin`.`minRestTime` = `o`.`created_at` ), 1, 0 ) AS `isRestaurantFirst`,
-                CASE `asset`.`manage_type` WHEN 0 THEN '账期' WHEN 1 THEN '预付' WHEN 2 THEN '账期' WHEN 3 THEN '账期'  WHEN 4 THEN '预付' END  AS `manageType`,
+                CASE `asset`.`manage_type` WHEN 0 THEN 'T+n账期' WHEN 1 THEN '餐前预付' WHEN 2 THEN '账期周结' WHEN 3 THEN '账期月结'  WHEN 4 THEN '循环预付' END  AS `manageType`,
                 IF ((`ora`.`score` > 0), 1, 0) AS `isScore`,
                 `ora`.`score` AS `score`,
                 ifnull(`ora`.`create_time`, 0) AS `orderRateCreateTime`,
@@ -251,7 +251,7 @@ UNION ALL
                 asset.bank_name as merchant_bank_name,
                 asset.bank_account as merchant_bank_account,
                 -- case asset.account_type when 1 then '对私' when 2 then '对公' end as merchant_account_type,
-                case asset.account_type when length(bank_account_name)<=12 then '对私' when length(bank_account_name)>12 then '对公' end as merchant_account_type,
+                case  when CHAR_LENGTH(bank_account_name)<=4 then '对私' when CHAR_LENGTH(bank_account_name)>4 then '对公' end as merchant_account_type,
                 CASE WHEN (rate_money.had_credence = '无' OR rate_money.had_credence IS NULL) AND p.type IS NULL THEN  '无' WHEN rate_money.had_credence = '有' OR p.type IS NOT NULL  THEN '有' END  as had_credence, /*是否有打款凭证*/
                 CASE WHEN (rate_money.had_invoice = '无'  OR rate_money.had_invoice IS NULL) AND pp.type IS NULL THEN '无' WHEN rate_money.had_invoice = '有' OR pp.type IS NOT NULL THEN '有' END  as had_invoice,/*是否有返点发票*/
                 case when busi.voucher  is not null then '有'  else '无' end as had_voucher, /*代收款证明*/
