@@ -43,7 +43,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                           <h4>订单<small><label >&nbsp;&nbsp;最近更新时间：</label><label class="update-time" th:text="${refresh_time_1}"></label>&nbsp;&nbsp;
-                          <button sec:authorize="hasAnyRole('ADMIN')" class="btn btn-xs btn-info refresh-btn" th:attr="job-id=1">马上更新</button></small></h4>
+                          <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-xs btn-info refresh-btn" th:attr="job-id=1">马上更新</button></small></h4>
                         </div> 
                         <div class="panel-wrapper collapse in">
                            <div class="panel-body" style="padding: 0 20px 0 20px;">
@@ -79,7 +79,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>餐厅<small><label>&nbsp;&nbsp;最近更新时间：</label><label class="update-time" th:text="${refresh_time_2}"></label>&nbsp;&nbsp;
-                            <button sec:authorize="hasAnyRole('ADMIN')" class="btn btn-info btn-xs refresh-btn"  th:attr="job-id=2_8_7">马上更新</button></small></h4>
+                            <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-info btn-xs refresh-btn"  th:attr="job-id=2_8_7">马上更新</button></small></h4>
                         </div> 
                         <div class="panel-wrapper collapse in">
                            <div class="panel-body" style="padding: 0 20px 0 20px;">
@@ -243,7 +243,7 @@
                         <div class="panel-heading">
                             <h4>企业信息<small><label>&nbsp;&nbsp;最近更新时间：</label>
                             <label class="update-time" th:text="${refresh_time_6}"></label>&nbsp;&nbsp;
-                            <button sec:authorize="hasAnyRole('ADMIN')" class="btn btn-info btn-xs refresh-btn "  th:attr="job-id=6" >马上更新</button></small></h4>
+                            <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-info btn-xs refresh-btn "  th:attr="job-id=6" >马上更新</button></small></h4>
                         </div> 
                         <div class="panel-wrapper collapse in">
                            <div class="panel-body" style="padding: 0 20px 0 20px;">
@@ -310,7 +310,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading"><h4>客服服务
                              <small><label>&nbsp;&nbsp;最近更新时间：</label><label class="update-time" th:text="${refresh_time_4}"></label>&nbsp;&nbsp;
-                             <button sec:authorize="hasAnyRole('ADMIN')" class="btn btn-info btn-xs refresh-btn"  th:attr="job-id=4">马上更新</button></small> </h4>
+                             <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-info btn-xs refresh-btn"  th:attr="job-id=4">马上更新</button></small> </h4>
                        </div> 
                         <div class="panel-wrapper collapse in">
                            <div class="panel-body" style="padding: 0 20px 0 20px;">
@@ -360,7 +360,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading"><h4>用户信息
                         <small><label>&nbsp;&nbsp;最近更新时间：</label><label class="update-time"  th:text="${refresh_time_5}"></label>&nbsp;&nbsp;
-                            <button sec:authorize="hasAnyRole('ADMIN')" class="btn btn-info btn-xs refresh-btn"  th:attr="job-id=5">马上更新</button></small>
+                            <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-info btn-xs refresh-btn"  th:attr="job-id=5">马上更新</button></small>
                         </h4></div> 
                         <div class="panel-wrapper collapse in">
                            <div class="panel-body" style="padding: 0 20px 0 20px;">
@@ -397,7 +397,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                             <h4>飞检服务<small><label>&nbsp;&nbsp;最近更新时间：</label><label th:text="${refresh_time_3}"></label>&nbsp;&nbsp;
-                            <button sec:authorize="hasAnyRole('ADMIN')" class="btn btn-info btn-xs refresh-btn" th:attr="job-id=3" >马上更新</button></small></h4>
+                            <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-info btn-xs refresh-btn" th:attr="job-id=3" >马上更新</button></small></h4>
                         </div> 
                         <div class="panel-wrapper collapse in">
                            <div class="panel-body" style="padding: 0 20px 0 20px;">
