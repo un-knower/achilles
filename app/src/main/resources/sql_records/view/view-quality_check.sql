@@ -27,7 +27,7 @@ from api_feijian_case fe LEFT JOIN api_feijian_rule rule on rule.id=fe.rule_id
                          LEFT JOIN 16860_member member on fe.target_id=member.uid
                          LEFT JOIN 16860_client client on client.id=member.cid
                          LEFT JOIN 16860_ucenter u on u.id=member.uid
-                         LEFT JOIN v_inn_org_for_company viofc on member.uid==viofc.uid
+                         LEFT JOIN v_inn_org_for_company viofc on member.uid=viofc.uid
                          LEFT JOIN 16860_order o on o.user_id= u.id
                          LEFT JOIN 16860_quality_check ch on  ch.order_num=o.order_num
                          LEFT JOIN 16860_quality_check_result  r on  r.quality_check_id=ch.id
@@ -93,7 +93,7 @@ SELECT uuid() as id,
 	c.order_num,
 	c.check_reason,
 	c.`status`,
-	c.order_money,
+	o.money as order_money,
 	ent.title as company,
 	r.check_item,
 	m.job_num,
@@ -103,7 +103,8 @@ from      16860_quality_check c
 	LEFT JOIN 16860_quality_check_result r on r.quality_check_id=c.id
 	LEFT JOIN 16860_client ent on ent.id=c.client_id
 	LEFT JOIN 16860_region region on  region.id=c.shangpu_city_id
-	LEFT JOIN 16860_member m ON m.uid=c.order_user_id ;
+	LEFT JOIN 16860_member m ON m.uid=c.order_user_id
+	LEFT JOIN 16860_order o on o.order_num=c.order_num;
 
 DROP  TABLE  IF EXISTS tmp_flycheck_record;
 CREATE TABLE tmp_flycheck_record   AS(SELECT * FROM v_inn_flycheckrecord);

@@ -33,7 +33,7 @@ FROM
 create or replace view v_inn_user_orderinfo_statistic as
 SELECT 
     o.user_id,
-    COUNT(0) AS `order_count`,
+    COUNT(o.id) AS `order_count`,
     SUM(`o`.`money`) AS `order_amount`,
     AVG(ABS(((`o`.`original_cost` / `o`.`actual_people`) - (`o`.`predict_cost` / `o`.`people_num`)))) AS `per_mean_diff`,
     AVG((`o`.`yuyue_time` - `o`.`create_time`)) AS `pre_yuyue_index`,
@@ -42,9 +42,9 @@ SELECT
             ELSE NULL
         END)) AS `case_times`
 FROM
-    16860_order o
-        LEFT JOIN
-    v_inn_fly_check_case `fcase` ON `fcase`.`target_id` = `fcase`.`target_id`
+   v_inn_fly_check_case `fcase`
+        LEFT JOIN  16860_order o
+      ON `fcase`.`target_id` = ` o`.`user_id`
 WHERE
     o.order_state IN (35 , 36)
 GROUP BY `o`.`user_id`;

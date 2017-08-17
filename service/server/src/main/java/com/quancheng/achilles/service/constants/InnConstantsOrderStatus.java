@@ -39,7 +39,7 @@ public enum InnConstantsOrderStatus {
     String order;
     private List<String> type;
     private String value;
-   
+
     public static InnConstantsOrderStatus getByKey(String key){
         for (InnConstantsOrderStatus iterable_element : InnConstantsOrderStatus.values()) {
             if(iterable_element.getType().contains(key)){

@@ -68,7 +68,7 @@ SELECT
   order_info.count_order,
   qua_ck_err_times.err_times,
   ROUND(rest_user_max.rest_user_max_cost/order_info.count_money,2) AS user_concentration,
-  case when ol.id is not null then sales.`name` else ast.user_name end as sales_name,
+  case when sales.`name`is not null  then sales.`name` else ast.user_name end as sales_name,
   CASE WHEN awrd.restaurant_id IS NULL THEN'1' ELSE '0' END as support_takeout_of_food,
   CASE WHEN sup_reserve.restaurant_id IS NULL THEN '1' ELSE '0' END support_reserve,
   null  AS own_companys_id,
