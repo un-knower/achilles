@@ -97,7 +97,7 @@ LEFT JOIN api_sales sales on asr.sales_id=sales.id AND sales.deleted_at is null
 LEFT JOIN api_sales_task ast on gh.id=ast.restaurant_id and ast.deleted_at is null
 LEFT JOIN v_inn_is_support_reserve sup_reserve ON sup_reserve.restaurant_id=ol.id
 LEFT JOIN v_inn_restaurant_rate  rest_rate ON rest_rate.rateable_id=ol.asset_id
-LEFT JOIN api_yuding ay ON ay.restaurant_id=ol.id
+LEFT JOIN api_yuding ay ON ay.restaurant_id=ol.id and ay.deleted_at is null
 WHERE ol.deleted_at is null and gh.deleted_at is null;
 
 DROP  TABLE  IF EXISTS tmp_restaurant_query;
