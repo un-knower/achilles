@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">白名单餐厅</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">特许餐厅</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-12">
+                     <div class="white-box">
+                        <h3 class="box-title">白名单餐厅
+                            <a class="pull-right" href="#">编辑报表</a>
+                            <a class="pull-right qc-download" href="#" th:attr="data-url=@{/ops/whitelist/restaurant/export}">导出</a>
+                        </h3>
+                        <div class="row">
+                          <form id="query-form" th:action="@{/ops/whitelist/restaurant}" method="post">
+                              <div class="col-md-2" th:each="pm:${paramaterConfigs}">
+                                  <input th:name="${pm.colName}" th:if="${pm.type=='input'}"  class="form-control" th:value="*{paramaterValues[pm.colName]}" th:placeholder= "${pm.title}"/>
+                                  <select class="selectpicker"  data-style="form-control" th:if="${pm.type=='multiple'}"  multiple="multiple" th:name="${pm.colName}" th:title="${pm.title}" >
+                                    <option th:each="x : ${pm.items}" th:value="${x.key}" th:text="${x.value}" 
+                                        th:selected="*{paramaterValues[pm.colName]!=null and #arrays.contains(paramaterValues[pm.colName],x.key)}">
+                                    </option>
+                                  </select>  
+                              </div>
+                              <div class="col-md-2">
+                                  <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">搜索</button>
+                              </div>
+                          </form>
+                        </div><!-- /.row -->
+                     </div>
+                  </div>
+               </div>
+               <!-- /.row -->
+               </div>
+            </div>
+         </div>
+         <!-- /#page-wrapper -->
+<!--       </div> -->
+      <!-- /#wrapper -->
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+   </body>
+</html>

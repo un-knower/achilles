@@ -15,7 +15,7 @@ import com.quancheng.achilles.service.job.OrderCacheSyncJob;
 import com.quancheng.achilles.service.job.SJJob;
 
 
-@Configuration
+//@Configuration
 public class QuartzConfiguration {
 	private static final String QUARTZ_DS_PASSWORD = "org.quartz.dataSource.qrtzDS.password";
 	private static final String QUARTZ_DS_USER = "org.quartz.dataSource.qrtzDS.user";

@@ -37,7 +37,7 @@ UNION ALL
     FROM
         16860_offstaff_order offer_recomm
     LEFT JOIN 16860_member fk_member ON fk_member.uid = offer_recomm.user_id
-        LEFT JOIN 16860_ucenter 168ucenter ON 168ucenter.id=offer_recomm.user_id
+    LEFT JOIN 16860_ucenter 168ucenter ON 168ucenter.id=offer_recomm.user_id
     LEFT JOIN 16860_region fk_citys ON fk_citys.id = offer_recomm.city_id
     LEFT JOIN 16860_region fk_areas ON offer_recomm.area_id = fk_areas.id
     LEFT JOIN 16860_client fk_client ON fk_client.id = fk_member.cid
