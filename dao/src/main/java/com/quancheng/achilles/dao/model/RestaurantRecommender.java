@@ -62,6 +62,10 @@ public class RestaurantRecommender implements Serializable{
     @ApiModelProperty(value = "推荐时间")
     private String createdAt;
     
+    @Column(name="source_id")
+    @ApiModelProperty(value = "高德ID")
+    private String sourceId;
+    
     public String getRecommandUser() {
         return recommandUser;
     }
@@ -128,5 +132,10 @@ public class RestaurantRecommender implements Serializable{
     public void setRestaurantAddress(String restaurantAddress) {
         this.restaurantAddress = restaurantAddress;
     }
-    
+    public String getSourceId() {
+        return sourceId;
+    }
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
 }

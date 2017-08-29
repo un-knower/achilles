@@ -11,7 +11,8 @@ SELECT
     CONVERT(ac_recomm.email USING utf8)  as email,
     fk_member.job_num,
     fk_client.title AS recommend_company,
-    recommed_record.created_at
+    recommed_record.created_at,
+    CONVERT(app_recomm.source_id USING utf8) as source_id
 FROM
     api_client_recommand_records recommed_record
 LEFT JOIN api_client_recommand_rest app_recomm ON recommed_record.reco_rest_id = app_recomm.id
@@ -33,7 +34,8 @@ UNION ALL
         168ucenter.email as email,
         fk_member.job_num as job_num,
         fk_client.title AS recommend_company,
-        offer_recomm.create_time as created_at 
+        offer_recomm.create_time as created_at ,
+        offer_recomm.source_id
     FROM
         16860_offstaff_order offer_recomm
     LEFT JOIN 16860_member fk_member ON fk_member.uid = offer_recomm.user_id
