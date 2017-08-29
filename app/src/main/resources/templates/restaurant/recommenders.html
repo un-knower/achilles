@@ -105,6 +105,7 @@
                                 <th>推荐人工号</th>
                                 <th>推荐企业</th>
                                 <th>推荐时间</th>
+                                <th>高德ID</th>
                                 <th class="text-nowrap" style="display: none">Action</th>
                               </tr>
                             </thead>
@@ -120,6 +121,7 @@
                                 <td th:text="${item.jobNum}"></td>
                                 <td th:text="${item.recommendCompany}"></td>
                                 <td th:text="${item.createdAt}"></td>
+                                <td th:text="${item.sourceId}"></td>
                                 <td class="text-nowrap" style="display: none"><a href="#" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a> <a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a> </td>
                               </tr>
                             </tbody>
