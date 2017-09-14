@@ -15,4 +15,4 @@ build_images:
     - echo "Push Image:" $dockerservice " to repository..."
     - docker push $dockerservice
    only:
-    - master
+    - master2
