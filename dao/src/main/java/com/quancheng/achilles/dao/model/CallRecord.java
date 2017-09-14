@@ -5,8 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity
-@Table(name = "16860_call_record")
+//@Entity
+//@Table(name = "16860_call_record")
 public class CallRecord implements Serializable {
 	/**
 	 * 只读，不需要生成Id

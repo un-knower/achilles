@@ -4,16 +4,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import io.swagger.annotations.ApiModelProperty;
 
-@Entity
-@Table(name = "tmp_inn_train_log")
+//@Entity
+//@Table(name = "tmp_inn_train_log")
 public class RestaurantTrainLog implements Serializable {
 
     private static final long serialVersionUID = -910742865360452644L;

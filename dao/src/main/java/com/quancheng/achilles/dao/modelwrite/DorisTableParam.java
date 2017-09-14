@@ -18,7 +18,7 @@ public class DorisTableParam {
     private Long id;
     @ApiModelProperty(value = "配置表id")
     @Column(name = "chart_info_id")
-    private Long chartInfoId;
+    private Long tableId;
     @ApiModelProperty(value = "参数key")
     @Column(name = "param_key")
     private String paramKey;
@@ -34,17 +34,21 @@ public class DorisTableParam {
     @ApiModelProperty(value = "选择控件数据源(字典key)")
     @Column(name = "data_item_id")
     private String dataItemId;
+    @ApiModelProperty(value = "排序")
+    @Column(name = "order_sort")
+    private Integer orderSort;
     public Long getId() {
         return id;
     }
     public void setId(Long id) {
         this.id = id;
     }
-    public Long getChartInfoId() {
-        return chartInfoId;
+    
+    public Long getTableId() {
+        return tableId;
     }
-    public void setChartInfoId(Long chartInfoId) {
-        this.chartInfoId = chartInfoId;
+    public void setTableId(Long tableId) {
+        this.tableId = tableId;
     }
     public String getParamKey() {
         return paramKey;
@@ -75,5 +79,11 @@ public class DorisTableParam {
     }
     public void setDataItemId(String dataItemId) {
         this.dataItemId = dataItemId;
+    }
+    public Integer getOrderSort() {
+        return orderSort;
+    }
+    public void setOrderSort(Integer orderSort) {
+        this.orderSort = orderSort;
     }
 }

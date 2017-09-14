@@ -26,12 +26,7 @@
     </environments>
     <mappers>
         <mapper resource="sqlmapper/Company-sqlmap.xml"/>
-<!--         <mapper resource="sqlmapper/Order-sqlmap.xml"/> -->
         <mapper resource="sqlmapper/Sales-sqlmap.xml"/>
         <mapper resource="sqlmapper/companyReport-sqlmap.xml"/>
-<!--         <mapper resource="sqlmapper/companyRestaurantsStatistics-sqlmap.xml"/> -->
-<!--         <mapper resource="sqlmapper/companyRestaurantsSource-sqlmap.xml"/> -->
-<!--         <mapper resource="sqlmapper/companyShelfRestaurants-sqlmap.xml"/> -->
-<!--         <mapper resource="sqlmapper/companyHospitalRestaurantStatistics-sqlmap.xml"/> -->
     </mappers>
 </configuration>

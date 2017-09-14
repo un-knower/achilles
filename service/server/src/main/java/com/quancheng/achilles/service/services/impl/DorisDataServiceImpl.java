@@ -9,12 +9,14 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+@Service
 public class DorisDataServiceImpl {
     
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     
-    public String handleSqlParam(String sql, Map<String, Object[]> params) {
+    public String handleSqlParam(String sql, Map<String, String[]> params) {
         String regex = "(?<=#\\{)[^\\}]+";
         sql = handelIf(sql, params);
         sql = replaceParams(sql, params);
@@ -48,16 +50,16 @@ public class DorisDataServiceImpl {
         }
         return str;
     }
-    public static String replaceParams(String sql, Map<String, Object[]> params) {
+    public static String replaceParams(String sql, Map<String, String[]> params) {
         if (params != null) {
-            for (Map.Entry<String, Object[]> m : params.entrySet()) {
+            for (Map.Entry<String, String[]> m : params.entrySet()) {
                 String key = m.getKey();
                 String value = getFromMap(m.getValue(), true);
                 if (!StringUtils.isEmpty(value)) {
                     sql = sql.replaceAll("#\\{" + key + "\\}", value);
                 }
             }
-            for (Map.Entry<String, Object[]> m : params.entrySet()) {
+            for (Map.Entry<String, String[]> m : params.entrySet()) {
                 String key = m.getKey();
                 String value = getFromMap(m.getValue(), false);
                 if (!StringUtils.isEmpty(value)) {
@@ -83,7 +85,7 @@ public class DorisDataServiceImpl {
         return list;
     }
 
-    public   Boolean checkTestStr(String testStr, Map<String, Object[]> params) {
+    public   Boolean checkTestStr(String testStr, Map<String, String[]> params) {
         Object result = false;
         try {
             ScriptEngineManager manager = new ScriptEngineManager();
@@ -103,7 +105,7 @@ public class DorisDataServiceImpl {
         return (Boolean) result;
     }
 
-    public   String handelIf(String sql, Map<String, Object[]> params) {
+    public   String handelIf(String sql, Map<String, String[]> params) {
         Pattern compile = Pattern.compile("<if[^>]*>([^/]*)</if( )*>");
         Matcher matcher = compile.matcher(sql);
         while (matcher.find()) {
@@ -128,16 +130,15 @@ public class DorisDataServiceImpl {
         if (value == null) {
             return null;
         }
-        String resp = value.toString();
-        if (isAdd && !StringUtils.isEmpty(resp)) {
-            resp = "'" + resp + "'";
-        }
+        String resp = "";
         if ( value instanceof Object[]) {
             StringBuilder sb = new StringBuilder();
             for (Object s : value) {
-                sb.append("'").append(s.toString()).append("',");
+                if(s!= null && !"".equals(s.toString().trim())){
+                    sb.append(isAdd?"'":"").append(s.toString()).append(isAdd?"',":",");
+                }
             }
-            if (sb.length() > 0) {
+            if (sb.length() > 0 && sb.lastIndexOf(",")==sb.length()-1) {
                 sb.deleteCharAt(sb.length() - 1);
             }
             resp = sb.toString();

@@ -23,7 +23,7 @@
                <div class="row bg-title">
                   <!-- .page title -->
                   <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                     <h4 class="page-title">白名单餐厅</h4>
+                     <h4 class="page-title" th:text="${template.templateName}"></h4>
                   </div>
                   <!-- /.page title -->
                   <!-- .breadcrumb -->
@@ -31,7 +31,7 @@
                      <ol class="breadcrumb">
                         <li><a th:href="@{/}">首页</a></li>
                         <li><a th:href="@{/ops}">运营数据</a></li>
-                        <li class="active"><a th:href="@{#}">特许餐厅</a></li>
+                        <li class="active"><a th:href="@{#}" th:text="${template.templateName}"></a></li>
                      </ol>
                   </div>
                   <!-- /.breadcrumb -->
@@ -40,22 +40,48 @@
                <div class="row">
                   <div class="col-md-12">
                      <div class="white-box">
-                        <h3 class="box-title">白名单餐厅
-                            <a class="pull-right" href="#">编辑报表</a>
-                            <a class="pull-right qc-download" href="#" th:attr="data-url=@{/ops/whitelist/restaurant/export}">导出</a>
-                        </h3>
+                          <div class="row">
+	                        <h3 class="box-title">
+	<!--                             <a class="pull-right" href="#">编辑报表</a> -->
+	                            <a class="pull-right qc-download" href="#" th:attr="data-url=@{/ops/template/export}">导出</a>
+	                        </h3>
+                        </div>
                         <div class="row">
-                          <form id="query-form" th:action="@{/ops/whitelist/restaurant}" method="post">
-                              <div class="col-md-2" th:each="pm:${paramaterConfigs}">
-                                  <input th:name="${pm.colName}" th:if="${pm.type=='input'}"  class="form-control" th:value="*{paramaterValues[pm.colName]}" th:placeholder= "${pm.title}"/>
-                                  <select class="selectpicker"  data-style="form-control" th:if="${pm.type=='multiple'}"  multiple="multiple" th:name="${pm.colName}" th:title="${pm.title}" >
-                                    <option th:each="x : ${pm.items}" th:value="${x.key}" th:text="${x.value}" 
-                                        th:selected="*{paramaterValues[pm.colName]!=null and #arrays.contains(paramaterValues[pm.colName],x.key)}">
+                          <form id="query-form" th:action="@{/ops/template/index}" method="post"  >
+                              <input type="hidden" name="templateId" th:value="${page.templateId}" />
+                              <input type="hidden" name="pageNum" th:value="${page.pageInfo.number}" />
+                              <input type="hidden" name="pageSize" th:value="${page.pageInfo.pageSize}" />
+                              <div   th:each="pm:${paramaterConfigs}" th:if="${pm.colName !='end'}" 
+                                       th:class="${pm.type=='datetime' and pm.colName=='begin' ?'col-md-3':(pm.type=='search'?'col-md-3':(pm.type=='single'?'col-md-1':'col-md-2'))}">
+                                  <!-- 搜索框 -->
+                                  <input th:name="${pm.colName}" th:if="${pm.type=='search'}"  class="form-control" 
+                                        th:value="*{paramaterValues[pm.colName]!=null ? paramaterValues[pm.colName][0]:null}" th:placeholder= "${pm.title}"/>
+                                  <!-- 时间控件 -->  
+								<div class="input-daterange input-group" th:if="${pm.type=='datetime' and pm.colName=='begin'}"  id="date-range">
+									<input type="text" class="form-control" name="begin" 
+									   th:value="*{paramaterValues['begin']!=null ? paramaterValues['begin'][0]:null}"   placeholder="起始时间"/>
+									<span class="input-group-addon"><i class="icon-calender"></i></span> 
+									<span class="input-group-addon bg-info b-0 text-white"> - </span>
+									<input type="text" class="form-control" name="end" 
+									   th:value="*{paramaterValues['end']!=null ? paramaterValues['end'][0]:null}"  placeholder="结束时间"/>
+									<span class="input-group-addon"><i class="icon-calender"></i></span> 
+								</div>
+                                  <!-- 多选 -->
+                                  <select class="selectpicker"  data-style="form-control" th:if="${pm.type=='multiple'}"  multiple="multiple" 
+                                        data-live-search="true" th:name="${pm.colName}" th:title="${pm.title}" >
+                                    <option th:each="x : ${pm.items}" th:value="${x.detailKey}" th:text="${x.detailText}" 
+                                        th:selected="*{paramaterValues[pm.colName]!=null and #arrays.contains(paramaterValues[pm.colName],x.detailKey)}">
                                     </option>
-                                  </select>  
+                                  </select>
+                                  <!-- 单选 -->
+                                  <select class="selectpicker"  data-style="form-control" th:if="${pm.type=='single'}"  th:name="${pm.colName}" th:title="${pm.title}" >
+                                    <option th:each="x : ${pm.items}" th:value="${x.detailKey}" th:text="${x.detailText}" 
+                                        th:selected="*{paramaterValues[pm.colName]!=null and #arrays.contains(paramaterValues[pm.colName],x.detailKey)}">
+                                    </option>
+                                  </select>
                               </div>
-                              <div class="col-md-2">
-                                  <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">搜索</button>
+                              <div class="col-md-1">
+                                  <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">Search</button>
                               </div>
                           </form>
                         </div><!-- /.row -->
@@ -63,7 +89,40 @@
                   </div>
                </div>
                <!-- /.row -->
+               <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                              <tr>
+                                <th th:each="item:${templateColumnKeys}" th:text="${item.colTitile}" width="8%">
+                                </th>
+                              </tr>
+                            </thead>
+                           <tbody>
+                              <tr th:each="item : ${page.dataList}">
+                                <td th:each="col : ${templateColumnKeys}" >
+                                    <div style="width: 150px; word-break:break-all;" th:text="*{col.tableCol==null|| item==null?'':item[col.tableCol]}"></div>
+                                </td>
+                              </tr>
+                            </tbody>
+                            <tfoot>
+                              <tr>
+                                <td  style="text-align: center;" colspan="6" >
+                                        <div th:replace="fragments/pageinfo :: pageinfo(${page.pageInfo})"></div>
+                                  </td>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      </div><!-- /.white-box -->
+                  </div><!-- /.col-md-12 -->
                </div>
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               </div>
+               <footer th:replace="fragments/footer :: footer"></footer>
             </div>
          </div>
          <!-- /#page-wrapper -->
@@ -71,4 +130,15 @@
       <!-- /#wrapper -->
       <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
    </body>
+   <script type="text/javascript">
+	   /*<![CDATA[*/
+	      $(document).ready(function(){
+	          $('#date-range').datepicker({
+	              autoclose: true,
+	              todayHighlight: true,
+	              format: "yyyy-mm-dd"
+	          });
+	      });
+	   /*]]>*/
+   </script>
 </html>

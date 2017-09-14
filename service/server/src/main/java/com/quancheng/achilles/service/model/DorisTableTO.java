@@ -2,20 +2,23 @@ package com.quancheng.achilles.service.model;
 
 import java.util.List;
 
-import com.quancheng.achilles.dao.modelwrite.DorisTableInfo;
+import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplate;
+import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.dao.modelwrite.DorisTableParam;
 
 public class DorisTableTO {
-    private DorisTableInfo table;
+    private AchillesDiyTemplate template;
     
     private List<DorisTableParam> params;
 
-    public DorisTableInfo getTable() {
-        return table;
+    private List<AchillesDiyTemplateColumns> cols;
+
+    public AchillesDiyTemplate getTemplate() {
+        return template;
     }
 
-    public void setTable(DorisTableInfo table) {
-        this.table = table;
+    public void setTemplate(AchillesDiyTemplate template) {
+        this.template = template;
     }
 
     public List<DorisTableParam> getParams() {
@@ -24,5 +27,13 @@ public class DorisTableTO {
 
     public void setParams(List<DorisTableParam> params) {
         this.params = params;
+    }
+
+    public List<AchillesDiyTemplateColumns> getCols() {
+        return cols;
+    }
+
+    public void setCols(List<AchillesDiyTemplateColumns> cols) {
+        this.cols = cols;
     } 
 }

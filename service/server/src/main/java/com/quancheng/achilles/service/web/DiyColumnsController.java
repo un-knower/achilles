@@ -31,12 +31,12 @@ public class DiyColumnsController {
 
     @RequestMapping(path = "/list", produces = { MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.TEXT_HTML_VALUE })
     @ResponseBody
-    public ModelAndView list(String tableName, ModelAndView mv,
+    public ModelAndView list(String tableId, ModelAndView mv,
             @ApiParam(value = "页码") @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
             @ApiParam(value = "每页记录数") @RequestParam(value = "pageSize", required = false, defaultValue = InnConstantPage.PAGE_SIZE_STRING) int pageSize) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        Page<AchillesDiyTemplate> page = achillesDiyColumnsServiceImpl.getOwnTemplate(tableName, null,
+        Page<AchillesDiyTemplate> page = achillesDiyColumnsServiceImpl.getOwnTemplate(tableId, null,
                 new PageRequest(pageNum, pageSize));
         Map<String,AchillesTemplateCondfig> maps = achillesDiyColumnsServiceImpl.getTemplateConfig();
         mv.addObject("page", page);
@@ -48,33 +48,29 @@ public class DiyColumnsController {
 
     @RequestMapping(path = "/edit", produces = { MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.TEXT_HTML_VALUE })
     @ResponseBody
-    public ModelAndView edit(ModelAndView mv, String tableName,@RequestParam(required=false) Long templateId) throws Exception {
-        
+    public ModelAndView edit(ModelAndView mv, Long tableId,@RequestParam(required=false) Long templateId) throws Exception {
         List<String> cols = new ArrayList<>();
-//        Map<String,String> colTitle= new HashMap<>();
         if(templateId != null && templateId  != 0){
             List<AchillesDiyTemplateColumns> selected= achillesDiyColumnsServiceImpl.getTemplateColsByTemplate(templateId);
             for (AchillesDiyTemplateColumns achillesDiyTemplateColumns : selected) {
                 cols.add(achillesDiyTemplateColumns.getTableCol());
-//                colTitle.put(achillesDiyTemplateColumns.getTableCol(), achillesDiyTemplateColumns.getColTitile());
             }
         }
         mv.addObject("selectedColumns", cols);
-//        mv.addObject("colTitles", colTitle);
         mv.addObject("templateInfo", templateId == null|| templateId  == 0?new AchillesDiyTemplate():achillesDiyColumnsServiceImpl.getTemplate(templateId));
-        mv.addObject("allColumns", achillesDiyColumnsServiceImpl.getTargetTableInfos(tableName));
-        mv.addObject("tableName", tableName);
+        mv.addObject("allColumns", achillesDiyColumnsServiceImpl.getTargetTableInfos(tableId));
+        mv.addObject("tableId", tableId);
         mv.setViewName("template/template_modify");
         return mv;
     }
 
     @RequestMapping(path = "/save", produces = { MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.TEXT_HTML_VALUE })
     @ResponseBody
-    public ModelAndView save(ModelAndView mv, String tableName,Long templateId,String[] columnName,String templateName ) throws Exception {
+    public ModelAndView save(ModelAndView mv,Long tableId,Long templateId,String[] columnName,String templateName ) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        achillesDiyColumnsServiceImpl.save(tableName, username, templateId, columnName, templateName);
-        mv.setViewName("redirect:/template/list");
+        achillesDiyColumnsServiceImpl.save(tableId, username, templateId, columnName, templateName);
+        mv.setViewName("redirect:/template/list?tableId="+tableId);
         return mv;
     }
 }

@@ -3,35 +3,32 @@ package com.quancheng.achilles.service.services.impl;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
-
 import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplate;
 import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.dao.modelwrite.AchillesTableInfo;
 import com.quancheng.achilles.dao.modelwrite.AchillesTemplateCondfig;
+import com.quancheng.achilles.dao.modelwrite.DorisTableColumns;
 import com.quancheng.achilles.dao.write.AchillesDiyTemplateColumnsRepository;
 import com.quancheng.achilles.dao.write.AchillesTableInfoRepository;
 import com.quancheng.achilles.dao.write.AchillesTemplateConfigRepository;
 import com.quancheng.achilles.dao.write.AchillesTemplateRepository;
+import com.quancheng.achilles.dao.write.DorisTableColumnsRepository;
+import com.quancheng.achilles.dao.write.DorisTableInfoRepository;
 import com.quancheng.achilles.service.services.AchillesDiyColumnsService;
 import com.quancheng.achilles.service.services.RestaurantServiceAbstract;
-import com.quancheng.achilles.util.DateUtils;
-
 import io.swagger.annotations.ApiModelProperty;
 
 @Service
@@ -44,6 +41,10 @@ public class AchillesDiyColumnsServiceImpl extends RestaurantServiceAbstract<Ach
     AchillesTemplateRepository achillesTemplateRepository;
     @Autowired
     AchillesTemplateConfigRepository achillesTemplateConfigRepository;
+    @Autowired
+    DorisTableColumnsRepository dorisTableColumnsRepository;
+    @Autowired
+    DorisTableInfoRepository dorisTableInfoRepository;
     
     public List<AchillesTableInfo> getTargetTableInfos(String tableName) throws Exception {
         AchillesTemplateCondfig atc = getTemplateConfig(tableName);
@@ -73,10 +74,10 @@ public class AchillesDiyColumnsServiceImpl extends RestaurantServiceAbstract<Ach
         return result;
     }
 
-    public Page<AchillesDiyTemplate> getOwnTemplate(String tableName,String owner,Pageable pageable) {
+    public Page<AchillesDiyTemplate> getOwnTemplate(String tableId,String owner,Pageable pageable) {
         Specifications<AchillesDiyTemplate>  speci= 
                 Specifications.where(equal("createdUser",owner))
-                .and(equal("tableName",tableName));
+                .and(equal("templateConfigId",tableId));
         return achillesTemplateRepository.findAll(speci,pageable);
     }
 
@@ -113,19 +114,12 @@ public class AchillesDiyColumnsServiceImpl extends RestaurantServiceAbstract<Ach
     public Integer saveTemplate(List<AchillesDiyTemplateColumns> templateColumns ,AchillesDiyTemplate template ) throws Exception {
         if(template.getId() != null ){
             achillesDiyTemplateColumnsRepository.deleteInBatch(getTemplateColsByTemplate(template.getId()));
-        }else{
-            AchillesTemplateCondfig atc = null;
-            try {
-                atc = getTemplateConfig(template.getTableName());
-            } catch (Exception e) {
-                throw new Exception("模版配置异常，联系技术人员！！");
-            }
-            if(atc == null ){
-                throw new Exception("模版配置异常，联系技术人员！");
-            }
-            template.setTemplateConfigId(atc.getId());
-            template.setCreatedAt(DateUtils.format(new Date()));
         }
+//        else{
+//            DorisTableInfo atc = dorisTableInfoRepository.findOne(id);
+//            template.setTemplateConfigId(atc.getId());
+//            template.setCreatedAt(DateUtils.format(new Date()));
+//        }
         achillesTemplateRepository.save(template);
         for (AchillesDiyTemplateColumns achillesDiyTemplateColumns : templateColumns) {
             achillesDiyTemplateColumns.setTemplateId(template.getId());
@@ -134,8 +128,8 @@ public class AchillesDiyColumnsServiceImpl extends RestaurantServiceAbstract<Ach
         return 1;
     }
 
-    public void save(String tableName, String user,Long templateId, String[] columnName, String templateName) throws Exception {
-        List<AchillesTableInfo>  cols = getTargetTableInfos(tableName);
+    public void save(Long tableId, String user,Long templateId, String[] columnName, String templateName) throws Exception {
+        List<AchillesTableInfo>  cols = getTargetTableInfos(tableId);
         List<AchillesDiyTemplateColumns> templateColumns = new ArrayList<>(columnName.length);
         AchillesDiyTemplateColumns adtc = null;
         List<String> colsSelected = Arrays.asList(columnName);
@@ -147,8 +141,23 @@ public class AchillesDiyColumnsServiceImpl extends RestaurantServiceAbstract<Ach
                 templateColumns.add(adtc);
             }
         }
-        AchillesDiyTemplate adt = templateId == null ? new  AchillesDiyTemplate(tableName,user): getTemplate(templateId);
+        AchillesDiyTemplate adt = templateId == null ? new  AchillesDiyTemplate(tableId,user): getTemplate(templateId);
         adt.setTemplateName(templateName);
         saveTemplate(templateColumns,adt);
+    }
+
+    public List<AchillesTableInfo> getTargetTableInfos(Long tableId) throws Exception {
+        List<DorisTableColumns> cols =  dorisTableColumnsRepository.findAll(new Specification<DorisTableColumns>() {
+            public Predicate toPredicate(Root<DorisTableColumns> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                return cb.equal(root.get("tableId"),tableId);
+            }
+        });
+        List<AchillesTableInfo> result = new ArrayList<>();
+        DorisTableColumns dtc = null;
+        for (int i = 0;cols != null &&  i < cols.size(); i++) {
+            dtc = cols.get(i);
+            result.add(new AchillesTableInfo(dtc.getColName(), dtc.getShowName()));
+        }
+        return result;
     }
 }

@@ -1,15 +1,13 @@
 package com.quancheng.achilles.dao.modelwrite;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import io.swagger.annotations.ApiModelProperty;
-@Entity
-@Table(name = "tmp_client_query")
+//@Entity
+//@Table(name = "tmp_client_query")
 public class QCClient {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

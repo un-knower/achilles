@@ -16,8 +16,8 @@ import com.quancheng.achilles.dao.repository.CacheLogRepository;
  * @author liujiejian
  * @version 2016年9月26日
  */
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class OrderCacheSyncJob extends QuartzJobBean {
 
     private static final Logger  LOGGER            = LoggerFactory.getLogger(OrderCacheSyncJob.class);

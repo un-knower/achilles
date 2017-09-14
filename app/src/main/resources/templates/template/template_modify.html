@@ -46,7 +46,7 @@
 											<thead>
 											     <tr>
 											         <td colspan="2">
-                                                         <input name="tableName"  th:value="${tableName}" hidden="true"/>
+                                                         <input name="tableId"  th:value="${tableId}" hidden="true"/>
                                                          <input name="templateId" th:value="${templateInfo.id}" hidden="true"/>
                                                          <input name="templateName" th:value="${templateInfo.templateName}" class="form-control" placeholder="模版名称" />
                                                      </td>
@@ -59,10 +59,7 @@
 											</thead>
 											<tbody>
 												<tr th:each="item:${allColumns}">
-													<td th:text="${item.columnComment==null||item.columnComment==''?item.columnName:item.columnComment}"></td>
-<!-- 													<td > 
-													   <input th:value="${colTitles.containsKey(item.columnName)?colTitles.get(item.columnName):item.columnComment}" name="columnComment"/>
- 													</td> -->
+													<td th:text="${item.columnComment==null||item.columnComment=='未知'?item.columnName:item.columnComment}"></td>
 													<td>
 														<input type="checkbox" name="columnName" class="js-switch" th:checked="${selectedColumns.contains(item.columnName)}" th:value="${item.columnName}" data-color="#13dafe"/>
 													</td>

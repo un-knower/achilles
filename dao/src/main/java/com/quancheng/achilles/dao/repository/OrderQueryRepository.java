@@ -26,4 +26,12 @@ public class OrderQueryRepository {
     public Long queryPageOrdersCount(Map<String, Object> map) {
         return sqlSession.selectOne("queryPageOrdersCounts", map);
     }
+    
+    public List<Map<String,Object>> queryPageData(Map<String,Object> sql){
+        return sqlSession.selectList("queryPageData", sql);                
+    }
+    
+    public Long queryPageDataCount(Map<String,Object> sql){
+        return sqlSession.selectOne("queryPageDataCount", sql);                
+    }
 }

@@ -16,8 +16,8 @@ import io.swagger.annotations.ApiModelProperty;
  * @author lijun jiang
  * @version 创建时间：2016年9月8日上午10:05:30
  */
-@Entity
-@Table(name = "tmp_check_dining")
+//@Entity
+//@Table(name = "tmp_check_dining")
 public class CheckEmphasisDining implements Serializable {
 
     /**

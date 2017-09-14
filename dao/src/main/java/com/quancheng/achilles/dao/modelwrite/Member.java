@@ -15,8 +15,8 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Created by XZW on 2016/9/7 0007.
  */
-@Entity
-@Table(name = "tmp_member")
+//@Entity
+//@Table(name = "tmp_member")
 public class Member implements Serializable {
 
     /**

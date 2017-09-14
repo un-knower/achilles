@@ -1,12 +1,12 @@
 package com.quancheng.achilles.dao.modelwrite;
 
 import java.util.Date;
+
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -14,8 +14,8 @@ import io.swagger.annotations.ApiModelProperty;
  * 
  * @author zhuzhong
  */
-@Entity
-@Table(name = "tmp_restaurant_query")
+//@Entity
+//@Table(name = "tmp_restaurant_query")
 public class RestaurantGonghai  {
 
     @Id

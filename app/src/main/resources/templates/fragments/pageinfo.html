@@ -6,7 +6,7 @@
 	        <li><a href="#" th:attr="data-page=0"><i class="fa fa-angle-double-left"></i> 首页</a> </li>
 			<li th:if="${!page.hasPrevious()}" class="disabled"> <a href="#"><i class="fa fa-angle-left"></i> 上一页</a> </li>
 			<li th:if="${page.hasPrevious()}"> <a href="#"  th:attr="data-page=${page.number-1}"><i class="fa fa-angle-left"></i> 上一页</a> </li>
-			<li class="active"> <a href="#" th:attr="data-page=${page.number}" th:text="${page.number+1} + ' / ' + ${page.totalPages}">2</a> </li>
+			<li class="active"> <a href="#" th:attr="data-page=${page.number}" th:text="${page.number+1} + ' / ' + ${page.totalPages}"></a> </li>
 			<li th:if="${page.hasNext()}"> <a href="#"  th:attr="data-page=${page.number+1}">下一页 <i class="fa fa-angle-right"></i> </a> </li>
 			<li th:if="${!page.hasNext()}" class="disabled"> <a href="#">下一页 <i class="fa fa-angle-right"></i> </a> </li>
 			<li> <a href="#" th:attr="data-page=${page.totalPages-1}">尾页 <i class="fa fa-angle-double-right"></i></a> </li>

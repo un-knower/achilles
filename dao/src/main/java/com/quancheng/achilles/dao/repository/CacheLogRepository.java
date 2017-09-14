@@ -22,20 +22,20 @@ public class CacheLogRepository {
 
     public Date doRefreshById(Integer id) {
         if (id == 1) {
-            sqlSession.update("dropOrderTemptable");
-            sqlSession.update("insertOrderTemptable");
+//            sqlSession.update("dropOrderTemptable");
+//            sqlSession.update("insertOrderTemptable");
         }
         if (id == 2) {
-            sqlSession.update("dropRestaurantTemptable");
-            sqlSession.update("insertNewRestaurantTemptable");
+//            sqlSession.update("dropRestaurantTemptable");
+//            sqlSession.update("insertNewRestaurantTemptable");
         }
         if (id == 3) {
             sqlSession.update("dropCheckPelpleTemptable");
             sqlSession.update("createNewCheckPeopleTemptable");
             sqlSession.update("dropCheckDiningTemptable");
             sqlSession.update("createNewCheckDiningTemptable");
-            sqlSession.update("dropCheckRecordTemptable");
-            sqlSession.update("createNewCheckRecordTemptable");
+//            sqlSession.update("dropCheckRecordTemptable");
+//            sqlSession.update("createNewCheckRecordTemptable");
         }
         if (id == 4) {
             sqlSession.update("dropCustomerServiceTemptable");
@@ -46,19 +46,19 @@ public class CacheLogRepository {
             sqlSession.update("createNewMemberTemptable");
         }
         if (id == 6) {
-            sqlSession.update("dropPrevClientTemptable");
-            sqlSession.update("insertPrevNewClientTemptable");
-            sqlSession.update("dropClientTemptable");
-            sqlSession.update("insertNewClientTemptable");
+//            sqlSession.update("dropPrevClientTemptable");
+//            sqlSession.update("insertPrevNewClientTemptable");
+//            sqlSession.update("dropClientTemptable");
+//            sqlSession.update("insertNewClientTemptable");
         }
         if (id == 7) {
-            sqlSession.update("dropTrainLogTemptable");
-            sqlSession.update("createNewTrainLogTemptable");
+//            sqlSession.update("dropTrainLogTemptable");
+//            sqlSession.update("createNewTrainLogTemptable");
         }
         
         if (id == 8) {
-            sqlSession.update("dropVisitLogTemptable");
-            sqlSession.update("insertVisitLogTemptable");
+//            sqlSession.update("dropVisitLogTemptable");
+//            sqlSession.update("insertVisitLogTemptable");
 //            doinsert("insertVisitLogTemptable");
         }
         sqlSession.update("updateInnCacheLog", id);

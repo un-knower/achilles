@@ -23,6 +23,7 @@ UNION ALL
         168order.city_id
     FROM
         16860_order 168order;
+        
 create or replace view `v_inn_request_patment_log` as 
 select
   if(model = 'order_dunning', (select order_num from 16860_order where id = al.record_id), (select order_num from api_orders where id = al.record_id)) as 'order_num',

@@ -27,6 +27,7 @@
     <mappers>
         <mapper resource="sqlmapper/Sync-sqlmap.xml"/>
         <mapper resource="sqlmapper/Order-sqlmap.xml"/>
+        <mapper resource="sqlmapper/DataItem-sqlmap.xml"/>
 <!--         <mapper resource="sqlmapper/companyReport-sqlmap.xml"/> -->
         <mapper resource="sqlmapper/sj-companyRestaurantsSource-sqlmap.xml"/>
         <mapper resource="sqlmapper/sj-companyRestaurantsStatistics-sqlmap.xml"/>

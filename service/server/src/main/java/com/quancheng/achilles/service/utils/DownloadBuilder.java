@@ -67,7 +67,12 @@ public class DownloadBuilder<T> {
             out = new FileOutputStream(file, true);
             wb = new SXSSFWorkbook(100);
             sheet = wb.createSheet();
-            this.createHeader();
+            if(cls == null){
+                createHeaderByTemplate();
+            }else{
+                this.createHeader();
+            }
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -165,12 +170,43 @@ public class DownloadBuilder<T> {
      */
     private List<Field> fieldList;
 
+    public void appendData(List<Map<String, Object>> datas) {
+        if (datas == null || datas.isEmpty()) {
+            return;
+        }
+        SXSSFRow row = null;
+        AchillesDiyTemplateColumns field = null;
+        Object fieldValue = null;
+        for (Map<String, Object> object : datas) {
+            row = sheet.createRow(getRow());
+            if(object==null){
+                    continue;
+            }
+            for (int i = 0;  i < tempcols.size(); i++) {
+                field = tempcols.get(i);
+                fieldValue = object.get(field.getTableCol()); 
+                /** 数据转换 */
+                setValue(row.createCell(i), fieldValue);
+            }
+        }
+    }
+    private void createHeaderByTemplate() {
+        SXSSFRow headrow = sheet.createRow(getRow());
+        SXSSFCell cell = null;
+        int currColumn = 0;
+        if(tempcols != null && !tempcols.isEmpty() ){
+            for (AchillesDiyTemplateColumns adtc : tempcols) {
+                cell = headrow.createCell(currColumn);
+                cell.setCellValue(adtc.getColTitile());
+                currColumn++;
+            }
+        } 
+    }
     /**
      * 构建表头
      */
     Map<String , AchillesDiyTemplateColumns> columns ;
     private void createHeader() {
-
         SXSSFRow headrow = sheet.createRow(getRow());
         SXSSFCell cell = null;
         int currColumn = 0;

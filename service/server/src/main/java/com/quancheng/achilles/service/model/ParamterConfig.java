@@ -2,9 +2,11 @@ package com.quancheng.achilles.service.model;
 
 import java.util.List;
 
+import com.quancheng.achilles.dao.modelwrite.DataItemDetail;
+
 public class ParamterConfig {
     private String type, colName, title;
-    private List<DataItemKV> items;
+    private List<DataItemDetail> items;
     public String getType() {
         return type;
     }
@@ -29,7 +31,7 @@ public class ParamterConfig {
         this.title = title;
     }
 
-    public ParamterConfig(String type, String colName, String title,List<DataItemKV> items) {
+    public ParamterConfig(String type, String colName, String title,List<DataItemDetail> items) {
         super();
         this.type = type;
         this.colName = colName;
@@ -41,11 +43,11 @@ public class ParamterConfig {
         super();
     }
 
-    public List<DataItemKV> getItems() {
+    public List<DataItemDetail> getItems() {
         return items;
     }
 
-    public void setItems(List<DataItemKV> items) {
+    public void setItems(List<DataItemDetail> items) {
         this.items = items;
     }
 }

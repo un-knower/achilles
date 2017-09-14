@@ -1,12 +1,12 @@
 package com.quancheng.achilles.dao.model;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -14,8 +14,8 @@ import io.swagger.annotations.ApiModelProperty;
  * 
  * @author zhuzhong
  */
-@Entity
-@Table(name = "v_inn_company_own_rest")
+//@Entity
+//@Table(name = "v_inn_company_own_rest")
 public class RestaurantOwnCompany implements Serializable {
 
     private static final long serialVersionUID = -3801799321665711586L;

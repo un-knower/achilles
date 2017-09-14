@@ -1,16 +1,14 @@
 package com.quancheng.achilles.dao.modelwrite;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import io.swagger.annotations.ApiModelProperty;
 
-@Entity
-@Table(name = "out_app_restaurant_reported_wrong")
+//@Entity
+//@Table(name = "out_app_restaurant_reported_wrong")
 public class AppRestaurantReportedWrong {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

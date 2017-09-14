@@ -163,7 +163,7 @@
 							<div class="white-box">
 								<div class="row">
 									<div class="col-md-3">
-										<input name="compareCompany" type="checkbox" checked="checked" value="true" />是否使用所属企业数据计算
+										<input name="compareCompany" type="checkbox" checked="checked" value="true" />使用指定企业数据计算
 									</div>
 									<div class="col-md-2">
 										<input name="isInsertDatas" type="checkbox" value="true" id="isInsertDatas"/>
@@ -171,7 +171,7 @@
 									</div>
 									<div class="col-md-3" style="display: none;">
 										<select class="selectpicker" data-style="form-control" id="companyIds" 
-											multiple="multiple" name="companyIds" title="数据所属企业"
+											multiple="multiple" name="companyIds" title="医院/餐厅所属企业"
 											data-live-search="true">
 											<option th:each="x : ${companyList}"
 												th:value="${x.companyId}" th:text="${x.companyName}"
@@ -180,7 +180,7 @@
 									</div>
 									<div class="col-md-3" style="display: none;">
 										<select class="selectpicker" data-style="form-control"
-											multiple="multiple" name="cityIds" title="选择数据所属城市" id="cityIds" 
+											multiple="multiple" name="cityIds" title="选择医院/餐厅城市" id="cityIds" 
 											data-live-search="true">
 											<option th:each="x : ${cityList}" th:value="${x.id}"
 												th:text="${x.name}"

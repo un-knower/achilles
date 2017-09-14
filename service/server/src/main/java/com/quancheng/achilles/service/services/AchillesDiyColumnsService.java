@@ -2,8 +2,10 @@ package com.quancheng.achilles.service.services;
 
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplate;
 import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.dao.modelwrite.AchillesTableInfo;
@@ -16,12 +18,20 @@ public interface AchillesDiyColumnsService {
      * @return
      */
     List<AchillesTableInfo> getTargetTableInfos(String tableName) throws Exception ;
+    
+    /**
+     * 根据表名图表字段
+     * @param owner
+     * @return
+     */
+    List<AchillesTableInfo> getTargetTableInfos(Long tableId) throws Exception ;
+    
     /**
      * 根据模版登陆用户获取模版
      * @param owner
      * @return
      */
-     Page<AchillesDiyTemplate> getOwnTemplate(String tableName,String owner,Pageable pageable) ;
+     Page<AchillesDiyTemplate> getOwnTemplate(String tableId,String owner,Pageable pageable) ;
     /**
      * 根据模版id获取自定义字段
      * @param templateId
@@ -43,7 +53,7 @@ public interface AchillesDiyColumnsService {
      * @param templateName
      * @throws Exception
      */
-    void save(String tableName, String user,Long templateId, String[] columnName, String templateName)  throws Exception ;
+    void save(Long tableId, String user,Long templateId, String[] columnName, String templateName)  throws Exception ;
     /**
      * 
      * @return

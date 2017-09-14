@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head">
+  </head>
+   <body class="fix-sidebar fix-header">
+   
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid" id="ops-page">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">运营数据</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">仪表盘</a></li>
+                        <li class="active"><a th:href="@{/ops}">运营数据</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <div class="row" >
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4>订单<small><label >&nbsp;&nbsp;最近更新时间：</label><label class="update-time" th:text="${refresh_time_1}"></label>&nbsp;&nbsp;
+                          <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-xs btn-info refresh-btn" th:attr="job-id=1">马上更新</button></small></h4>
+                        </div> 
+                        <div class="panel-wrapper collapse in">
+                           <div class="panel-body" style="padding: 0 20px 0 20px;">
+                              <table class="table table-hover" style="text-align: left">
+                                <thead><tr><td width="20%"></td><td width="20%"></td><td></td><td width="10%"></td></tr></thead>
+                                <tbody>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+<!--                                     <td><a href="/ops/orderquery/all">订单统计</a></td> -->
+                                <td><a href="template/list?tableName=tmp_order_query">订单统计</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+<!--                                               <li><a href="template/list?tableName=tmp_restaurant" class="waves-effect">模版管理</a></li> -->
+                                              <li><a href="template/edit?tableName=tmp_order_query">新增模版</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                           </div>
+                        </div>
+                      </div>
+                  </div>
+               </div>
+               <!-- /.row -->
+               <!-- .row -->
+               <div class="row"  >
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>餐厅<small><label>&nbsp;&nbsp;最近更新时间：</label><label class="update-time" th:text="${refresh_time_2}"></label>&nbsp;&nbsp;
+                            <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-info btn-xs refresh-btn"  th:attr="job-id=2_8_7">马上更新</button></small></h4>
+                        </div> 
+                        <div class="panel-wrapper collapse in">
+                           <div class="panel-body" style="padding: 0 20px 0 20px;">
+                              <table class="table table-hover" style="text-align: left">
+                                <thead><tr><td width="20%"></td><td width="20%"></td><td></td><td width="10%"></td></tr></thead>
+                                <tbody>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+                                   <!--<td><a th:href="@{/ops/restaurant/gh_index}" >公海餐厅</a></td>-->
+                                    <td><a href="template/list?tableName=tmp_restaurant" >餐厅</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="template/edit?tableName=tmp_restaurant">添加模版</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
+                                    <td><a th:href="@{/ops/restaurant/online}" >上架餐厅</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
+                                    <td><a th:href="@{/ops/restaurant/ol}" >在线餐厅统计</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+                                    <td><a href="template/list?tableName=out_approve_time_detail" >特许餐厅</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="template/edit?tableName=out_approve_time_detail">新增模版</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+                                    <td><a href="template/list?tableName=out_app_restaurant_reported_wrong" >App餐厅报错信息</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="template/edit?tableName=out_app_restaurant_reported_wrong">新增模版</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+                                    <td><a href="template/list?tableName=out_white_list_restaurant" >白名单餐厅</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="template/edit?tableName=out_white_list_restaurant">新增模版</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+<!--                                     <td><a th:href="@{/ops/restaurant/visitlog}">餐厅拜访记录</a></td> -->
+<td><a th:href="@{/ops/restaurant/visitlog}">餐厅拜访记录</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')">
+                                    <td><a th:href="@{/ops/restaurant/trainlog}">餐厅培训记录</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
+                                    <td><a th:href="@{/ops/restaurant/recommenders}">推荐餐厅</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr sec:authorize="hasAnyRole('ADMIN','OPERATIVE')" >
+                                    <td><a th:href="@{/ops/hospitalrestaurant/view}" >医院餐厅距离信息导出</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="template/edit?tableName=out_approve_time_detail">新增模版</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                           </div>
+                        </div>
+                      </div>
+                  </div>
+               </div>
+               <!-- /.row -->
+               <!-- .row -->
+               <div class="row"  sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>企业信息<small><label>&nbsp;&nbsp;最近更新时间：</label>
+                            <label class="update-time" th:text="${refresh_time_6}"></label>&nbsp;&nbsp;
+                            <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-info btn-xs refresh-btn "  th:attr="job-id=6" >马上更新</button></small></h4>
+                        </div> 
+                        <div class="panel-wrapper collapse in">
+                           <div class="panel-body" style="padding: 0 20px 0 20px;">
+                              <table class="table table-hover" style="text-align: left">
+                                <thead><tr><td width="20%"></td><td width="20%"></td><td></td><td width="10%"></td></tr></thead>
+                                <tbody>
+                                   <tr>
+                                    <td><a th:href="@{/ops/client/list}">企业信息</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>  
+                                  <tr>
+                                    <td><a href="#">企页使用率</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td><a href="#">企页下单情况统计</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                           </div>
+                        </div>
+                      </div>
+                  </div>
+               </div>
+               <!-- /.row -->
+               
+               <!-- .row -->
+               <div class="row"  sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>客服服务
+                             <small><label>&nbsp;&nbsp;最近更新时间：</label><label class="update-time" th:text="${refresh_time_4}"></label>&nbsp;&nbsp;
+                             <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-info btn-xs refresh-btn"  th:attr="job-id=4">马上更新</button></small> </h4>
+                       </div> 
+                        <div class="panel-wrapper collapse in">
+                           <div class="panel-body" style="padding: 0 20px 0 20px;">
+                              <table class="table table-hover" style="text-align: left">
+                                <thead><tr><td width="20%"></td><td width="20%"></td><td></td><td width="10%"></td></tr></thead>
+                                <tbody>
+                                  <tr>
+                                    <td><a th:href="@{/ops/callrecord}">通话记录</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                   <tr>
+                                    <td><a th:href="@{/ops/reqpayment}">催款记录</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                           </div>
+                        </div>
+                      </div>
+                  </div>
+               </div>
+                <!-- .row -->
+               <div class="row"  sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>用户信息
+                        <small><label>&nbsp;&nbsp;最近更新时间：</label><label class="update-time"  th:text="${refresh_time_5}"></label>&nbsp;&nbsp;
+                            <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-info btn-xs refresh-btn"  th:attr="job-id=5">马上更新</button></small>
+                        </h4></div> 
+                        <div class="panel-wrapper collapse in">
+                           <div class="panel-body" style="padding: 0 20px 0 20px;">
+                              <table class="table table-hover" style="text-align: left">
+                                <thead><tr><td width="20%"></td><td width="20%"></td><td></td><td width="10%"></td></tr></thead>
+                                <tbody>
+                                  <tr>
+                                    <td><a th:href="@{/ops/member}">用户信息</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                           </div>
+                        </div>
+                      </div>
+                  </div>
+               </div>
+ 
+               <!-- /.row -->
+                  <!-- .row -->
+               <div class="row"  sec:authorize="hasAnyRole('ADMIN','KEYCUSTOMER')">
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                            <h4>飞检服务<small><label>&nbsp;&nbsp;最近更新时间：</label><label th:text="${refresh_time_3}"></label>&nbsp;&nbsp;
+                            <button sec:authorize="hasAnyRole('ROOT')" class="btn btn-info btn-xs refresh-btn" th:attr="job-id=3" >马上更新</button></small></h4>
+                        </div> 
+                        <div class="panel-wrapper collapse in">
+                           <div class="panel-body" style="padding: 0 20px 0 20px;">
+                              <table class="table table-hover" style="text-align: left">
+                                <thead><tr><td width="20%"></td><td width="20%"></td><td></td><td width="10%"></td></tr></thead>
+                                <tbody>
+                                  <tr>
+                                    <td><a th:href="@{/ops/checkpeople}">重点关注人员</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                   <tr>
+                                    <td><a th:href="@{/ops/checkdining}">重点关注餐厅</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr   >
+                                    <td><a th:href="@{/ops/quanlity}">飞检记录</a></td>
+
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                        <div class="btn-group m-r-10">
+                                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle waves-effect waves-light" type="button"> <i class="fa fa-list"></i></button>
+                                            <ul role="menu" class="dropdown-menu">
+                                              <li><a href="#" class="waves-effect">编辑表格</a></li>
+                                              <li><a href="#">删除表格</a></li>
+                                              <li><a href="#">换个名字</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                  </tr>
+                                  <tr   >
+                                    <td><a onclick="test(55)">test</a></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="center">
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                           </div>
+                        </div>
+                      </div>
+                  </div>
+               </div>
+               <!-- /.row -->
+               
+
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+   
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+      <script type="text/javascript">
+      /*<![CDATA[*/
+        $(function(){
+            $(".refresh-btn").each(function(){
+            	var $updateBtn = $(this);
+            	$updateBtn.click(function(){
+                    var $btn = $(this);           
+                    $btn.addClass("disabled").html("更新中");
+                    var ids = "";
+                    var idarr = $btn.attr("job-id").split("_");
+                    $(idarr).each(function(){
+                        var idValue= this;
+                        ids += ids=="" ? "ids="+idValue :"&ids="+idValue;
+                    });
+                    $.ajax({
+                        type : "get",  
+                        url : "ops/refresh?"+ids,  
+                        dataType:"json",  
+                        success : function(msg) {  
+                        	$($updateBtn).prev().text(msg.date);
+                            $($updateBtn).removeClass("disabled");
+                            $($updateBtn).html("马上更新");
+                        }  
+                    });  
+                });
+            });
+        });
+        /*]]>*/
+        </script>
+   </body>
+</html>

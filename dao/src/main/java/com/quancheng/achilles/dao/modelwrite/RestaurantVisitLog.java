@@ -3,12 +3,11 @@ package com.quancheng.achilles.dao.modelwrite;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
+
 import io.swagger.annotations.ApiModelProperty;
-@Entity
-@Table(name = "tmp_inn_visit_log")
+//@Entity
+//@Table(name = "tmp_inn_visit_log")
 public class RestaurantVisitLog implements Serializable{
     private static final long serialVersionUID = -4328878160244212514L;
     

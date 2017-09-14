@@ -10,8 +10,8 @@ import java.io.Serializable;
 /**
  * Created by XZW on 2016/9/10 0010.
  */
-@Entity
-@Table(name = "16860_client")
+//@Entity
+//@Table(name = "16860_client")
 public class Client implements Serializable {
     private static final long serialVersionUID = 8660340502323460340L;
 
