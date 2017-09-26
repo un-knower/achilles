@@ -14,24 +14,15 @@ import com.quancheng.achilles.dao.model.OrderRecordVo;
  */
 @Repository
 public class OrderQueryRepository {
-
     @Resource(name="writeSqlSession")
-//    @Autowired
     private SqlSession sqlSession;
-
-    public List<OrderRecordVo> queryPageOrders(Map<String, Object> map) {
-        return sqlSession.selectList("queryPageOrders", map);
-    }
-
-    public Long queryPageOrdersCount(Map<String, Object> map) {
-        return sqlSession.selectOne("queryPageOrdersCounts", map);
-    }
-    
     public List<Map<String,Object>> queryPageData(Map<String,Object> sql){
         return sqlSession.selectList("queryPageData", sql);                
     }
-    
     public Long queryPageDataCount(Map<String,Object> sql){
         return sqlSession.selectOne("queryPageDataCount", sql);                
+    }
+    public List<Map<String,Object>>  queryPageDataLimit(Map<String,Object> sql){
+        return sqlSession.selectList("queryPageDataLimit", sql);
     }
 }

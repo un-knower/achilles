@@ -7,14 +7,28 @@
             <result column="detail_key" property="detailKey"/>
             <result column="detail_text" property="detailText"/>
         </resultMap>
+    <select  id="queryPageDataLimit" parameterType="Map"   resultType="Map">
+        select 
+	        <foreach collection="cols" item="item" separator=",">
+	            b.${item}
+	        </foreach>
+	      from   
+             ( select 
+                ${countCol} as id
+                ${sql}   limit  ${pageBegin},${pageSize}
+            ) a 
+            left join ${tableName} b on a.id=b.${countCol}
+    </select>
+
+    <select  id="queryPageDataCount" parameterType="Map"   resultType="Long">
+        select count(${countCol})   ${sql}  
+    </select>
+    
     <select  id="queryPageData" parameterType="Map"   resultType="Map">
         select 
         <foreach collection="cols" item="item" separator=",">
             ${item}
         </foreach>
-      ${sql}   limit  ${pageBegin},${pageSize}
-    </select>
-    <select  id="queryPageDataCount" parameterType="Map"   resultType="Long">
-        select count(${countCol})   ${sql}  
+      ${sql}  limit  ${pageBegin},${pageSize} 
     </select>
 </mapper>

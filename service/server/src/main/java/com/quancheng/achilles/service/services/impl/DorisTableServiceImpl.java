@@ -91,8 +91,9 @@ public class DorisTableServiceImpl {
         ChartDataResp cdr = new ChartDataResp();
         try {
             Long begin = System.currentTimeMillis();
-            List<Map<String,Object>> result = orderQueryRepository.queryPageData(par);
-            par.put("countCol", columns.get(0).getTableCol());
+            par.put("countCol", dti.getLatitudeCols());
+            par.put("tableName", dti.getRemark());
+            List<Map<String,Object>> result =orderQueryRepository.queryPageDataLimit(par);
             Long end = System.currentTimeMillis();
             Long count = orderQueryRepository.queryPageDataCount(par);
             Long end2 = System.currentTimeMillis();

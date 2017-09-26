@@ -38,6 +38,9 @@ public class TemplateController {
     public ModelAndView list(HttpServletRequest request, ModelAndView mv)   {
         Map<String,String[]> param = request.getParameterMap();
         mv.addObject("paramaterValues", param);
+        if(param.containsKey("templateId")){
+            mv.setViewName("redirect:/ops");
+        }
         Long templateId=Long.parseLong(param.get("templateId")[0].toString());
         DorisTableTO dtt = dorisTableServiceImpl.query(templateId);
         List<AchillesDiyTemplateColumns> cols = achillesDiyColumnsServiceImpl.getTemplateColsByTemplate(templateId);
