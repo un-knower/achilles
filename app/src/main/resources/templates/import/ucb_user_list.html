@@ -44,12 +44,16 @@
                      <div class="white-box">
                         <h3 class="box-title">用户信息 <a class="pull-right" th:href="@{/ops/import/ucb/user}">新增</a></h3>
                      </div>
+                      <form id="query-form" th:action="@{/ops/import/ucb/list}" method="post">
+                         <input type="hidden" name="pageNum" th:value="${page.number}" />
+                              <input type="hidden" name="pageSize" th:value="${page.size}" />
+                      </form>
                   </div>
                   <div class="col-md-12">
                     <div class="white-box">
                         <div class="table-responsive">
-                          <table class="table table-bordered table-hover">
-                            <thead>
+                          <table class="table table-bordered table-hover Sortable">
+                            <thead >
                               <tr>
 <!--                                 <th>发票抬头</th> -->
                                 <th>姓名</th>

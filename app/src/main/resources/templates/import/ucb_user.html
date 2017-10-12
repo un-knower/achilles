@@ -75,7 +75,7 @@
                                       <td align="right" style="padding:22px 12px;font-size: 16px;"><span>城市</span></td>
                                       <td>
                                             <div class="col-md-6">
-				                                  <select class="selectpicker"  data-style="form-control"  name="cityId"    data-live-search="true"  >
+				                                  <select class="selectpicker"  data-style="form-control"  name="cityId"    data-live-search="true"  onchange="setCity(this)">
 				                                    <option th:each="x : ${cityList}" th:value="${x.detailKey}"  th:text="${x.detailText}" th:if="x!=null" />
 				                                  </select>
                                             </div>
@@ -85,7 +85,9 @@
                                       <td align="right" style="padding:22px 12px;font-size: 16px;"><span>城市</span></td>
                                       <td>
                                             <div class="col-md-6">
-                                                  <input type="text" class="form-control" name="city" th:value="${restaurantName}" placeholder="city name" th:required="required"/>
+                                                  <input type="text" class="form-control" name="city"  id="city"  placeholder="city name"
+                                                    th:value="${cityList!=null?cityList[0].detailText:null}"
+                                                   th:required="required" readonly="readonly"/>
                                             </div>
                                       </td>
                                   </tr>
@@ -154,4 +156,11 @@
       <!-- /#wrapper -->
       <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
    </body>
+   <script type="text/javascript">
+       /*<![CDATA[*/
+          function setCity(selectEl){
+        	    $("#city").val($(selectEl).find(":selected").html());
+          }
+       /*]]>*/
+   </script>
 </html>
