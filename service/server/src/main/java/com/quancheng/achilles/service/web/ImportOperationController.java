@@ -70,7 +70,7 @@ public class ImportOperationController extends ControllerAbstract {
             uu.setCreatedAt(dt);
             ucbUserRepository.save(uu);
         }
-        mv.setViewName("redirect:import/ucb_user_list");
+        mv.setViewName("redirect:/ops/import/ucb/list");
         return mv;
     }
 }
