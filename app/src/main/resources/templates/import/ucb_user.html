@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">ucb</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">ucb_用户导入</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-6">
+                     <div class="white-box">
+                        <h3 class="box-title">ucb_用户导入</h3>
+                        <div class="row">
+                          <form id="submit-form" th:action="@{/ops/import/ucb/save}" method="post">
+                              <input type="hidden" value="42" name="clientId"/>
+	                          <table class="table table-hover" style="border: none;">
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>姓名</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+			                                <input type="text" class="form-control" name="realname" th:value="${restaurantName}" placeholder="user real name" th:required="required"/>
+			                                </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>email</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                            <input type="text" class="form-control" name="email" th:value="${restaurantName}" placeholder="employee email" th:required="required"/>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>工号</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                            <input type="text" class="form-control" name="jobNum" th:value="${restaurantName}" placeholder="user job num" th:required="required"/>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>城市</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+				                                  <select class="selectpicker"  data-style="form-control"  name="cityId"    data-live-search="true"  >
+				                                    <option th:each="x : ${cityList}" th:value="${x.detailKey}"  th:text="${x.detailText}" th:if="x!=null" />
+				                                  </select>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>城市</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                                  <input type="text" class="form-control" name="city" th:value="${restaurantName}" placeholder="city name" th:required="required"/>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>部门</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                                <select class="selectpicker"  data-style="form-control"  name="sectorId"   data-live-search="true" >
+                                                    <option th:each="x : ${sectorList}" th:value="${x.detailKey}" th:text="${x.detailText}" th:if="x!=null"/>
+                                                  </select>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>大区</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                                <select class="selectpicker"  data-style="form-control"  name="regionId"   data-live-search="true">
+                                                    <option th:each="x : ${regionList}" th:value="${x.detailKey}" th:text="${x.detailText}" />
+                                                  </select>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                   <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>上级邮箱</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                            <input type="text" class="form-control" name="superiorEmail" th:value="${restaurantName}" placeholder="super email"  th:required="required"/>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                   <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>上级</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                            <input type="text" class="form-control" name="superiorName" th:value="${restaurantName}" placeholder="super real name"  th:required="required"/>
+                                            </div>
+                                      </td>
+                                  </tr>   
+                                   <tr>
+                                       <td >
+                                       </td>  
+                                      <td >
+                                         <div class="col-md-6">
+			                                  <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px;">Submit</button>
+			                              </div>
+                                      </td>
+                                  </tr>   
+                              </table>
+                          </form>
+                        </div><!-- /.row -->
+                     </div>
+                  </div>
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+   </body>
+</html>

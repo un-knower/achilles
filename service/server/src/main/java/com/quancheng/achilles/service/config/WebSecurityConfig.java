@@ -15,6 +15,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.inMemoryAuthentication().withUser("user").password("qcpassword").roles("USER");
 		auth.inMemoryAuthentication().withUser("admin").password("qcpassword").roles("ADMIN");
+		auth.inMemoryAuthentication().withUser("ruanzheng").password("ruanzheng12345").roles("ROOT");
 		auth.inMemoryAuthentication().withUser("qianyu@quancheng-ec.com").password("password").roles("KEYCUSTOMER");
         auth.inMemoryAuthentication().withUser("jihongyan@quancheng-ec.com").password("password").roles("KEYCUSTOMER");
         auth.inMemoryAuthentication().withUser("xiayang@quancheng-ec.com").password("password").roles("OPERATIVE");

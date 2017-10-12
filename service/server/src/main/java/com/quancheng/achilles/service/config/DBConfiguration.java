@@ -28,10 +28,12 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import com.github.pagehelper.PageHelper;
 import com.quancheng.achilles.dao.model.CallRecord;
 import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
+import com.quancheng.achilles.dao.quancheng_db.model.UcbUser;
 
 @Configuration
 public class DBConfiguration {
-
+    /**数据平台数据库实例数据源*/
+    /*=====ds read begin======*/
     @Primary
     @Bean(name = "quanchengDBReadDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.readonly")
@@ -54,11 +56,9 @@ public class DBConfiguration {
     public SqlSession readSqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
-
-    @Bean(name = "writeSqlSession")
-    public SqlSession sqlSessionTemplate(@Qualifier("writeSqlSessionFactoryBean") SqlSessionFactory sqlSessionFactory) {
-        return new SqlSessionTemplate(sqlSessionFactory);
-    }
+    /*=====ds read end======*/
+    /*=====ds write begin======*/
+ 
 
     @Bean(name = "quanchengDBWriteDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.writedb")
@@ -74,7 +74,11 @@ public class DBConfiguration {
         sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-write-config.xml"));
         return sqlSessionFactory;
     }
-
+    @Bean(name = "writeSqlSession")
+    public SqlSession sqlSessionTemplate(@Qualifier("writeSqlSessionFactoryBean") SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
+    /*=====ds write end======*/
     // ---------------------------------------------
 
     @Bean(name = "statisticsSqlSessionFactoryBean")
@@ -151,6 +155,25 @@ public class DBConfiguration {
     @Primary
     @Bean(name = "qcReaderTransactionManager")
     public JpaTransactionManager jpaReaderTransactionManager(@Qualifier("qcReaderManagerFactory") LocalContainerEntityManagerFactoryBean builder) {
+        return new JpaTransactionManager(builder.getObject());
+    }
+    
+    /**生产环境数据库实例数据源 quancheng_db*/
+    @Bean(name = "quanchengOnlineDBWriteDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.online.quancheng_db")
+    public DataSource quanchengDBOnlineDataSource() {
+        DataSource ds = DataSourceBuilder.create().build();
+        return ds;
+    }
+    
+    @Bean(name = "quanchengOnLineManagerFactory")
+    public LocalContainerEntityManagerFactoryBean jpaQuanchengOnlineManagerFactory(@Qualifier("quanchengOnlineDBWriteDataSource") DataSource dataSource,
+                                                                          EntityManagerFactoryBuilder builder) {
+        return builder.dataSource(dataSource).packages(UcbUser.class).persistenceUnit("quancheng_db_write_db").build();
+    }
+
+    @Bean(name = "quanchengOnLineTransactionManager")
+    public JpaTransactionManager jpaQuanchengOnlineTransactionManager(@Qualifier("quanchengOnLineManagerFactory") LocalContainerEntityManagerFactoryBean builder) {
         return new JpaTransactionManager(builder.getObject());
     }
 }
