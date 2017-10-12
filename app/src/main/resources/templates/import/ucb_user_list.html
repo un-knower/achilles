@@ -51,35 +51,35 @@
                           <table class="table table-bordered table-hover">
                             <thead>
                               <tr>
-                                <th>发票抬头</th>
+<!--                                 <th>发票抬头</th> -->
                                 <th>姓名</th>
-                                <th>手机</th>
+<!--                                 <th>手机</th> -->
                                 <th>工号</th>
                                 <th >邮箱</th>
                                 <th >城市</th>
                                 <th >上级姓名</th>
                                 <th >上级邮箱</th>
-                                <th width="5%">子公司</th>
-                                <th width="8%">事业部</th>
+<!--                                 <th width="5%">子公司</th> -->
+<!--                                 <th width="8%">事业部</th> -->
                                 <th width="8%">部门</th>
-                                <th width="5%">产品组</th>
+<!--                                 <th width="5%">产品组</th> -->
                                 <th width="5%">大区</th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr th:each="item : ${page.content}">
-                                <td th:text="${item.invoiceTitle}"></td>
+<!--                                 <td th:text="${item.invoiceTitle}"></td> -->
                                 <td th:text="${item.realname}"></td>
-                                <td th:text="${item.mobile}"></td>
+<!--                                 <td th:text="${item.mobile}"></td> -->
                                 <td th:text="${item.jobNum}"></td>
                                 <td th:text="${item.email}"></td>
                                 <td th:text="${item.city}"></td>
                                 <td th:text="${item.superiorName}"></td>
                                 <td th:text="${item.superiorEmail}"></td>
-                                <td th:text="${item.branchId}"></td>
-                                <td th:text="${item.businessunitId}"></td>
+<!--                                 <td th:text="${item.branchId}"></td> -->
+<!--                                 <td th:text="${item.businessunitId}"></td> -->
                                 <td th:text="${sectorList[item.sectorId+'']}"></td>
-                                <td th:text="${item.productgroupId}"></td>
+<!--                                 <td th:text="${item.productgroupId}"></td> -->
                                 <td th:text="${regionList[item.regionId+'']}"></td>
                               </tr>
                             </tbody>
