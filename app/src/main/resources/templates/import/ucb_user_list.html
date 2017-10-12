@@ -78,9 +78,9 @@
                                 <td th:text="${item.superiorEmail}"></td>
                                 <td th:text="${item.branchId}"></td>
                                 <td th:text="${item.businessunitId}"></td>
-                                <td th:text="${item.sectorId}"></td>
+                                <td th:text="${sectorList[item.sectorId+'']}"></td>
                                 <td th:text="${item.productgroupId}"></td>
-                                <td th:text="${item.regionId}"></td>
+                                <td th:text="${regionList[item.regionId+'']}"></td>
                               </tr>
                             </tbody>
                             <tfoot>
