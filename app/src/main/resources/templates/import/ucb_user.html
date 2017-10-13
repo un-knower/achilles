@@ -46,6 +46,8 @@
                         <div class="row">
                           <form id="submit-form" th:action="@{/ops/import/ucb/save}" method="post">
                               <input type="hidden" value="42" name="clientId"/>
+                              <input type="hidden" class="form-control" name="city"  id="city"  placeholder="city name"
+                                        th:value="${cityList!=null?cityList[0].detailText:null}" th:required="required" readonly="readonly"/>
 	                          <table class="table table-hover" style="border: none;">
                                   <tr>
                                       <td align="right" style="padding:22px 12px;font-size: 16px;"><span>姓名</span></td>
@@ -78,16 +80,6 @@
 				                                  <select class="selectpicker"  data-style="form-control"  name="cityId"    data-live-search="true"  onchange="setCity(this)">
 				                                    <option th:each="x : ${cityList}" th:value="${x.detailKey}"  th:text="${x.detailText}" th:if="x!=null" />
 				                                  </select>
-                                            </div>
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>城市</span></td>
-                                      <td>
-                                            <div class="col-md-6">
-                                                  <input type="text" class="form-control" name="city"  id="city"  placeholder="city name"
-                                                    th:value="${cityList!=null?cityList[0].detailText:null}"
-                                                   th:required="required" readonly="readonly"/>
                                             </div>
                                       </td>
                                   </tr>

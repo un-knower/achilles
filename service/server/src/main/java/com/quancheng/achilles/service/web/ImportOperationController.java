@@ -54,7 +54,11 @@ public class ImportOperationController extends ControllerAbstract {
             @ApiParam(value = "页码") @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
             @ApiParam(value = "每页记录数") @RequestParam(value = "pageSize", required = false, defaultValue = InnConstantPage.PAGE_SIZE_STRING) int pageSize,
             ModelAndView mv) { 
-        Page<UcbUser> page = ucbUserRepository.findAll(new PageRequest(pageNum,pageSize,Direction.DESC,"id" ));
+        Page<UcbUser> page = ucbUserRepository.findAll(Specifications.where(new Specification<UcbUser>() {
+            public Predicate toPredicate(Root<UcbUser> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                return cb.equal(root.get("clientId"), 42);
+            }
+        }),new PageRequest(pageNum,pageSize,Direction.DESC,"id" ));
         mv.addObject("sectorList", convert(dataItemServiceImpl.getDataItemDetail("UCB_SECTORS")));
         mv.addObject("regionList", convert(dataItemServiceImpl.getDataItemDetail("UCB_REGIONS")));
         mv.addObject("page", page);
