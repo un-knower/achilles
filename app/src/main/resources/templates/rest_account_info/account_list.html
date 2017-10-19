@@ -25,7 +25,7 @@
                <div class="row bg-title">
                   <!-- .page title -->
                   <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                     <h4 class="page-title">用户信息</h4>
+                     <h4 class="page-title">企业后台-餐厅结算信息补全</h4>
                   </div>
                   <!-- /.page title -->
                   <!-- .breadcrumb -->
@@ -33,7 +33,7 @@
                      <ol class="breadcrumb">
                         <li><a th:href="@{/}">首页</a></li>
                         <li><a th:href="@{/ops}">运营数据</a></li>
-                        <li class="active"><a th:href="@{#}">ucb用户导入</a></li>
+                        <li class="active"><a th:href="@{#}">企业后台-餐厅结算信息补全</a></li>
                      </ol>
                   </div>
                   <!-- /.breadcrumb -->
@@ -42,14 +42,15 @@
                <div class="row">
                   <div class="col-md-12">
                      <div class="white-box">
-                        <h3 class="box-title">用户信息 <a class="pull-right" th:href="@{/ops/import/ucb/user}">新增</a></h3>
-                    <div class="row">
-                      <form id="query-form" th:action="@{/ops/import/ucb/list}" method="post">
-                         <input type="hidden" name="pageNum" th:value="${page.number}" />
+                        <h3 class="box-title">企业后台-餐厅结算信息补全 <a class="pull-right" th:href="@{/ops/account/info/edit}">新增</a></h3>
+                    
+                     <div class="row">
+                      <form id="query-form" th:action="@{/ops/order/special/mark/list}" method="post">
+                              <input type="hidden" name="pageNum" th:value="${page.number}" />
                               <input type="hidden" name="pageSize" th:value="${page.size}" />
                                <!-- 搜索框 -->
                                 <div class="col-md-3">
-                                  <input  name="likeKey"  class="form-control"  th:value="${likeKey}" placeholder= "工号"/>
+                                  <input  name="orderNum"  class="form-control"  th:value="${orderNum}" placeholder= "订单号"/>
                                   </div>
                                 <div class="col-md-1">
                                   <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">Search</button>
@@ -64,26 +65,27 @@
                           <table class="table table-bordered table-hover Sortable">
                             <thead >
                               <tr>
-                                <th>姓名</th>
-                                <th>工号</th>
-                                <th >邮箱</th>
-                                <th >城市</th>
-                                <th >上级姓名</th>
-                                <th >上级邮箱</th>
-                                <th width="8%">部门</th>
-                                <th width="5%">大区</th>
+                                <th>订单号</th>
+                                <th>开户行</th>
+                                <th>银行账户</th>
+                                <th>开户名</th>
+                                <th>账户类型</th>
+                                <th></th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr th:each="item : ${page.content}">
-                                <td th:text="${item.realname}"></td>
-                                <td th:text="${item.jobNum}"></td>
-                                <td th:text="${item.email}"></td>
-                                <td th:text="${item.city}"></td>
-                                <td th:text="${item.superiorName}"></td>
-                                <td th:text="${item.superiorEmail}"></td>
-                                <td th:text="${sectorList[item.sectorId+'']}"></td>
-                                <td th:text="${regionList[item.regionId+'']}"></td>
+                                <td th:text="${item.orderNum}"></td>
+                                <td th:text="${item.bankName}"></td>
+                                <td th:text="${item.accountNum}"></td>
+                                <td th:text="${item.bankAccountName}"></td>
+                                <td th:text="${accountTypeList[item.accountType]}"></td>
+                                <td>
+                                    <a th:href="@{/ops/account/info/edit(orderNum=${item.orderNum})}" data-toggle="tooltip" data-original-title="Edit">
+                                         <i class="fa fa-pencil text-inverse m-r-10">
+                                        </i> 
+                                    </a>
+                                </td>
                               </tr>
                             </tbody>
                             <tfoot>

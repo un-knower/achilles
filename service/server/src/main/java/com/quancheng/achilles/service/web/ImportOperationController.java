@@ -51,6 +51,7 @@ public class ImportOperationController extends ControllerAbstract {
     @RequestMapping(value = "/import/ucb/list", method = { RequestMethod.GET, RequestMethod.POST }, produces = {
             MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.TEXT_HTML_VALUE })
     public ModelAndView ucbList(  
+             String likeKey,
             @ApiParam(value = "页码") @RequestParam(value = "pageNum", required = false, defaultValue = "0") int pageNum,
             @ApiParam(value = "每页记录数") @RequestParam(value = "pageSize", required = false, defaultValue = InnConstantPage.PAGE_SIZE_STRING) int pageSize,
             ModelAndView mv) { 
@@ -58,10 +59,16 @@ public class ImportOperationController extends ControllerAbstract {
             public Predicate toPredicate(Root<UcbUser> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 return cb.equal(root.get("clientId"), 42);
             }
-        }),new PageRequest(pageNum,pageSize,Direction.DESC,"id" ));
+        }).and(new Specification<UcbUser>() {
+            public Predicate toPredicate(Root<UcbUser> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                return likeKey==null||likeKey.isEmpty()?null:cb.equal(root.get("jobNum"), likeKey);
+            }
+        }),
+                new PageRequest(pageNum,pageSize,Direction.DESC,"id" ));
         mv.addObject("sectorList", convert(dataItemServiceImpl.getDataItemDetail("UCB_SECTORS")));
         mv.addObject("regionList", convert(dataItemServiceImpl.getDataItemDetail("UCB_REGIONS")));
         mv.addObject("page", page);
+        mv.addObject("likeKey", likeKey);
         mv.setViewName("import/ucb_user_list");
         return mv;
     }

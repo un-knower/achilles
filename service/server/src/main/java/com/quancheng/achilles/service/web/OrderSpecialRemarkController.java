@@ -55,6 +55,7 @@ public class OrderSpecialRemarkController extends ControllerAbstract {
             }
         }),new PageRequest(pageNum,pageSize,Direction.DESC,"orderNum" ));
         mv.addObject("page", page);
+        mv.addObject("orderNum", orderNum);
         mv.setViewName("order_special/special_list");
         return mv;
     }
