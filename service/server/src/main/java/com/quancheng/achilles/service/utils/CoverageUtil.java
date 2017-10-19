@@ -428,7 +428,7 @@ public class CoverageUtil {
         locations2 = appendLatAndLng(locations2);
 
         List<Map<String, String>> result = new ArrayList<>();
-        long sum = 0;
+//        long sum = 0;
         for(int i = 0; i< locations1.size(); i++) {
             if(locations1.get(i) == null) {
                 continue;
@@ -441,11 +441,11 @@ public class CoverageUtil {
                 map.put("location1",location1);
                 map.put("location2","");
                 map.put("distance","");
-                sum++;
+//                sum++;
                 result.add(map);
             } else {
                 //System.out.println("i = "+i +", size = "+ ratio.size());
-                sum += ratio.size();
+//                sum += ratio.size();
                 result.addAll(ratio);
             }
             locations1.set(i, null);
@@ -526,7 +526,7 @@ public class CoverageUtil {
      * @return
      * @deprecated 太耗内存，不再使用
      */
-    private static List<Map<String, String>> getCoverageRatioManyToMany(int limitDistance, List<Map<String, String>> locations1, List<Map<String, String>> locations2) {
+    public static List<Map<String, String>> getCoverageRatioManyToMany(int limitDistance, List<Map<String, String>> locations1, List<Map<String, String>> locations2) {
         List<Map<String, String>> result = new ArrayList<>();
 
         for(int i = 0; i< locations1.size(); i++) {

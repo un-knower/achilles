@@ -14,16 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
-import com.quancheng.achilles.service.constants.InnConstantsJob;
-import com.quancheng.achilles.service.services.CacheLogService;
 import com.quancheng.achilles.service.services.OssFileInfoService;
 import com.quancheng.achilles.service.services.impl.DorisTableServiceImpl;
 
 @Controller
 public class HomeController {
 //	 private Logger logger = LoggerFactory.getLogger(HomeController.class);
-    @Autowired
-    private CacheLogService cacheLogService;
     @Autowired
     private OssFileInfoService ossFileInfoService;
     @Autowired
@@ -37,9 +33,9 @@ public class HomeController {
         String username = auth.getName();
         List<OssFileInfo> ossFileInfoList = ossFileInfoService.listLatest10OssFileInfoOfUser(username);
         session.setAttribute("ossFileInfoList", ossFileInfoList);
-        for (Integer id : InnConstantsJob.IDS) {
-            mv.addObject("refresh_time_"+id,cacheLogService.getRefreshTimeById(id));
-        }
+//        for (Integer id : InnConstantsJob.IDS) {
+////            mv.addObject("refresh_time_"+id,cacheLogService.getRefreshTimeById(id));
+//        }
         return mv;
     }
 }

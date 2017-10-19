@@ -65,6 +65,7 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         paramaters.put("time", time);
         paramaters.put("company_id", companyId);
         String sql = " select  sum(shelf_num) as all_num  from %s where time = %s and company_id=%s group by company_id";
+        @SuppressWarnings("rawtypes")
         List<Map> selectList = query(Map.class, sql, InnConstantODPSTables.outCompanyShelfRestaurant, time, companyId);
         if (!CollectionUtils.isEmpty(selectList)) {
             allNum = Integer.parseInt(selectList.get(0).get("all_num").toString());
@@ -79,6 +80,7 @@ public class ODPSQueryService extends AbstractOdpsQuery {
         paramaters.put("time", time);
         paramaters.put("company_id", companyId);
         String sql = " select  sum(source_num) as all_num  from %s where time = %s and company_id=%s group by company_id";
+        @SuppressWarnings("rawtypes")
         List<Map> selectList = query(Map.class, sql, InnConstantODPSTables.outCompanyRestaurantSource, time, companyId);
         if (!CollectionUtils.isEmpty(selectList)) {
             allNum = Integer.parseInt(selectList.get(0).get("all_num").toString());

@@ -31,8 +31,10 @@ public abstract class RestaurantServiceAbstract<T> {
             }
         };
     }
-     public Specification<T> between(String field,Comparable  begin,Comparable  end) {
+     @SuppressWarnings("rawtypes")
+    public Specification<T> between(String field,Comparable  begin,Comparable  end) {
         return new Specification<T>() {
+            @SuppressWarnings("unchecked")
             public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 return begin==null ||end==null ?null : cb.between(root.get(field), begin, end);
             }

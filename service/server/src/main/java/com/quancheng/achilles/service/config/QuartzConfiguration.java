@@ -1,18 +1,15 @@
 package com.quancheng.achilles.service.config;
 
 import java.util.Properties;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-
-import com.quancheng.achilles.service.job.OrderCacheSyncJob;
-import com.quancheng.achilles.service.job.SJJob;
 
 
 //@Configuration
@@ -34,7 +31,7 @@ public class QuartzConfiguration {
 	@Bean(name="cacheSyncJobDetail")
 	public JobDetailFactoryBean jobDetailFactoryBean(){
 		JobDetailFactoryBean factory = new JobDetailFactoryBean();
-		factory.setJobClass(OrderCacheSyncJob.class);
+//		factory.setJobClass(OrderCacheSyncJob.class);
 		factory.setGroup("inn");
 		factory.setDurability(true);
 		factory.setRequestsRecovery(true);

@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.quancheng.achilles.dao.model.BaseResponse;
 import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.dao.modelwrite.DorisTableInfo;
-import com.quancheng.achilles.dao.modelwrite.RestaurantGonghai;
 import com.quancheng.achilles.service.model.ChartDataResp;
 import com.quancheng.achilles.service.model.DorisTableTO;
 import com.quancheng.achilles.service.model.PageInfo;
@@ -38,8 +37,9 @@ public class TemplateController {
     public ModelAndView list(HttpServletRequest request, ModelAndView mv)   {
         Map<String,String[]> param = request.getParameterMap();
         mv.addObject("paramaterValues", param);
-        if(param.containsKey("templateId")){
+        if(!param.containsKey("templateId")){
             mv.setViewName("redirect:/ops");
+            return mv;
         }
         Long templateId=Long.parseLong(param.get("templateId")[0].toString());
         DorisTableTO dtt = dorisTableServiceImpl.query(templateId);
@@ -72,8 +72,7 @@ public class TemplateController {
             MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
     public BaseResponse export(HttpServletRequest request)   {
-        Map<String,String[]> param = request.getParameterMap();
-       
+        final Map<String,String[]> param = request.getParameterMap();
         class AsyncUploadToOSS implements Runnable {
             private String username;
             public AsyncUploadToOSS( String username) {
@@ -93,7 +92,7 @@ public class TemplateController {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                DownloadBuilder<RestaurantGonghai> eb = new DownloadBuilder<>(null,null,cols);
+                DownloadBuilder<?> eb = new DownloadBuilder<>(null,null,cols);
                 eb.appendData(cdr.getDataList());
                 PageInfo pi = cdr.getPageInfo();
                 while (pi != null && pi.hasNext()) {

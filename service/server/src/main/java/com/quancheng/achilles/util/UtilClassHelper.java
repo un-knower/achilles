@@ -86,7 +86,7 @@ public class UtilClassHelper {
         return result;
     }
 
-    public static Map JsonToMap(String json) throws IOException {
+    public static Map<String, Object> JsonToMap(String json) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
 

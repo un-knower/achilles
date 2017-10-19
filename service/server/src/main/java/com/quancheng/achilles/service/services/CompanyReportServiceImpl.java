@@ -18,10 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics;
 import com.quancheng.achilles.dao.repository.CompanyReportRepository;
 import com.quancheng.achilles.service.utils.CoverageUtil;
-import com.quancheng.achilles.service.utils.TimeUtil;
-import com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics;
 
 /**
  * <strong>描述：</strong>TODO 描述 <br>
@@ -53,9 +52,9 @@ public class CompanyReportServiceImpl implements CompanyReportService {
             if (!CollectionUtils.isEmpty(beforQuery)) {
                 return true;// 数据已存在
             }
-            String lastDayOfMonth = TimeUtil.formatDate("yyyy-MM-dd",
-                                                        TimeUtil.getLastDayOfMonth(TimeUtil.parseDate("yyyy-MM",
-                                                                                                      time)));
+//            String lastDayOfMonth = TimeUtil.formatDate("yyyy-MM-dd",
+//                                                        TimeUtil.getLastDayOfMonth(TimeUtil.parseDate("yyyy-MM",
+//                                                                                                      time)));
             List<CompanyRestaurantsStatistics> companyCityRestaurantList = companyReport.queryCompanyCityRestaurantByTime(time
                                                                                                                           + "-01");
             if (!CollectionUtils.isEmpty(companyCityRestaurantList)) {
@@ -465,7 +464,7 @@ public class CompanyReportServiceImpl implements CompanyReportService {
     @Override
     public boolean queryCompanyHospitalRestaurantStatistics(Map<String, Object> param, Integer... distance) {
         try {
-            List<Map<String, Object>> hospitalCityList = companyReport.queryCompanyHospitalInfoByCompanyIdAndTime(param);
+//            List<Map<String, Object>> hospitalCityList = companyReport.queryCompanyHospitalInfoByCompanyIdAndTime(param);
         } catch (Exception e) {
             log.error("queryCompanyHospitalInfoByCompanyIdAndTime have a error {}", e);
         }

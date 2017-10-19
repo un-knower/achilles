@@ -24,9 +24,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-
 import com.github.pagehelper.PageHelper;
-import com.quancheng.achilles.dao.model.CallRecord;
+import com.quancheng.achilles.dao.model.Region;
 import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
 import com.quancheng.achilles.dao.quancheng_db.model.UcbUser;
 
@@ -147,7 +146,7 @@ public class DBConfiguration {
     @Bean(name = "qcReaderManagerFactory")
     public LocalContainerEntityManagerFactoryBean jpaReaderManagerFactory(@Qualifier("quanchengDBReadDataSource") DataSource dataSource,
                                                                           EntityManagerFactoryBuilder builder) {
-        LocalContainerEntityManagerFactoryBean loefb = builder.dataSource(dataSource).packages(CallRecord.class).persistenceUnit("qc_read_db").build();
+        LocalContainerEntityManagerFactoryBean loefb = builder.dataSource(dataSource).packages(Region.class).persistenceUnit("qc_read_db").build();
         loefb.setSharedCacheMode(SharedCacheMode.NONE);
         return loefb;
     }

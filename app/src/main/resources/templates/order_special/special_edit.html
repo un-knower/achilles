@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">企业后台-特殊备注</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">企业后台-特殊备注</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-6">
+                     <div class="white-box">
+                        <h3 class="box-title">企业后台-特殊备注</h3>
+                        <div class="row">
+                          <form id="submit-form" th:action="@{/ops/order/special/mark/save}" method="post">
+	                          <table class="table table-hover" style="border: none;">
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>订单号</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+			                                <input type="text" class="form-control" name="orderNum" th:value="${orderInfo==null?null:orderInfo.orderNum}" 
+			                                 placeholder="orderNum" th:required="required"/>
+			                                </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>备注内容</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                            <input type="text" class="form-control" name="remarks" 
+                                                th:value="${orderInfo==null?null:orderInfo.remarks}" placeholder="contents..." th:required="required"/>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                   <tr>
+                                       <td >
+                                       </td>  
+                                      <td >
+                                         <div class="col-md-6">
+			                                  <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px;">Submit</button>
+			                              </div>
+                                      </td>
+                                  </tr>   
+                              </table>
+                          </form>
+                        </div><!-- /.row -->
+                     </div>
+                  </div>
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+   </body>
+</html>
