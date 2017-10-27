@@ -42,10 +42,9 @@
                <div class="row">
                   <div class="col-md-12">
                      <div class="white-box">
-                        <h3 class="box-title">企业后台-餐厅结算信息补全 <a class="pull-right" th:href="@{/ops/account/info/edit}">新增</a></h3>
-                    
+                        <h3 class="box-title">企业后台-餐厅结算信息补全 </h3>
                      <div class="row">
-                      <form id="query-form" th:action="@{/ops/order/special/mark/list}" method="post">
+                      <form id="query-form" th:action="@{/ops/account/info/list}" method="post">
                               <input type="hidden" name="pageNum" th:value="${page.number}" />
                               <input type="hidden" name="pageSize" th:value="${page.size}" />
                                <!-- 搜索框 -->
