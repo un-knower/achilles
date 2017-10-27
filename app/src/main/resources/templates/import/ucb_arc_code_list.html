@@ -25,7 +25,7 @@
                <div class="row bg-title">
                   <!-- .page title -->
                   <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                     <h4 class="page-title">企业后台-餐厅结算信息补全</h4>
+                     <h4 class="page-title">arcCode</h4>
                   </div>
                   <!-- /.page title -->
                   <!-- .breadcrumb -->
@@ -33,7 +33,7 @@
                      <ol class="breadcrumb">
                         <li><a th:href="@{/}">首页</a></li>
                         <li><a th:href="@{/ops}">运营数据</a></li>
-                        <li class="active"><a th:href="@{#}">企业后台-餐厅结算信息补全</a></li>
+                        <li class="active"><a th:href="@{#}">ucb-arcCode</a></li>
                      </ol>
                   </div>
                   <!-- /.breadcrumb -->
@@ -42,15 +42,14 @@
                <div class="row">
                   <div class="col-md-12">
                      <div class="white-box">
-                        <h3 class="box-title">企业后台-餐厅结算信息补全 <a class="pull-right" th:href="@{/ops/receipt/edit}">新增</a></h3>
-                    
-                     <div class="row">
-                      <form id="query-form" th:action="@{/ops/receipt/list}" method="post">
-                              <input type="hidden" name="pageNum" th:value="${page.number}" />
+                        <h3 class="box-title">arcCode</h3>
+                    <div class="row">
+                      <form id="query-form" th:action="@{/ops/arc/code/list}" method="post">
+                         <input type="hidden" name="pageNum" th:value="${page.number}" />
                               <input type="hidden" name="pageSize" th:value="${page.size}" />
                                <!-- 搜索框 -->
                                 <div class="col-md-3">
-                                  <input  name="orderNum"  class="form-control"  th:value="${orderNum}" placeholder= "订单号"/>
+                                  <input  name="likeKey"  class="form-control"  th:value="${likeKey}" placeholder= "arc code"/>
                                   </div>
                                 <div class="col-md-1">
                                   <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">Search</button>
@@ -65,19 +64,23 @@
                           <table class="table table-bordered table-hover Sortable">
                             <thead >
                               <tr>
-                                <th>订单号</th>
-                                <th>代收款证明</th>
-                                <th>url</th>
-                                <th></th>
+                                <th>code</th>
+                                <th>工号</th>
+                                <th >邮箱</th>
+                                <th >电话</th>
+                                <th >修改时间</th>
+                                <th >编辑</th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr th:each="item : ${page.content}">
-                                <td th:text="${item.orderNum}"></td>
-                                <td th:text="${item.pictureUrl}"></td>
-                                <td th:text="${item.pt}"></td>
-                                <td>
-                                    <a th:href="@{/ops/receipt/edit(orderNum=${item.orderNum})}" data-toggle="tooltip" data-original-title="Edit">
+                                <td th:text="${item.arc_code}"></td>
+                                <td th:text="${item.user_uid}"></td>
+                                <td th:text="${item.user_email}"></td>
+                                <td th:text="${item.updated_at}"></td>
+                                <td th:text="${item.user_telephone}"></td>
+                                <td >
+                                    <a th:href="@{/ops/arc/code/edit(id=${item.id})}" data-toggle="tooltip" data-original-title="Edit">
                                          <i class="fa fa-pencil text-inverse m-r-10">
                                         </i> 
                                     </a>

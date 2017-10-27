@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">ucb</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">ucb arc code</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-6">
+                     <div class="white-box">
+                        <h3 class="box-title">ucb arc code</h3>
+                        <div class="row">
+                          <form id="submit-form" th:action="@{/ops/arc/code/save}" method="post">
+                              <input type="hidden" th:value="${ editInfo.id}" name="id"/>
+	                          <table class="table table-hover" style="border: none;">
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>code</span></td>
+                                      <td>
+                                            <div class="col-md-6" th:text="${editInfo.arc_code}"> </div>
+                                      </td>
+                                  </tr>
+                                <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>用户</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                                  <select class="selectpicker" data-style="form-control"  name="user"   
+                                                     data-live-search="true"  onchange="setCity(this)">
+                                                    <option th:each="x : ${userList}" th:value="${x.jobNum}"  th:text="${x.realname}"  
+                                                        th:if="${ editInfo!=null and  x != null}"  
+                                                        th:attr="data=${x.jobNum+','+x.email+','+x.mobile}"  
+                                                         th:selected="${editInfo.user_uid==x.jobNum}"/>
+                                                  </select>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                   <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>jobNum</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                            <input type="text" class="form-control" id="jobNum" name="jobNum" th:value="${editInfo.user_uid}"  readonly="readonly" th:required="required"/>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>email</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                            <input type="text" class="form-control" id="email"  name="email" th:value="${editInfo.user_email}"  readonly="readonly"   th:required="required"/>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>telephone</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                            <input type="text" class="form-control" id="telephone"  name="telephone" th:value="${editInfo.user_telephone}"  readonly="readonly"   th:required="required"/>
+                                            </div>
+                                      </td>
+                                  </tr>      
+                                   <tr>
+                                       <td >
+                                       </td>  
+                                      <td >
+                                         <div class="col-md-6">
+			                                  <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px;">Submit</button>
+			                              </div>
+                                      </td>
+                                  </tr>   
+                              </table>
+                          </form>
+                        </div><!-- /.row -->
+                     </div>
+                  </div>
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+   </body>
+   <script type="text/javascript">
+       /*<![CDATA[*/
+          function setCity(selectEl){
+        	    var datas = $(selectEl).find(":selected").attr("data").split(",");
+        	    $("#jobNum").val(datas[0]);
+        	    $("#email").val(datas[1]);
+        	    $("#telephone").val(datas[2]);
+          }
+       /*]]>*/
+   </script>
+</html>

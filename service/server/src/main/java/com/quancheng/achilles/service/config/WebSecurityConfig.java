@@ -19,7 +19,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.inMemoryAuthentication().withUser("qianyu@quancheng-ec.com").password("password").roles("KEYCUSTOMER");
         auth.inMemoryAuthentication().withUser("jihongyan@quancheng-ec.com").password("password").roles("KEYCUSTOMER");
         auth.inMemoryAuthentication().withUser("xiayang@quancheng-ec.com").password("password").roles("OPERATIVE");
-        
 	}
 
 	@Override
