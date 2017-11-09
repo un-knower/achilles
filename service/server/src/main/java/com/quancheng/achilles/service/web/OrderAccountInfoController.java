@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.quancheng.achilles.dao.model.InputReceipt;
-import com.quancheng.achilles.dao.model.InputRestaurantAccountInfo;
-import com.quancheng.achilles.dao.modelwrite.DataItemDetail;
-import com.quancheng.achilles.dao.repository.ReceiptRepository;
-import com.quancheng.achilles.dao.repository.RestAccountInfoRepository;
+import com.quancheng.achilles.dao.ds_qc.model.InputReceipt;
+import com.quancheng.achilles.dao.ds_qc.model.InputRestaurantAccountInfo;
+import com.quancheng.achilles.dao.ds_qc.repository.ReceiptRepository;
+import com.quancheng.achilles.dao.ds_qc.repository.RestAccountInfoRepository;
+import com.quancheng.achilles.dao.ds_st.model.DataItemDetail;
 import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.services.impl.DataItemServiceImpl;
 import com.quancheng.achilles.service.utils.TimeUtil;

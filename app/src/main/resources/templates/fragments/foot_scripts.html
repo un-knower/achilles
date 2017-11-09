@@ -35,42 +35,7 @@
     <script src="/elite/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
     <script type="text/javascript">
     /*<![CDATA[*/
-	    $(document).ready(function(){
-	    	// 上下双横向滚动条
-	    	$('.table-responsive').doubleScroll();
-            // reset pageNum when click search button
-            $('#query-form button[type="submit"]').on('click',function (event) {
-              event.preventDefault();
-              $('form#query-form input[name="pageNum"]').val(0);
-              $('form#query-form').submit();
-            });
-	    	// pagination
-	  	    $('ul.pagination li:not(.active) a').click(function(event){
-	  		  event.preventDefault();
-	  		  if($(this).data('page')!==undefined) {
-	  		  	$('form#query-form input[name="pageNum"]').val($(this).data('page'));
-	  		  	$('form#query-form').submit();
-	  		  }
-	  	  	});
-	    	// 导出 下载
-	    	$('a.qc-download').click(function(event){
-	    		event.preventDefault();
-	    		var $downloadButton=$(this);
-	    		$downloadButton.addClass("btn disabled").html("导出中...");
-
-    			$.ajax({
-    				type:$("#query-form").attr("method"),
-    				url:$downloadButton.data('url') ,
-   				    data: $("#query-form").serialize(),
-   				    dataType: "json",
-   				    success:function(){
-                      // resp: {"status":"0","msg":null,"data":null}
-//                       setTimeout(function(){$downloadButton.html('导出申请成功，请等待文件生成从右边栏下载');},3000);
-   				    	$downloadButton.html('导出申请成功，请等待文件生成从右边栏下载');
-   				    }
-    			}); // end of $.ajax
-
-	    	});
+              $(document).ready(function(){ 
             // 自动刷新右边栏导出申请列表
             setInterval(function(){
               $.ajax({

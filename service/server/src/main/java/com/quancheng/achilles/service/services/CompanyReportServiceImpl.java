@@ -10,16 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics;
-import com.quancheng.achilles.dao.repository.CompanyReportRepository;
+import com.quancheng.achilles.dao.ds_qc.model.CompanyRestaurantsStatistics;
+import com.quancheng.achilles.dao.ds_qc.repository.CompanyReportRepository;
 import com.quancheng.achilles.service.utils.CoverageUtil;
 
 /**
@@ -39,7 +37,7 @@ import com.quancheng.achilles.service.utils.CoverageUtil;
 public class CompanyReportServiceImpl implements CompanyReportService {
 
     private Logger          log = LoggerFactory.getLogger(CompanyReportServiceImpl.class);
-    @Autowired
+//    @Autowired
     CompanyReportRepository companyReport;
 
     @Override

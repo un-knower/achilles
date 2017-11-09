@@ -8,7 +8,7 @@ public class ChartDataResp implements Serializable {
 
     private static final long         serialVersionUID = -1752904409128180604L;
 
-    private PageInfo                  pageInfo;
+    private PageInfo                  pageInfo = new PageInfo();
     private Long                   templateId;
     private List<Map<String, Object>> dataList;
     public PageInfo getPageInfo() {
@@ -34,5 +34,4 @@ public class ChartDataResp implements Serializable {
     public void setDataList(List<Map<String, Object>> dataList) {
         this.dataList = dataList;
     }
-    
 }

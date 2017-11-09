@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
+import com.quancheng.achilles.dao.ds_st.model.OssFileInfo;
 import com.quancheng.achilles.service.services.OssFileInfoService;
 import com.quancheng.achilles.service.services.impl.DorisTableServiceImpl;
 
@@ -33,9 +33,6 @@ public class HomeController {
         String username = auth.getName();
         List<OssFileInfo> ossFileInfoList = ossFileInfoService.listLatest10OssFileInfoOfUser(username);
         session.setAttribute("ossFileInfoList", ossFileInfoList);
-//        for (Integer id : InnConstantsJob.IDS) {
-////            mv.addObject("refresh_time_"+id,cacheLogService.getRefreshTimeById(id));
-//        }
         return mv;
     }
 }

@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.quancheng.achilles.dao.modelwrite.DataItem;
-import com.quancheng.achilles.dao.modelwrite.DataItemDetail;
-import com.quancheng.achilles.dao.repository.DataItemDetailRep;
-import com.quancheng.achilles.dao.write.DataItemDetailRepository;
-import com.quancheng.achilles.dao.write.DataItemRepository;
+import com.quancheng.achilles.dao.ds_qc.repository.DataItemDetailRep;
+import com.quancheng.achilles.dao.ds_st.model.DataItem;
+import com.quancheng.achilles.dao.ds_st.model.DataItemDetail;
+import com.quancheng.achilles.dao.ds_st.repository.DataItemDetailRepository;
+import com.quancheng.achilles.dao.ds_st.repository.DataItemRepository;
 
 @Service
 public class DataItemServiceImpl {
@@ -32,7 +32,7 @@ public class DataItemServiceImpl {
     public List<DataItem> getDataItem(Object... itemKes) {
         return dataItemRepository.findAll(new Specification<DataItem>() {
             public Predicate toPredicate(Root<DataItem> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                return root.get("itemKey").in(itemKes);
+                return itemKes==null||itemKes.length==0?null:root.get("itemKey").in(itemKes);
             }
         });
     }
@@ -68,5 +68,24 @@ public class DataItemServiceImpl {
             return getDataItemDetail(map);
         }
         return new ArrayList<DataItemDetail>();
+    }
+    
+    public Map<Object,Object> getDataItemDetailToMap(Object itemKey){
+        List<DataItemDetail>  items = getDataItemDetail(itemKey);
+        Map<Object,Object> result = new HashMap<>(items.size());
+        for (DataItemDetail dataItemDetail : items) {
+            result.put(dataItemDetail.getDetailKey(), dataItemDetail.getDetailText());
+        }
+        return result;
+    }
+    
+    
+    public Map<Object,Object> getDataItemDetailReverseMap(Object itemKey){
+        List<DataItemDetail>  items = getDataItemDetail(itemKey);
+        Map<Object,Object> result = new HashMap<>(items.size());
+        for (DataItemDetail dataItemDetail : items) {
+            result.put(dataItemDetail.getDetailText(),dataItemDetail.getDetailKey());
+        }
+        return result;
     }
 }

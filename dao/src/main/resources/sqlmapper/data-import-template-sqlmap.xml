@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.quancheng.achilles.dao.ds_st.mapper.DataImportTemplateMapper">
+	<select id="queryAll" resultType="Map" parameterType="Map">
+		select * from ${tableName}
+	</select>
+	<insert id="doInsert" parameterType="java.util.Map">
+		insert into ${tableName}
+		<foreach collection="colName" open="(" separator="," close=")"
+			item="col">
+			`${col.colName}`
+		</foreach>
+		values
+		<foreach collection="datas" separator="," 
+			item="dt">
+			<foreach collection="dt" open="("  separator="," close=")" item="dtv"  >
+				#{dtv}
+			</foreach>
+		</foreach>
+	</insert>
+	<delete id="deleteAllData" >
+	   delete from ${tableName}
+	</delete>
+</mapper>

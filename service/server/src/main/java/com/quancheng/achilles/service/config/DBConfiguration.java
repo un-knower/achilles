@@ -24,9 +24,10 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+
 import com.github.pagehelper.PageHelper;
-import com.quancheng.achilles.dao.model.Region;
-import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
+import com.quancheng.achilles.dao.ds_qc.model.Region;
+import com.quancheng.achilles.dao.ds_st.model.OssFileInfo;
 import com.quancheng.achilles.dao.quancheng_db.model.UcbUser;
 
 @Configuration
@@ -57,8 +58,6 @@ public class DBConfiguration {
     }
     /*=====ds read end======*/
     /*=====ds write begin======*/
- 
-
     @Bean(name = "quanchengDBWriteDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.writedb")
     public DataSource quanchengDBWriteDataSource() {
@@ -85,7 +84,6 @@ public class DBConfiguration {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
         sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-config.xml"));
-        // new Resource[] { new ClassPathResource("aaa-sqlmap.xml") }
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         // 将加载多个绝对匹配的所有Resource
         // 将首先通过ClassLoader.getResources("META-INF")加载非模式路径部分
@@ -97,7 +95,7 @@ public class DBConfiguration {
         } catch (IOException e) {
             System.err.println("statisticsSqlSessionFactoryBean have a error " + e.getMessage());
         }
-        sqlSessionFactory.setTypeAliasesPackage("com.quancheng.achilles.dao.model");
+        sqlSessionFactory.setTypeAliasesPackage("com.quancheng.achilles.dao.ds_st.model");
         // 分页插件
         PageHelper pageHelper = new PageHelper();
         Properties props = new Properties();
@@ -116,7 +114,11 @@ public class DBConfiguration {
     public SqlSession statisticsSqlSessionTemplate(@Qualifier("statisticsSqlSessionFactoryBean") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
-
+    @Bean(name = "statisticsSqlSessionFactory")
+    public SqlSessionFactory dorisSqlSessionFactory(@Qualifier("statisticsSqlSessionFactoryBean") SqlSessionFactoryBean dorisSqlSessionFactoryBean) throws Exception {
+        return dorisSqlSessionFactoryBean.getObject();
+    }
+    
     // ---------------------------------------------
     /**
      * QC WRITER

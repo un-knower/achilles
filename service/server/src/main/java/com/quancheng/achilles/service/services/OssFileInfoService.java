@@ -2,7 +2,7 @@ package com.quancheng.achilles.service.services;
 
 import java.util.List;
 
-import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
+import com.quancheng.achilles.dao.ds_st.model.OssFileInfo;
 
 public interface OssFileInfoService {
     /**

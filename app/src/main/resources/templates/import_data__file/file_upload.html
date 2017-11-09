@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+          <link href="/elite/plugins/bower_components/dropify/dist/css/dropify.min.css" rel="stylesheet" />
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">数据导入-医院</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">数据导入-医院</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-4">
+                     <div class="white-box">
+                        <h3 class="box-title">数据导入-医院</h3>
+                        <div class="row">
+                          <form id="submit-form" enctype="multipart/form-data" th:action="@{/data/model/import}" method="post">
+                              <input type="hidden" id="_csrf" th:value="${_csrf.token}"/>   
+                              <table class="table table-hover" style="border: none;">
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>文件</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+											    <input type="file" id="input-file-now" class="dropify" name ="file"/>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>导入目标</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                                <select name="dorisTableId" id="dorisTableId"  class="selectpicker"  data-style="form-control" onchange="loadData();">
+                                                    <option  value="-1" >--选择-- </option>
+                                                    <option  th:each="item:${tableList}" th:value="${item.id}" th:text="${item.chartName}"> </option>
+                                                </select>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                   <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;"><span>企业</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                                <select name="clientId"   class="selectpicker"  data-style="form-control" >
+                                                    <option th:each="item:${clientList}" th:value="${item.detailKey}" th:text="${item.detailText}" > </option>
+                                                </select>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                       <td >
+                                       </td>  
+                                      <td >
+                                         <div class="col-md-6">
+                                              <button type="button" id="upload-file-btn" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px;">导入</button>
+                                          </div>
+                                      </td>
+                                  </tr>   
+                              </table>
+                          </form>
+                        </div><!-- /.row -->
+                     </div>
+                  </div>
+                  <div class="col-md-8" id="data-preview">
+          
+                  </div>
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+   </body>
+   <script src="/elite/plugins/bower_components/dropify/dist/js/dropify.min.js"></script>
+   <script type="text/javascript">
+   /*<![CDATA[*/
+            $('.dropify').dropify();   
+            $('#upload-file-btn').click(function(){
+            	    var file=$("input[type='file']").val();
+            	    var filePrex=file.substring(file.lastIndexOf(".")+1,file.length);
+            	    if(filePrex!="csv" && filePrex!="xls" &&  filePrex!="xlsx"){
+            	    	   	sweetAlert("异常", "仅支持excel/csv文件类型："+filePrex, "error");
+            	    	   	return;
+            	    }
+                var formData = new FormData($('#submit-form')[0]);
+                $.ajax({
+                    url: '/data/model/import',  //server script to process data
+                    type: 'POST',
+                    xhr: function() {  // custom xhr
+                        myXhr = $.ajaxSettings.xhr();
+                        if(myXhr.upload){ // check if upload property exists
+                            myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // for handling the progress of the upload
+                        }
+                        return myXhr;
+                    },
+                    //Ajax事件
+                    // Form数据
+                    data: formData,
+                    beforeSend: function(request){
+                    	   request.setRequestHeader("X-CSRF-TOKEN", $("#_csrf").val()); 
+                    },
+                    success: function(response){
+                    	   loadData();
+                    },
+                    //Options to tell JQuery not to process data or worry about content-type
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            });
+            function progressHandlingFunction(e){
+                if(e.lengthComputable){
+                    $('progress').attr({value:e.loaded,max:e.total});
+                }
+            }
+            function loadData(){
+            	 //load file data
+                var url='/data/model/view?dorisTableId='+$("#dorisTableId").val();
+                $.ajax({
+                    url:url ,  //server script to process data
+	                type: 'get',
+	                success:function(resp){
+	                        $("#data-preview").html(resp);
+	                },
+	                beforeSend: function(request){
+	                    request.setRequestHeader("X-CSRF-TOKEN", $("#_csrf").val()); 
+	                    }
+	                });
+            }
+            $(document).ready(function(){
+                loadData();
+            });
+    /*]]>*/
+   </script>
+</html>

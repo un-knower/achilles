@@ -2,7 +2,7 @@ package com.quancheng.achilles.service.model;
 
 import java.util.List;
 
-import com.quancheng.achilles.dao.modelwrite.DataItemDetail;
+import com.quancheng.achilles.dao.ds_st.model.DataItemDetail;
 
 public class ParamterConfig {
     private String type, colName, title;

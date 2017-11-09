@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<!-- <head th:replace="fragments/head :: head"></head> -->
+<body class="fix-sidebar fix-header">
+	<form id="query-form" th:action="@{/data/model/view}" method="get">
+		<input type="hidden" name="pageNum" th:value="${page==null or page.pageInfo==null?null:page.pageInfo.number}" />
+		<input type="hidden" name="pageSize" th:value="${page==null or page.pageInfo==null?null:page.pageInfo.pageSize}" />
+		<input type="hidden" name="dorisTableId" th:value="${dorisTableId}" />
+	</form>
+	<div class="white-box">
+        <h3 class="box-title">数据导入-设置</h3>
+        <div class="table-responsive" id="data-column">
+            <form id="column-mapping-form" enctype="multipart/form-data" th:action="@{/data/model/edit}" method="post">
+                <input type="hidden" id="_csrf" th:value="${_csrf.token}" />
+                <input type="hidden" name="dorisTableId" th:value="${dorisTableId}" />
+                <table class="table table-hover" style="border: none;">
+                    <tr th:each="item:${templateColumnKeys}" >
+                        <td align="right" width="250px;" th:text="${item.showName+'('+(item.colExcel==null?'不填':item.colExcel)+')'}"></td>
+                        <td width="250px;">
+                            <select title="数据" onchange="changeInput(this)" th:attr="data-col-name=${item.colName}" class="form-control">
+                                <option value="1" th:selected="${item.dataType==null or item.dataType==''}">导入</option>
+                                <option value="2" th:selected="${item.dataType!=null and #strings.startsWith(item.dataType,'DEFAULT_') }">默认值</option>
+                                <option value="3" th:selected="${item.dataType!=null and #strings.startsWith(item.dataType,'CONVERT_') }">映射</option>
+                                <option value="4" th:selected="${item.dataType=='datetime' }">当前时间</option>
+                            </select>
+                        </td>
+                        <td  >
+                            <select th:name="${'mapping_'+item.colName}" th:id="${'sel'+item.colName}"  class="form-control"
+                                th:style="${item.dataType!=null and #strings.startsWith(item.dataType,'CONVERT_') }?'':'display:none;'"  
+                                th:disabled="${item.dataType!=null and #strings.startsWith(item.dataType,'CONVERT_') }?null :'disabled'" >
+                                <option  value="-1" >--选择--</option>
+                                <option th:each="it:${itemList}" th:value="${it.itemKey}" th:text="${it.itemMark}"  th:selected="${'CONVERT_'+it.itemKey==item.dataType}"></option>
+                            </select>
+                            <input th:name="${'default_'+item.colName}"  class="form-control"  th:id="${'inp'+item.colName}" 
+                                th:value="${item.dataType==null?null:#strings.substringAfter(item.dataType,'DEFAULT_') }"
+                                th:style="${item.dataType!=null and #strings.startsWith(item.dataType,'DEFAULT_') }?'':'display:none;'"  
+                                th:disabled="${item.dataType!=null and #strings.startsWith(item.dataType,'DEFAULT_') }?null :'disabled'" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                                <button type="button" id="save-table-set" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px;">保存</button>
+                        </td>
+                         <td></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+	<div class="white-box">
+		<h3 class="box-title">数据导入-预览</h3>
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover Sortable">
+				<thead>
+					<tr>
+						<th th:each="item:${templateColumnKeys}" th:text="${item.showName+'('+(item.colExcel==null?'不填':item.colExcel)+')'}">
+						</th>
+					</tr>
+				</thead>
+				<tbody th:if="${page!=null}">
+					<tr th:each="item : ${page.dataList}">
+						<td th:each="col : ${templateColumnKeys}">
+							<div th:text="*{col.colName==null|| item==null?'':item[col.colName]}"></div>
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td style="text-align: center;" colspan="4" th:if="${page!=null and page.pageInfo!=null}">
+							<div th:replace="fragments/pageinfo2 :: pageinfo(${page.pageInfo})"></div>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+	<script type="text/javascript">
+      /*<![CDATA[*/
+            function changeInput(sel){
+                if($(sel).val()=="3"){
+                	   $("#sel"+$(sel).attr("data-col-name")).show();
+                	   $("#sel"+$(sel).attr("data-col-name")).attr("disabled",null);
+                	   $("#inp"+$(sel).attr("data-col-name")).hide();
+                	   $("#inp"+$(sel).attr("data-col-name")).attr("disabled","disabled");
+                }else if($(sel).val()=="2"){
+                	  $("#sel"+$(sel).attr("data-col-name")).hide();
+                   $("#sel"+$(sel).attr("data-col-name")).attr("disabled","disabled");
+                	   $("#inp"+$(sel).attr("data-col-name")).show();
+                   $("#inp"+$(sel).attr("data-col-name")).attr("disabled",null);
+                }else if($(sel).val()=="1"){
+                    $("#sel"+$(sel).attr("data-col-name")).hide();
+                    $("#sel"+$(sel).attr("data-col-name")).attr("disabled","disabled");
+                    $("#inp"+$(sel).attr("data-col-name")).hide();
+                    $("#inp"+$(sel).attr("data-col-name")).attr("disabled","disabled");
+                 }
+            	}
+            $("#save-table-set").click(function(){
+                var formData=  new FormData($('#column-mapping-form')[0]);
+                	$.ajax({
+                    url: '/data/model/edit',  //server script to process data
+                    type: 'POST',
+                    xhr: function() {  // custom xhr
+                        myXhr = $.ajaxSettings.xhr();
+                        if(myXhr.upload){ // check if upload property exists
+                            myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // for handling the progress of the upload
+                        }
+                        return myXhr;
+                    },
+                    //Ajax事件
+                    // Form数据
+                    data: formData,
+                    beforeSend: function(request){
+                           request.setRequestHeader("X-CSRF-TOKEN", $("#_csrf").val()); 
+                    },
+                    success: function(response){
+                            sweetAlert("保存成功");
+                    },
+                    //Options to tell JQuery not to process data or worry about content-type
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            });
+      /*]]>*/
+   </script>            
+</body>
+</html>

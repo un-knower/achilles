@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import com.quancheng.achilles.dao.model.API_OrderSpecialMark;
-import com.quancheng.achilles.dao.repository.API_OrderSpecialMarkRepository;
+
+import com.quancheng.achilles.dao.ds_qc.model.API_OrderSpecialMark;
+import com.quancheng.achilles.dao.ds_qc.repository.API_OrderSpecialMarkRepository;
 import com.quancheng.achilles.service.constants.InnConstantPage;
 /**
  * 订单特殊备注 用于企业后台

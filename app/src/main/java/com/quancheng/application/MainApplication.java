@@ -18,7 +18,8 @@ import org.thymeleaf.dialect.springdata.SpringDataDialect;
  */
 @ComponentScan({"com.quancheng.application", "com.quancheng.application.api", "com.quancheng.*.service",
         "com.quancheng.*.service.view", "com.quancheng.*.service.api", "com.quancheng.service.*",
-        "com.quancheng.achilles.dao.repository", "com.quancheng.achilles.dao.write",
+        // dao
+        "com.quancheng.achilles.dao.*.repository", "com.quancheng.achilles.dao.write",
         "com.quancheng.shared.*", "com.quancheng.saluki.monitor.web"})
 @ImportResource({"classpath*:quancheng-app-*.xml"})
 @SpringBootApplication

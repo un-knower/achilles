@@ -31,7 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.aliyun.odps.OdpsException;
 import com.github.pagehelper.PageInfo;
 import com.quancheng.achilles.dao.constant.InnConstantODPSTables;
-import com.quancheng.achilles.dao.model.BaseResponse;
+import com.quancheng.achilles.dao.ds_qc.model.BaseResponse;
 import com.quancheng.achilles.dao.odps.model.HospitalInfo;
 import com.quancheng.achilles.dao.odps.model.OutHospitalRestaurantDistance;
 import com.quancheng.achilles.dao.odps.model.RestaurantInfo;

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
+import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.service.services.AchillesDiyColumnsService;
 
 public abstract class ControllerAbstract {

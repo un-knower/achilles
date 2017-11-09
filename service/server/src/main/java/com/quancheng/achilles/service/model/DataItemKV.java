@@ -3,7 +3,7 @@ package com.quancheng.achilles.service.model;
 public class DataItemKV {
     private String key;
     
-    private String value;
+    private Object value;
 
     public String getKey() {
         return key;
@@ -13,7 +13,7 @@ public class DataItemKV {
         this.key = key;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
@@ -21,7 +21,7 @@ public class DataItemKV {
         this.value = value;
     }
 
-    public DataItemKV(String key, String value) {
+    public DataItemKV(String key, Object value) {
         super();
         this.key = key;
         this.value = value;

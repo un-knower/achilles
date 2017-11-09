@@ -2,9 +2,9 @@ package com.quancheng.achilles.service.model;
 
 import java.util.List;
 
-import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplate;
-import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
-import com.quancheng.achilles.dao.modelwrite.DorisTableParam;
+import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplate;
+import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplateColumns;
+import com.quancheng.achilles.dao.ds_st.model.DorisTableParam;
 
 public class DorisTableTO {
     private AchillesDiyTemplate template;

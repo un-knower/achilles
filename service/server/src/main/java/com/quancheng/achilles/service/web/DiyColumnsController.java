@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplate;
-import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
-import com.quancheng.achilles.dao.modelwrite.AchillesTemplateCondfig;
+
+import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplate;
+import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplateColumns;
+import com.quancheng.achilles.dao.ds_st.model.AchillesTemplateCondfig;
 import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.services.AchillesDiyColumnsService;
 import io.swagger.annotations.ApiParam;

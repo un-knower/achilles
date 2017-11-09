@@ -1,7 +1,7 @@
 package com.quancheng.achilles.service.web;
 
 import javax.servlet.http.HttpSession;
-import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import com.quancheng.achilles.service.services.OssFileInfoService;
-import com.quancheng.achilles.dao.model.BaseResponse;
+import com.quancheng.achilles.dao.ds_qc.model.BaseResponse;
+import com.quancheng.achilles.dao.ds_st.model.OssFileInfo;
 
 import java.util.List;
 

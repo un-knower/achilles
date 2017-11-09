@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.quancheng.achilles.dao.model.BaseResponse;
-import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
-import com.quancheng.achilles.dao.modelwrite.DorisTableInfo;
+import com.quancheng.achilles.dao.ds_qc.model.BaseResponse;
+import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplateColumns;
+import com.quancheng.achilles.dao.ds_st.model.DorisTableInfo;
 import com.quancheng.achilles.service.model.ChartDataResp;
 import com.quancheng.achilles.service.model.DorisTableTO;
 import com.quancheng.achilles.service.model.PageInfo;
@@ -58,7 +58,7 @@ public class TemplateController {
             mv.setViewName("error/500");
             return mv;
         }
-        mv.addObject("paramaterConfigs",dorisTableServiceImpl.configParamater(dtt.getParams()) );
+        mv.addObject("paramaterConfigs",dorisTableServiceImpl.configParamater(dtt.getParams()));
         cdr.setTemplateId(templateId);
         mv.addObject("templateColumnKeys", cols);
         mv.addObject("page", cdr);

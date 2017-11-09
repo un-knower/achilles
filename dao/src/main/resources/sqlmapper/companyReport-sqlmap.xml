@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="CompanyReportMapper">
-<resultMap id="CompanyRestaurantsStatisticsResultMap" type="com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics" >
+<resultMap id="CompanyRestaurantsStatisticsResultMap" type="com.quancheng.achilles.dao.ds_qc.model.CompanyRestaurantsStatistics" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="time" property="time" jdbcType="VARCHAR" />
     <result column="company_id" property="companyId" jdbcType="INTEGER" />

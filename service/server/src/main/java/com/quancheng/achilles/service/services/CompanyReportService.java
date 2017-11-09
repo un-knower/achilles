@@ -3,7 +3,7 @@ package com.quancheng.achilles.service.services;
 import java.util.List;
 import java.util.Map;
 
-import com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics;
+import com.quancheng.achilles.dao.ds_qc.model.CompanyRestaurantsStatistics;
 
 /** 公司信息统计 */
 public interface CompanyReportService {

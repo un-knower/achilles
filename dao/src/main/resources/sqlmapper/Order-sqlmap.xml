@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="OrderMapper">
-           <resultMap type="com.quancheng.achilles.dao.modelwrite.DataItemDetail" id="detailViewMap">
+           <resultMap type="com.quancheng.achilles.dao.ds_st.model.DataItemDetail" id="detailViewMap">
             <result column="detail_key" property="detailKey"/>
             <result column="detail_text" property="detailText"/>
         </resultMap>

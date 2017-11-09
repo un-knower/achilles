@@ -6,10 +6,10 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplate;
-import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
-import com.quancheng.achilles.dao.modelwrite.AchillesTableInfo;
-import com.quancheng.achilles.dao.modelwrite.AchillesTemplateCondfig;
+import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplate;
+import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplateColumns;
+import com.quancheng.achilles.dao.ds_st.model.AchillesTableInfo;
+import com.quancheng.achilles.dao.ds_st.model.AchillesTemplateCondfig;
 
 public interface AchillesDiyColumnsService {
     /**

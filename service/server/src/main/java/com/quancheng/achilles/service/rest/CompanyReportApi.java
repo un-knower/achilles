@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.quancheng.achilles.dao.ds_qc.model.CompanyRestaurantsStatistics;
 import com.quancheng.achilles.service.constants.InnConstantsJob;
-import com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics;
 import com.quancheng.achilles.service.utils.Response;
 
 import io.swagger.annotations.Api;

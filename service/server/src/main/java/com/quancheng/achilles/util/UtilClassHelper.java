@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -163,7 +164,7 @@ public class UtilClassHelper {
             if (row.getRowNum() == 0) {
                 for (int col = 0; col < length; col++) {
                     Cell cell = row.getCell(col);
-                    keys.add(col, getCellValue(cell));
+                    keys.add(getCellValue(cell));
                 }
                 continue;
             }
@@ -290,7 +291,89 @@ public class UtilClassHelper {
         BigDecimal bg = new BigDecimal(s).setScale(decimal, RoundingMode.UP);
         return bg.doubleValue();
     }
-
+    
+    private static void processSheetWithColumnNames(Sheet sheet, Integer bufferSize, Consumer<List<Map<String, String>>> rowHandler) {
+        List<String> keys = new ArrayList<>();
+        int length = sheet.getRow(0).getPhysicalNumberOfCells();
+        List<Map<String, String>> buffers = new ArrayList<>(bufferSize);
+        int i=0; 
+        for (Row row : sheet) {
+            // 表头
+            if (row.getRowNum() == 0) {
+                for (int col = 0; col < length; col++) {
+                    String cellValue =getCellValue(row.getCell(col));
+                    if(cellValue!=null&&!cellValue.isEmpty()){
+                        keys.add(cellValue.trim());
+                    }
+                }
+                continue;
+            }
+            // 获取数据，生成 key-value
+            Map<String, String> rowMap = new HashMap<>();
+            for (int col = 0; col < length; col++) {
+                String key = keys.get(col);
+                String value = getCellValue(row.getCell(col));
+                if(rowMap.containsKey(key)){
+                    rowMap.remove(key);
+                    rowMap.put(key, rowMap.get(key)+","+value);
+                }else{
+                    rowMap.put(key,  value);
+                }
+            }
+            i++;
+            if(i%bufferSize==0){
+                rowHandler.accept(buffers);
+                buffers.clear();
+            }else{
+                buffers.add(rowMap);
+            }
+        }
+        if(buffers.size()!=0){
+            rowHandler.accept(buffers);
+        }
+    }
+    public static void processCsvWithColumnNames(InputStream stream, Integer bufferSize, Consumer<List<Map<String, String>>> rowHandler) {
+        // 获取数据，生成 key-value
+    }   
+        /**
+         * 读取并按给定函数处理Excel文件的每行数据
+         * @param file           excel 文件
+         * @param sheetNum       工作表的编号, 从 0 开始
+         * @param bufferSize       must bigger then zero defualt 50
+         * @param hasColumnNames true : 首行为列名， false : 首行为数据
+         * @param rowHandler 消费型函数式接口，指定每行数据的处理逻辑
+         * @throws IOException
+         */
+        public static void processByGivenRowHandler(InputStream stream,String fileName,Integer bufferSize,  Consumer<List<Map<String, String>>> rowHandler)
+                throws IOException {
+            Workbook wb = null;
+            try {
+                String fileType = fileName .split("\\.")[1];
+                Sheet sheet =null;
+                bufferSize= bufferSize==null||bufferSize.intValue()==0?50:bufferSize;
+                switch (fileType) {
+                    case "xls":
+                        wb = new HSSFWorkbook(stream);
+                        sheet = wb.getSheetAt(0);
+                        processSheetWithColumnNames(sheet, bufferSize, rowHandler);
+                        break;
+                    case "xlsx":
+                        wb = new XSSFWorkbook(stream);
+                        sheet = wb.getSheetAt(0);
+                        processSheetWithColumnNames(sheet,bufferSize,  rowHandler);
+                        break;
+                    case "csv":    
+                        processCsvWithColumnNames(stream,bufferSize, rowHandler);
+                    default:
+                        throw new IOException("文件格式不正确，应为xls或xlsx");
+                }
+            } finally {
+                if (wb != null) {
+                    wb.close();
+                }
+                stream.close();
+            }
+        }
     public static void main(String[] args) {
         Map<String, String> mapParam = new HashMap<>();
         String name = "艾薯(黄沙大道店)";

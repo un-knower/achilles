@@ -24,10 +24,12 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
+import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplateColumns;
+import com.quancheng.achilles.dao.ds_st.model.OssFileInfo;
 import com.quancheng.achilles.service.config.SpringBeanUtil;
 import com.quancheng.achilles.service.services.OssFileInfoService;
-import com.quancheng.achilles.dao.modelwrite.AchillesDiyTemplateColumns;
-import com.quancheng.achilles.dao.modelwrite.OssFileInfo;
+
 import io.swagger.annotations.ApiModelProperty;
 
 public class DownloadBuilder<T> {

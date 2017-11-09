@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.quancheng.achilles.dao.ds_qc.model.CompanyRestaurantsStatistics;
 import com.quancheng.achilles.service.services.CompanyReportService;
 import com.quancheng.achilles.service.services.ISJOrderService;
-import com.quancheng.achilles.dao.model.CompanyRestaurantsStatistics;
 import com.quancheng.achilles.service.utils.Response;
 import com.quancheng.achilles.service.utils.TimeUtil;
 
