@@ -45,6 +45,8 @@ public class DataImportController {
     
     @Autowired
     DataItemServiceImpl dataItemServiceImpl;
+    
+    private static volatile String status="free";
     /***
      * 模版 列表
      * @param mv
@@ -78,6 +80,7 @@ public class DataImportController {
     @ResponseBody
     public ModelAndView importpage(ModelAndView mv ,String templateId) {
         mv.addObject("tableList", dorisTableServiceImpl.queryDataImport());
+        mv.addObject("status", status);
         mv.addObject("clientList", dataItemServiceImpl.getDataItemDetail("ALL_CLIENT_LIST"));
         mv.setViewName("import_data__file/file_upload");
         return mv;
@@ -87,13 +90,26 @@ public class DataImportController {
     @ResponseBody
     public void importOption(  @ApiParam(value = "导入Excel的文件") @RequestParam(value = "file", required = false) MultipartFile file, 
             @ApiParam(value = "模版id") @RequestParam(value = "dorisTableId", required = false) Long dorisTableId) {
-        dataImportService.doImport(file, dorisTableId);
+        
+        if("free".equals(status)){
+            status="busy";
+            dataImportService.doImport(file, dorisTableId);
+            status="free";
+        }
     }
     
+    @RequestMapping(path = "/model/status" ,produces = { MediaType.APPLICATION_JSON_UTF8_VALUE },method=RequestMethod.GET)
+    public String request( ){
+        return status;
+    }
     
     @RequestMapping(path = "/model/view",  method = RequestMethod.GET)
     @ResponseBody
     public ModelAndView dataView(HttpServletRequest request,ModelAndView mv,  Long dorisTableId) {
+        mv.setViewName("import_data__file/data_preview");
+        if(dorisTableId==null){
+            return mv;
+        }
         Map<String,String[]> param = request.getParameterMap();
         mv.addObject("paramaterValues", param);
         List<DorisTableColumns> cols = dorisTableServiceImpl.getTableColumns(dorisTableId);
@@ -102,7 +118,6 @@ public class DataImportController {
         mv.addObject("page", dataImportService.dataView(param, cols,table));
         mv.addObject("itemList", dataItemServiceImpl.getDataItem(new Object[]{}));
         mv.addObject("dorisTableId", dorisTableId);
-        mv.setViewName("import_data__file/data_preview");
         return mv;
     }
 }

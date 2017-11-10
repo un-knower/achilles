@@ -42,12 +42,13 @@ public class ImportController {
     @RequestMapping(path = "/import/proccessing", produces = { MediaType.APPLICATION_JSON_UTF8_VALUE, 
             MediaType.TEXT_HTML_VALUE },method={RequestMethod.POST})
     public String importData(ModelAndView mv, Long clientId, Long dorisTableId, String targetTable, String apiType){
-            if(status=="busy"){
-                return "busy";
+            if("free".equals(status)){
+                status="busy"; 
+                importToOnlineDbServiceImpl.calculate(clientId, dorisTableId, targetTable, apiType);
+                status="free";
+                return "success";
+            }else{
+                return "failed";
             }
-            status="busy"; 
-            importToOnlineDbServiceImpl.calculate(clientId, dorisTableId, targetTable, apiType);
-            status="free";
-        return "success";
     }
 }

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 
   <head th:replace="fragments/head :: head"></head>
-          <link href="/elite/plugins/bower_components/dropify/dist/css/dropify.min.css" rel="stylesheet" />
+   <link href="/elite/plugins/bower_components/dropify/dist/css/dropify.min.css" rel="stylesheet" />
    <body class="fix-sidebar fix-header">
       <!-- Preloader -->
       <div class="preloader">
@@ -59,7 +59,6 @@
                                       <td>
                                             <div class="col-md-6">
                                                 <select name="dorisTableId" id="dorisTableId"  class="selectpicker"  data-style="form-control" onchange="loadData();">
-                                                    <option  value="-1" >--选择-- </option>
                                                     <option  th:each="item:${tableList}" th:value="${item.id}" th:text="${item.chartName}"> </option>
                                                 </select>
                                             </div>
@@ -80,7 +79,10 @@
                                        </td>  
                                       <td >
                                          <div class="col-md-6">
-                                              <button type="button" id="upload-file-btn" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px;">导入</button>
+                                              <button type="button" id="upload-file-btn" class="btn btn-block btn-primary waves-effect waves-light" th:disabled="${status=='free'?null:'disabled'}">
+                                              <i class="fa fa-spin fa-spinner" th:style="${status=='busy'}?null:'display:none'"></i>
+                                              导入
+                                              </button>
                                           </div>
                                       </td>
                                   </tr>   
@@ -106,8 +108,8 @@
       </div>
       <!-- /#wrapper -->
       <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+       <script  src="/elite/plugins/bower_components/dropify/dist/js/dropify.min.js"></script>
    </body>
-   <script src="/elite/plugins/bower_components/dropify/dist/js/dropify.min.js"></script>
    <script type="text/javascript">
    /*<![CDATA[*/
             $('.dropify').dropify();   
@@ -133,9 +135,11 @@
                     // Form数据
                     data: formData,
                     beforeSend: function(request){
-                    	   request.setRequestHeader("X-CSRF-TOKEN", $("#_csrf").val()); 
+                    	   request.setRequestHeader("X-CSRF-TOKEN", $("#_csrf").val());
+                    	   loadMagic();
                     },
                     success: function(response){
+                    	   cancelLoad();                    	
                     	   loadData();
                     },
                     //Options to tell JQuery not to process data or worry about content-type
@@ -151,20 +155,60 @@
             }
             function loadData(){
             	 //load file data
+            	   var vl = $("#dorisTableId").val();
+            	   if(!vl){
+            		   return ;
+            	   }
                 var url='/data/model/view?dorisTableId='+$("#dorisTableId").val();
                 $.ajax({
                     url:url ,  //server script to process data
 	                type: 'get',
 	                success:function(resp){
-	                        $("#data-preview").html(resp);
+	                    $("#data-preview").html(resp);
 	                },
 	                beforeSend: function(request){
 	                    request.setRequestHeader("X-CSRF-TOKEN", $("#_csrf").val()); 
-	                    }
-	                });
+                    }
+                });
             }
+            function loadMagic(){
+                if(!window.isUploadFile){
+                    window.isUploadFile=true;
+                    $("#upload-file-btn").attr("disabled","disabled");
+                    $(".fa-spinner").show();
+//                     $.blockUI({ message: '<h1><img src="/elite/plugins/bower_components/x-editable/dist/jqueryui-editable/img/loading.gif" .> Just a moment...</h1>' });
+                }
+	         }
+	         function cancelLoad(){
+                 window.isUploadFile=false;
+//                  $.unblockUI();
+                $(".fa-spinner").hide();
+                 $("#upload-file-btn").attr("disabled",null);
+	         }
             $(document).ready(function(){
                 loadData();
+                var code = setInterval(function(){
+                    $.ajax({
+                        url: '/data/model/status',  
+                        type: 'get',
+                        dataType:"json",
+                        beforeSend: function(request){
+                            request.setRequestHeader("X-CSRF-TOKEN", $("#_csrf").val()); 
+                         },
+                         success: function(msg){
+                               if(rs=='free' && window.isUploadFile){
+                                   cancelLoad();
+                               }
+                        } ,
+                        error:function(resp){
+                            if(resp.responseText=='free' && window.isUploadFile){
+                                cancelLoad();
+                            }else if (resp.responseText=='busy' &&  !window.isUploadFile){
+                                loadMagic();
+                            }
+                        }
+                    });
+                },5000);
             });
     /*]]>*/
    </script>

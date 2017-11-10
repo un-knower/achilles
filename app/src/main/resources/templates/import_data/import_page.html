@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 
   <head th:replace="fragments/head :: head"></head>
+  
    <body class="fix-sidebar fix-header">
       <!-- Preloader -->
       <div class="preloader">
@@ -108,9 +109,8 @@
       </div>
       <!-- /#wrapper -->
       <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
-      <script type="text/javascript" src="http://malsup.github.io/min/jquery.blockUI.min.js"></script>
+      <script type="text/javascript" src="/elite/plugins/bower_components/blockUI/jquery.blockUI.min.js"></script>
    </body>
-   <script src="/elite/plugins/bower_components/dropify/dist/js/dropify.min.js"></script>
    <script type="text/javascript">
    /*<![CDATA[*/
             $('#data-calculate-btn').click(function(){
@@ -133,10 +133,12 @@
                     	   request.setRequestHeader("X-CSRF-TOKEN", $("#_csrf").val()); 
                     },
                     success: function(response){
-                    	   $.unblockUI();
+                    	   cancelLoad();
+                    	   sweetAlert("导入成功");
                     },
                     error:function(response){
-                    	   $.unblockUI();
+                    	   cancelLoad();
+                    	   sweetAlert("导入成功");
                     },
                     cache: false,
                     contentType: false,
@@ -149,7 +151,16 @@
                 }
             }
             function loadMagic(){
-            	   $.blockUI({ message: '<h1><img src="/elite/plugins/bower_components/x-editable/dist/jqueryui-editable/img/loading.gif" .> Just a moment...</h1>' });
+            	   if(!window.isInsertHospital){
+            		   window.isInsertHospital=true;
+            		   $("#data-calculate-btn").attr("disabled","disabled");
+            		   $.blockUI({ message: '<h1><img src="/elite/plugins/bower_components/x-editable/dist/jqueryui-editable/img/loading.gif" .> Just a moment...</h1>' });
+            	   }
+            }
+            function cancelLoad(){
+                	window.isInsertHospital=false;
+                	$("#data-calculate-btn").attr("disabled",null);
+                	$.unblockUI();
             }
             $(document).ready(function(){
             	   if("busy"==$("#data-calculate-btn").attr("status")){
@@ -165,20 +176,18 @@
                          },
                          success: function(msg){
                         	   if(rs=='free'){
-                        		   $.unblockUI();
+                        		   cancelLoad();
                         	   }
                         } ,
                         error:function(resp){
 	                        	if(resp.responseText=='free'){
-	                        		$.unblockUI();
-	                        		$("#data-calculate-btn").attr("disabled",null);
+	                        		cancelLoad();
 	                        	}else if (resp.responseText=='busy'){
 	                        		loadMagic();
-	                        		$("#data-calculate-btn").attr("disabled","disabled");
 	                        	}
                         }
                     });
-                },3000);
+                },5000);
             });
     /*]]>*/
    </script>

@@ -122,6 +122,9 @@ public class DataImportServiceImpl implements DataImportService {
     }
     @Override
     public ChartDataResp dataView(Map<String,String[]> param, List<DorisTableColumns> cols,DorisTableInfo table) {
+        if(table == null ){
+            return new ChartDataResp();
+        }
         String[] pageSize = param.get("pageSize");
         String[] pageNum = param.get("pageNum");
         Long ps = Long.parseLong(pageSize== null?"10":pageSize[0]);
