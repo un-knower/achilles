@@ -320,12 +320,11 @@ public class UtilClassHelper {
                     rowMap.put(key,  value);
                 }
             }
+            buffers.add(rowMap);
             i++;
             if(i%bufferSize==0){
                 rowHandler.accept(buffers);
                 buffers.clear();
-            }else{
-                buffers.add(rowMap);
             }
         }
         if(buffers.size()!=0){
