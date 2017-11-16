@@ -73,7 +73,7 @@ public class ImportToOnlineDbServiceImpl {
         Map<Object,Object> cities = dataItemServiceImpl.getDataItemDetailToMap("ALL_CITY_LIST");
         Map<Object,Object> cityMap = dataItemServiceImpl.getDataItemDetailReverseMap("ALL_CITY_LIST");
         Map<Object,Object> areaMap = dataItemServiceImpl.getDataItemDetailReverseMap("ALL_AREA");
-        
+        Map<Object,Object> provinceMap = dataItemServiceImpl.getDataItemDetailReverseMap("ALL_PROVINCE");
 //        final List<SytHospital> list = new ArrayList<>(200);
 //        final List<SytHospitalRelation> listRel = new ArrayList<>(200);
         String date = df.format(new Date());
@@ -134,6 +134,9 @@ public class ImportToOnlineDbServiceImpl {
                         }
                         if((hospital.getArea()==0 || hospital.getArea()==null) && pi.getArea() != null){
                             hospital.setArea(areaMap.get(pi.getArea())==null?0:Integer.parseInt(areaMap.get(pi.getArea()).toString()));
+                        }
+                        if((hospital.getProvince()==0 || hospital.getProvince()==null) && pi.getProvince()!= null){
+                            hospital.setProvince(provinceMap.get(pi.getProvince())==null?0:Integer.parseInt(provinceMap.get(pi.getProvince()).toString()));
                         }
                     }else{
                         hospital.setLat(getValue(t,"lat",String.class));

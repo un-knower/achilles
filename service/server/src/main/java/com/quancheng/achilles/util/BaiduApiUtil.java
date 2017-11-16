@@ -46,7 +46,12 @@ public class BaiduApiUtil {
             }
             url = String.format(baiduPoi, location.getDouble("lat")+","+location.getDouble("lng"), BAIDU_API_AK);
             str = rest.getForObject(url, String.class);
-            return JSON.parseObject(str).getJSONObject(jsonKeys[0]);
+            JSONObject result = JSON.parseObject(str).getJSONObject(jsonKeys[0]);
+            if(result==null || result.getJSONObject(jsonKeys[0])== null ){
+                result = result==null?new JSONObject():result;
+                result.put(jsonKeys[1], location);
+            } 
+            return result;
         } catch (RestClientException e) {
             return null;
         }
@@ -77,14 +82,15 @@ public class BaiduApiUtil {
                 pi.setAddress(jsonObject.getString("addr"));
                 pi.setName(jsonObject.getString("name"));
                 if( json.getJSONObject("addressComponent") != null ){
-                    pi.setArea(json.getJSONObject("addressComponent").getString("district").replace("区", "").replace("县", ""));
+                    pi.setArea(json.getJSONObject("addressComponent").getString("district"));
                     pi.setCity(json.getJSONObject("addressComponent").getString("city").replace("市", ""));
+                    pi.setProvince(json.getJSONObject("addressComponent").getString("province").replace("省", "").replace("市", ""));
                 }
-                if( json.getJSONObject("location") != null ){
-                    JSONObject locations = json.getJSONObject("location") ;
-                    pi.setLng(locations.getDouble("lng")+"");
-                    pi.setLat(locations.getDouble("lat")+"");
-                }
+            }
+            if( json.getJSONObject("location") != null ){
+                JSONObject locations = json.getJSONObject("location") ;
+                pi.setLng(locations.getDouble("lng")+"");
+                pi.setLat(locations.getDouble("lat")+"");
             }
         }
         return pi;
