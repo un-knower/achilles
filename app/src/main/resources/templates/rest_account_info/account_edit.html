@@ -50,7 +50,8 @@
                                       <td>
                                             <div class="col-md-6">
 			                                <input type="text" class="form-control" name="orderNum" th:value="${editInfo==null?null:editInfo.orderNum}" 
-			                                 placeholder="orderNum" th:required="required" th:readonly="editInfo!=null"/>
+			                                th:readonly="${editInfo==null?null:'readonly'}"
+			                                 placeholder="orderNum" th:required="required"  />
 			                                </div>
                                       </td>
                                   </tr>

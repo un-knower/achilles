@@ -42,19 +42,19 @@
                <div class="row">
                   <div class="col-md-12">
                      <div class="white-box">
-                        <h3 class="box-title">企业后台-餐厅结算信息补全 </h3>
                      <div class="row">
-                      <form id="query-form" th:action="@{/ops/account/info/list}" method="post">
-                              <input type="hidden" name="pageNum" th:value="${page.number}" />
-                              <input type="hidden" name="pageSize" th:value="${page.size}" />
-                               <!-- 搜索框 -->
-                                <div class="col-md-3">
-                                  <input  name="orderNum"  class="form-control"  th:value="${orderNum}" placeholder= "订单号"/>
-                                  </div>
-                                <div class="col-md-1">
-                                  <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">Search</button>
-                              </div>
-                      </form>
+	                     <h3 class="box-title">企业后台-餐厅结算信息补全-商家账户 <a class="pull-right" th:href="@{/ops/account/info/edit}">新增</a></h3>
+	                      <form id="query-form" th:action="@{/ops/account/info/list}" method="post">
+	                              <input type="hidden" name="pageNum" th:value="${page.number}" />
+	                              <input type="hidden" name="pageSize" th:value="${page.size}" />
+	                               <!-- 搜索框 -->
+	                                <div class="col-md-3">
+	                                  <input  name="orderNum"  class="form-control"  th:value="${orderNum}" placeholder= "订单号"/>
+	                                  </div>
+	                                <div class="col-md-1">
+	                                  <button type="submit" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px">Search</button>
+	                              </div>
+	                      </form>
                       </div>
                        </div>
                   </div>
