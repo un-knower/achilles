@@ -91,9 +91,9 @@ public class DataImportController {
     public void importOption(  @ApiParam(value = "导入Excel的文件") @RequestParam(value = "file", required = false) MultipartFile file, 
             @ApiParam(value = "模版id") @RequestParam(value = "dorisTableId", required = false) Long dorisTableId) {
         if("free".equals(status)){
+            status="busy";
             new Thread(new Runnable() {
                 public void run() {
-                    status="busy";
                     try {
                         dataImportService.doImport(file, dorisTableId);
                     } catch (Exception e) {
@@ -102,7 +102,7 @@ public class DataImportController {
                         status="free";
                     }
                 }
-            });   
+            }).start();   
         }
     }
     
