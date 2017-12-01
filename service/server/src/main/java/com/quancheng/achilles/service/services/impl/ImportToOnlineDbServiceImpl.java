@@ -87,7 +87,6 @@ public class ImportToOnlineDbServiceImpl {
                     SytHospital hospital = hospitals==null||hospitals.isEmpty()?null:hospitals.get(0);
                     if(hospital!=null){
                         final Long id = hospital.getId();
-                        System.out.println(id);
                         List<SytHospitalRelation>  srList = sytHospitalRelationRepository.findAll(Specifications.where(new Specification<SytHospitalRelation>() {
                             public Predicate toPredicate(Root<SytHospitalRelation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                                 return cb.equal(root.get("hospitalId"),id);

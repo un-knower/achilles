@@ -43,14 +43,18 @@ public class ImportController {
             MediaType.TEXT_HTML_VALUE },method={RequestMethod.POST})
     public String importData(ModelAndView mv, Long clientId, Long dorisTableId, String targetTable, String apiType){
             if("free".equals(status)){
-                status="busy"; 
-                try {
-                    importToOnlineDbServiceImpl.calculate(clientId, dorisTableId, targetTable, apiType);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }finally{
-                    status="free";
-                }
+                new Thread(new Runnable() {
+                    public void run() {
+                        status="busy"; 
+                        try {
+                            importToOnlineDbServiceImpl.calculate(clientId, dorisTableId, targetTable, apiType);
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }finally{
+                            status="free";
+                        }
+                    }
+                });
                 return "success";
             }else{
                 return "failed";

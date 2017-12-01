@@ -59,11 +59,11 @@
                                   <!-- 时间控件 -->  
 								<div class="input-daterange input-group" th:if="${pm.type=='datetime' and pm.colName=='begin'}"  id="date-range">
 									<input type="text" class="form-control" name="begin" 
-									   th:value="*{paramaterValues['begin']!=null ? paramaterValues['begin'][0]:null}"   placeholder="起始时间"/>
+									   th:value="*{paramaterValues['begin']!=null ? paramaterValues['begin'][0]:null}"   th:placeholder="${pm.title}"/>
 									<span class="input-group-addon"><i class="icon-calender"></i></span> 
 									<span class="input-group-addon bg-info b-0 text-white"> - </span>
 									<input type="text" class="form-control" name="end" 
-									   th:value="*{paramaterValues['end']!=null ? paramaterValues['end'][0]:null}"  placeholder="结束时间"/>
+									   th:value="*{paramaterValues['end']!=null ? paramaterValues['end'][0]:null}"  th:placeholder="${pm.title}"/>
 									<span class="input-group-addon"><i class="icon-calender"></i></span> 
 								</div>
                                   <!-- 多选 -->
