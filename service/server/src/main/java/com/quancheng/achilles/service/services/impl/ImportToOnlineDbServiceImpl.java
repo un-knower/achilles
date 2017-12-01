@@ -66,7 +66,7 @@ public class ImportToOnlineDbServiceImpl {
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public void importHospital(Long clientId,Long dorisTableId ,String apiType){
         Map<String,String[]> paramaters = new HashMap<>();
-        paramaters.put("pageSize", new String[]{"200"});
+        paramaters.put("pageSize", new String[]{"2000"});
         List<DorisTableColumns>cols = dorisTableServiceImpl.getTableColumns(dorisTableId);
         DorisTableInfo table= dorisTableServiceImpl.dorisTableInfo(dorisTableId);
         ChartDataResp cdr =null;
@@ -76,6 +76,10 @@ public class ImportToOnlineDbServiceImpl {
         Map<Object,Object> provinceMap = dataItemServiceImpl.getDataItemDetailReverseMap("ALL_PROVINCE");
         String date = df.format(new Date());
         do{
+            if(cdr!= null && cdr.getPageInfo().hasNext()){
+                PageInfo page = cdr.getPageInfo().next();
+                paramaters.put("pageNum", new String[]{page.getNumber()+""});
+            }
             cdr = dataImportService.dataView(paramaters, cols, table);
             cdr.getDataList().stream().forEach(new Consumer<Map<String, Object>>() {
                 public void accept(Map<String, Object> t) {
@@ -88,19 +92,19 @@ public class ImportToOnlineDbServiceImpl {
                     if(hospital!=null){
                         final Long id = hospital.getId();
                         List<SytHospitalRelation>  srList = sytHospitalRelationRepository.findAll(Specifications.where(new Specification<SytHospitalRelation>() {
-                            public Predicate toPredicate(Root<SytHospitalRelation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                                return cb.equal(root.get("hospitalId"),id);
-                            }
-                        }).and(new Specification<SytHospitalRelation>() {
-                            public Predicate toPredicate(Root<SytHospitalRelation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                                return cb.equal(root.get("clientId"), clientId);
-                            }
-                        }).and(new Specification<SytHospitalRelation>() {
-                            public Predicate toPredicate(Root<SytHospitalRelation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                                return cb.isNull(root.get("deletedAt"));
-                            }
-                        })
-                                );
+                                public Predicate toPredicate(Root<SytHospitalRelation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                                    return cb.equal(root.get("hospitalId"),id);
+                                }
+                            }).and(new Specification<SytHospitalRelation>() {
+                                public Predicate toPredicate(Root<SytHospitalRelation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                                    return cb.equal(root.get("clientId"), clientId);
+                                }
+                            }).and(new Specification<SytHospitalRelation>() {
+                                public Predicate toPredicate(Root<SytHospitalRelation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                                    return cb.isNull(root.get("deletedAt"));
+                                }
+                            })
+                        );
                         SytHospitalRelation sr = null;
                         if( srList==null || srList.isEmpty()){
                             sytHospitalRelationRepository.save(new SytHospitalRelation(hospital.getId(),clientId,0L,hospital.getCreatedAt(),hospital.getCreatedAt()));
@@ -152,22 +156,11 @@ public class ImportToOnlineDbServiceImpl {
                         hospital.setLng(getValue(t,"lng",String.class));
                     }
                     hospital.setStatus(1);
-//                    list.add(hospital);
                     sytHospitalRepository.save(hospital);
                     sytHospitalRelationRepository.save(new SytHospitalRelation(hospital.getId(),clientId,0L,hospital.getCreatedAt(),hospital.getCreatedAt()));
                 }
             });
-            try {
-//                save(list, listRel,clientId);
-            } catch (Exception e) {
-                
-            }finally{
-                if(cdr.getPageInfo().hasNext()){
-                    PageInfo page = cdr.getPageInfo().next();
-                    paramaters.put("pageNum", new String[]{page.getNumber()+""});
-                }
-            }
-        }while(cdr.getPageInfo().hasNext());
+        }while(cdr!=null && cdr.getPageInfo().hasNext());
     }
     public void save(List<SytHospital> list,List<SytHospitalRelation> listRel,Long clientId){
         try {
