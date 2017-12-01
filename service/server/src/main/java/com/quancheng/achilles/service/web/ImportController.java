@@ -44,8 +44,13 @@ public class ImportController {
     public String importData(ModelAndView mv, Long clientId, Long dorisTableId, String targetTable, String apiType){
             if("free".equals(status)){
                 status="busy"; 
-                importToOnlineDbServiceImpl.calculate(clientId, dorisTableId, targetTable, apiType);
-                status="free";
+                try {
+                    importToOnlineDbServiceImpl.calculate(clientId, dorisTableId, targetTable, apiType);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }finally{
+                    status="free";
+                }
                 return "success";
             }else{
                 return "failed";

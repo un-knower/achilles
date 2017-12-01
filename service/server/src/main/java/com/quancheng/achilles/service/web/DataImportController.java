@@ -93,8 +93,13 @@ public class DataImportController {
         
         if("free".equals(status)){
             status="busy";
-            dataImportService.doImport(file, dorisTableId);
-            status="free";
+            try {
+                dataImportService.doImport(file, dorisTableId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally{
+                status="free";
+            }
         }
     }
     

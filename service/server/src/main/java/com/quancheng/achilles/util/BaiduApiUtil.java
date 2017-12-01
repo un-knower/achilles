@@ -71,7 +71,11 @@ public class BaiduApiUtil {
             logger.error(e );
             return null;
         }
+        if(json == null ){
+            return null;
+        }
         JSONArray pois = json.getJSONArray("pois");
+        pi.setAddress(json.getString("formatted_address"));
         JSONObject jsonObject=null;
         for (int i=0 ;i<pois.size();i++) {
             jsonObject =  pois.getJSONObject(i);
@@ -79,7 +83,7 @@ public class BaiduApiUtil {
                   || keyWord.contains(jsonObject.getString("name"))
                   || jsonObject.getString("name").contains(keyWord)){
                 jsonObject =  pois.getJSONObject(0);
-                pi.setAddress(jsonObject.getString("addr"));
+                
                 pi.setName(jsonObject.getString("name"));
                 if( json.getJSONObject("addressComponent") != null ){
                     pi.setArea(json.getJSONObject("addressComponent").getString("district"));

@@ -74,21 +74,21 @@ public class ImportToOnlineDbServiceImpl {
         Map<Object,Object> cityMap = dataItemServiceImpl.getDataItemDetailReverseMap("ALL_CITY_LIST");
         Map<Object,Object> areaMap = dataItemServiceImpl.getDataItemDetailReverseMap("ALL_AREA");
         Map<Object,Object> provinceMap = dataItemServiceImpl.getDataItemDetailReverseMap("ALL_PROVINCE");
-//        final List<SytHospital> list = new ArrayList<>(200);
-//        final List<SytHospitalRelation> listRel = new ArrayList<>(200);
         String date = df.format(new Date());
         do{
             cdr = dataImportService.dataView(paramaters, cols, table);
             cdr.getDataList().stream().forEach(new Consumer<Map<String, Object>>() {
                 public void accept(Map<String, Object> t) {
-                    SytHospital hospital= sytHospitalRepository.findOne(new Specification<SytHospital>() {
+                    List<SytHospital> hospitals= sytHospitalRepository.findAll(new Specification<SytHospital>() {
                         public Predicate toPredicate(Root<SytHospital> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                             return cb.equal(root.get("name"), getValue(t,"name",String.class));
                         }
                     });
+                    SytHospital hospital = hospitals==null||hospitals.isEmpty()?null:hospitals.get(0);
                     if(hospital!=null){
                         final Long id = hospital.getId();
-                        SytHospitalRelation  sr = sytHospitalRelationRepository.findOne(Specifications.where(new Specification<SytHospitalRelation>() {
+                        System.out.println(id);
+                        List<SytHospitalRelation>  srList = sytHospitalRelationRepository.findAll(Specifications.where(new Specification<SytHospitalRelation>() {
                             public Predicate toPredicate(Root<SytHospitalRelation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                                 return cb.equal(root.get("hospitalId"),id);
                             }
@@ -96,10 +96,17 @@ public class ImportToOnlineDbServiceImpl {
                             public Predicate toPredicate(Root<SytHospitalRelation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                                 return cb.equal(root.get("clientId"), clientId);
                             }
-                        }));
-                        if(sr==null){
+                        }).and(new Specification<SytHospitalRelation>() {
+                            public Predicate toPredicate(Root<SytHospitalRelation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                                return cb.isNull(root.get("deletedAt"));
+                            }
+                        })
+                                );
+                        SytHospitalRelation sr = null;
+                        if( srList==null || srList.isEmpty()){
                             sytHospitalRelationRepository.save(new SytHospitalRelation(hospital.getId(),clientId,0L,hospital.getCreatedAt(),hospital.getCreatedAt()));
-                        } else if(sr!=null && sr.getDeletedAt()!=null){
+                        } else if(srList!=null && !srList.isEmpty()){
+                            sr = srList.get(0);
                             sr.setDeletedAt(null);
                             sr.setUpdatedAt(date);
                             sytHospitalRelationRepository.save(sr);
@@ -128,15 +135,18 @@ public class ImportToOnlineDbServiceImpl {
                         if(pi != null){
                             hospital.setLat(pi.getLat());
                             hospital.setLng(pi.getLng());
-                        }
-                        if((hospital.getCity()==0||hospital.getCity()==null) && pi.getCity() != null){
-                            hospital.setCity(cityMap.get(pi.getCity())==null?0:Integer.parseInt(cityMap.get(pi.getCity()).toString()));
-                        }
-                        if((hospital.getArea()==0 || hospital.getArea()==null) && pi.getArea() != null){
-                            hospital.setArea(areaMap.get(pi.getArea())==null?0:Integer.parseInt(areaMap.get(pi.getArea()).toString()));
-                        }
-                        if((hospital.getProvince()==0 || hospital.getProvince()==null) && pi.getProvince()!= null){
-                            hospital.setProvince(provinceMap.get(pi.getProvince())==null?0:Integer.parseInt(provinceMap.get(pi.getProvince()).toString()));
+                            if(hospital.getAddress()==null || hospital.getAddress().isEmpty()){
+                                hospital.setAddress(pi.getAddress());
+                            }
+                            if((hospital.getCity()==0||hospital.getCity()==null) && pi.getCity() != null){
+                                hospital.setCity(cityMap.get(pi.getCity())==null?0:Integer.parseInt(cityMap.get(pi.getCity()).toString()));
+                            }
+                            if((hospital.getArea()==0 || hospital.getArea()==null) && pi.getArea() != null){
+                                hospital.setArea(areaMap.get(pi.getArea())==null?0:Integer.parseInt(areaMap.get(pi.getArea()).toString()));
+                            }
+                            if((hospital.getProvince()==0 || hospital.getProvince()==null) && pi.getProvince()!= null){
+                                hospital.setProvince(provinceMap.get(pi.getProvince())==null?0:Integer.parseInt(provinceMap.get(pi.getProvince()).toString()));
+                            }
                         }
                     }else{
                         hospital.setLat(getValue(t,"lat",String.class));

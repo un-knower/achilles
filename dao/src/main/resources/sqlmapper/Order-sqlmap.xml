@@ -10,14 +10,16 @@
     <select  id="queryPageDataLimit" parameterType="Map"   resultType="Map">
         select 
 	        <foreach collection="cols" item="item" separator=",">
-	            b.${item}
+<!-- 	            b. -->
+	            ${item}
 	        </foreach>
-	      from   
-             ( select 
-                ${countCol} as id
-                ${sql}   limit  ${pageBegin},${pageSize}
-            ) a 
-            left join ${tableName} b on a.id=b.${countCol}
+<!-- 	      from    -->
+<!--              ( select  -->
+<!--                 ${countCol} as id -->
+<!--                 ${sql}   limit  ${pageBegin},${pageSize} -->
+<!--             ) a  -->
+<!--             left join ${tableName} b on a.id=b.${countCol} -->
+           ${sql}   limit  ${pageBegin},${pageSize}
     </select>
 
     <select  id="queryPageDataCount" parameterType="Map"   resultType="Long">
