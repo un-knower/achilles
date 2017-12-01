@@ -19,7 +19,7 @@
 <!--                 ${sql}   limit  ${pageBegin},${pageSize} -->
 <!--             ) a  -->
 <!--             left join ${tableName} b on a.id=b.${countCol} -->
-           ${sql}   limit  ${pageBegin},${pageSize}
+           ${sql}  order by ${countCol}  limit  ${pageBegin},${pageSize} 
     </select>
 
     <select  id="queryPageDataCount" parameterType="Map"   resultType="Long">

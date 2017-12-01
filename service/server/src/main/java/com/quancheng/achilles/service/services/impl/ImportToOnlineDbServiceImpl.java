@@ -66,7 +66,7 @@ public class ImportToOnlineDbServiceImpl {
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public void importHospital(Long clientId,Long dorisTableId ,String apiType){
         Map<String,String[]> paramaters = new HashMap<>();
-        paramaters.put("pageSize", new String[]{"2000"});
+        paramaters.put("pageSize", new String[]{"500"});
         List<DorisTableColumns>cols = dorisTableServiceImpl.getTableColumns(dorisTableId);
         DorisTableInfo table= dorisTableServiceImpl.dorisTableInfo(dorisTableId);
         ChartDataResp cdr =null;
@@ -105,15 +105,16 @@ public class ImportToOnlineDbServiceImpl {
                                 }
                             })
                         );
-                        SytHospitalRelation sr = null;
+//                        SytHospitalRelation sr = null;
                         if( srList==null || srList.isEmpty()){
                             sytHospitalRelationRepository.save(new SytHospitalRelation(hospital.getId(),clientId,0L,hospital.getCreatedAt(),hospital.getCreatedAt()));
-                        } else if(srList!=null && !srList.isEmpty()){
-                            sr = srList.get(0);
-                            sr.setDeletedAt(null);
-                            sr.setUpdatedAt(date);
-                            sytHospitalRelationRepository.save(sr);
-                        }
+                        } 
+//                            else if(srList!=null && !srList.isEmpty()){
+//                            sr = srList.get(0);
+//                            sr.setDeletedAt(null);
+//                            sr.setUpdatedAt(date);
+//                            sytHospitalRelationRepository.save(sr);
+//                        }
                         return ;
                     }
                     Object obj = cities.get(t.get("city"));
