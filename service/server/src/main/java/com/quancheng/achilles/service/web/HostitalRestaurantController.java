@@ -71,6 +71,7 @@ public class HostitalRestaurantController {
                                   @ApiParam(value = "导入Excel所属公司") @RequestParam(value = "excelCompanyId", required = false) String excelCompanyId,
                                   @ApiParam(value = "距离") @RequestParam(value = "distances", required = false) Double distances,
                                   @ApiParam(value = "是否插入额外数据") @RequestParam(value = "isInsertDatas", required = false) Boolean isInsertDatas,
+                                  @ApiParam(value = "是否包含线上特许餐厅数据") @RequestParam(value = "isIncludeSpecial", required = false) Boolean isIncludeSpecial,
                                   @ApiParam(value = "任务类型") @RequestParam(value = "taskType", required = false) String taskType,
                                   @ApiParam(value = "导出外卖类型") @RequestParam(value = "waimai", required = false) String waimai,
                                   @ApiParam(value = "外卖是否在配送范围") @RequestParam(value = "isWaimaiOk", required = false) Boolean isWaimaiOk,
@@ -81,8 +82,8 @@ public class HostitalRestaurantController {
                                   HttpServletRequest request, HttpServletResponse response, ModelAndView mv) {
         String remoteUser = request.getRemoteUser();
         EXECUTOR_SERVICE.execute(() -> {
-            upload(file, isUpload, excelType, excelCompanyId, distances, isInsertDatas, taskType, waimai, isWaimaiOk,
-                   reserve, compareCompany, companyIds, cityIds, remoteUser);
+            upload(file, isUpload, excelType, excelCompanyId, distances, isInsertDatas, isIncludeSpecial, taskType,
+                   waimai, isWaimaiOk, reserve, compareCompany, companyIds, cityIds, remoteUser);
         });
         try {
             response.sendRedirect("/ops/hospitalrestaurant/view");
@@ -92,8 +93,9 @@ public class HostitalRestaurantController {
     }
 
     public void upload(MultipartFile file, Boolean isUpload, String excelType, String excelCompanyId, Double distances,
-                       Boolean isInsertDatas, String taskType, String waimai, Boolean isWaimaiOk, String reserve,
-                       Boolean compareCompany, String[] companyIds, String[] cityIds, String remoteUser) {
+                       Boolean isInsertDatas, Boolean isIncludeSpecial, String taskType, String waimai,
+                       Boolean isWaimaiOk, String reserve, Boolean compareCompany, String[] companyIds,
+                       String[] cityIds, String remoteUser) {
         isUsed = true;
         BaseResponse export = new BaseResponse("-1", "fail");
         Boolean saveExcelToDB = false;
@@ -143,7 +145,7 @@ public class HostitalRestaurantController {
                 }
             }
             EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, remoteUser, excelName,
-                                               distances, isWaimaiOk, waimai, reserve));
+                                               distances, isWaimaiOk, waimai, reserve, isIncludeSpecial));
             // isUsed = !submit.get(30, TimeUnit.MINUTES);
 
         } catch (Exception e) {
@@ -170,8 +172,11 @@ public class HostitalRestaurantController {
         private String  reserve;
         private String  excelName;
 
+        private Boolean isIncludeSpecial;// 是否包含线上特许餐厅
+
         public Handel(String taskType, String excelType, Boolean compareCompany, Object otype, String username,
-                      String excelName, Double distances, Boolean isWaimaiOk, String waimai, String reserve){
+                      String excelName, Double distances, Boolean isWaimaiOk, String waimai, String reserve,
+                      Boolean isIncludeSpecial){
             this.taskType = taskType;
             this.excelType = excelType;
             this.compareCompany = compareCompany;
@@ -182,6 +187,7 @@ public class HostitalRestaurantController {
             this.waimai = waimai;
             this.reserve = reserve;
             this.excelName = excelName;
+            this.isIncludeSpecial = isIncludeSpecial;
         }
 
         @Override
@@ -201,7 +207,7 @@ public class HostitalRestaurantController {
                     taskTypeO = InnConstantODPSTables.TaskHospitalRestaurantDistance.HospitalRestaurant;
                 }
                 distanceService.invokeODPSTask(uuid, otype, taskTypeO, compareCompany, distances, isWaimaiOk,
-                                               getSqlParam("r.", waimai, reserve));
+                                               getSqlParam("r.", waimai, reserve), isIncludeSpecial);
                 distanceService.queryFromODPSAndSaveToDB(uuid);
 
                 export(1, uuid, distances, isWaimaiOk, waimai, reserve, username, excelName);

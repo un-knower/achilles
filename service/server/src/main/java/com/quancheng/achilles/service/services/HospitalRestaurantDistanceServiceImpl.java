@@ -288,10 +288,10 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
 
     @Override
     public <T> Boolean invokeODPSTask(String uuid, T otype, InnConstantODPSTables.TaskHospitalRestaurantDistance type,
-                                      Boolean compareCompany, Double distances, Boolean isWaimaiOk,
-                                      String sqlParam) throws OdpsException, IOException {
+                                      Boolean compareCompany, Double distances, Boolean isWaimaiOk, String sqlParam,
+                                      Boolean isIncludeSpecial) throws OdpsException, IOException {
         return odpsService.taskHospitalRestaurantDistance(uuid, otype, type, compareCompany, distances, isWaimaiOk,
-                                                          sqlParam);
+                                                          sqlParam, isIncludeSpecial);
     }
 
     @Override
