@@ -92,7 +92,8 @@ public class ODPSQueryService extends AbstractOdpsQuery {
     public <T> boolean taskHospitalRestaurantDistance(String uuid, T otype,
                                                       InnConstantODPSTables.TaskHospitalRestaurantDistance type,
                                                       Boolean compareCompany, Double distances, Boolean isWaimaiOk,
-                                                      String sqlParam) throws OdpsException, IOException {
+                                                      String sqlParam,
+                                                      Boolean isIncludeSpecial) throws OdpsException, IOException {
         String comapre = "";
         String allComapre = "";
         if (compareCompany != null && compareCompany) {
@@ -104,6 +105,10 @@ public class ODPSQueryService extends AbstractOdpsQuery {
 
         String restaurantWhere = " and r.deleted_at is null and r.status = 0 ";
         String hospitalWhere = " and h.deleted_at is null and h.status = 1 ";
+        if (isIncludeSpecial != null && isIncludeSpecial) {
+            restaurantTable = "out_sync_restaurant_special_info";// 每日凌晨自动同步数据
+            restaurantWhere = " and r.deleted_at is null and (r.status = '0'  or r.status ='success'  or r.status ='on' ) ";
+        }
 
         // String restaurantTableStatus = " r.status=0 and";
         if (otype != null) {// 上传了数据
