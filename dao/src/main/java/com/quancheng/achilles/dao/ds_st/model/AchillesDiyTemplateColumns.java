@@ -54,4 +54,5 @@ public class AchillesDiyTemplateColumns {
     public void setColTitile(String colTitile) {
         this.colTitile = colTitile;
     }
+
 }

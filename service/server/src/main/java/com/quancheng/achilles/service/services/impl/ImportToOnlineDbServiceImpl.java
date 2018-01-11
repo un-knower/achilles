@@ -5,8 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -63,10 +65,14 @@ public class ImportToOnlineDbServiceImpl {
             break;
         }
     }
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    
+    // 导入医院列表
     public void importHospital(Long clientId,Long dorisTableId ,String apiType){
         Map<String,String[]> paramaters = new HashMap<>();
-        paramaters.put("pageSize", new String[]{"500"});
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int bufferSize = 50;
+        int bufferSizeNum = 10;
+        paramaters.put("pageSize", new String[]{bufferSize*bufferSizeNum+""});
         List<DorisTableColumns>cols = dorisTableServiceImpl.getTableColumns(dorisTableId);
         DorisTableInfo table= dorisTableServiceImpl.dorisTableInfo(dorisTableId);
         ChartDataResp cdr =null;
@@ -75,6 +81,10 @@ public class ImportToOnlineDbServiceImpl {
         Map<Object,Object> areaMap = dataItemServiceImpl.getDataItemDetailReverseMap("ALL_AREA");
         Map<Object,Object> provinceMap = dataItemServiceImpl.getDataItemDetailReverseMap("ALL_PROVINCE");
         String date = df.format(new Date());
+        List<SytHospital> sytHospitalListOld = new ArrayList<>(bufferSize*bufferSizeNum);
+        List<SytHospital> sytHospitalListNew = new ArrayList<>(bufferSize*bufferSizeNum);
+        List<SytHospitalRelation> relationList = new ArrayList<>(bufferSize*bufferSizeNum);
+        Set<String> bufferHospitalNames = new HashSet<>(bufferSize*bufferSizeNum);
         do{
             if(cdr!= null && cdr.getPageInfo().hasNext()){
                 PageInfo page = cdr.getPageInfo().next();
@@ -83,6 +93,10 @@ public class ImportToOnlineDbServiceImpl {
             cdr = dataImportService.dataView(paramaters, cols, table);
             cdr.getDataList().stream().forEach(new Consumer<Map<String, Object>>() {
                 public void accept(Map<String, Object> t) {
+                    if(bufferHospitalNames.contains(getValue(t,"name",String.class))){
+                        //导入重名
+                        return ;
+                    }
                     List<SytHospital> hospitals= sytHospitalRepository.findAll(new Specification<SytHospital>() {
                         public Predicate toPredicate(Root<SytHospital> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                             return cb.equal(root.get("name"), getValue(t,"name",String.class));
@@ -107,7 +121,9 @@ public class ImportToOnlineDbServiceImpl {
                         );
 //                        SytHospitalRelation sr = null;
                         if( srList==null || srList.isEmpty()){
-                            sytHospitalRelationRepository.save(new SytHospitalRelation(hospital.getId(),clientId,0L,hospital.getCreatedAt(),hospital.getCreatedAt()));
+                            sytHospitalListOld.add(hospital);
+                            bufferHospitalNames.add(hospital.getName());
+//                            sytHospitalRelationRepository.save(new SytHospitalRelation(hospital.getId(),clientId,0L,hospital.getCreatedAt(),hospital.getCreatedAt()));
                         } 
 //                            else if(srList!=null && !srList.isEmpty()){
 //                            sr = srList.get(0);
@@ -120,7 +136,9 @@ public class ImportToOnlineDbServiceImpl {
                     Object obj = cities.get(t.get("city"));
                     String city = obj==null?null:obj.toString();
                     hospital = new SytHospital();
+                    sytHospitalListNew.add(hospital);
                     hospital.setName(getValue(t,"name",String.class));
+                    bufferHospitalNames.add(hospital.getName());
                     hospital.setAddress(getValue(t,"address",String.class,""));
                     hospital.setArea(getValue(t,"area",Integer.class,0));
                     hospital.setCity(getValue(t,"city",Integer.class,0));
@@ -157,10 +175,31 @@ public class ImportToOnlineDbServiceImpl {
                         hospital.setLng(getValue(t,"lng",String.class));
                     }
                     hospital.setStatus(1);
-                    sytHospitalRepository.save(hospital);
-                    sytHospitalRelationRepository.save(new SytHospitalRelation(hospital.getId(),clientId,0L,hospital.getCreatedAt(),hospital.getCreatedAt()));
                 }
             });
+            //批量保存
+            for (int i = 0; !sytHospitalListOld.isEmpty() && i < sytHospitalListOld.size(); i++) {
+                relationList.add(new SytHospitalRelation(sytHospitalListOld.get(i).getId(),clientId,0L,sytHospitalListOld.get(i).getCreatedAt(),sytHospitalListOld.get(i).getCreatedAt()));
+            }
+            if(!sytHospitalListNew.isEmpty()){
+                sytHospitalRepository.save(sytHospitalListNew);
+                for (SytHospital sytHospital : sytHospitalListNew) {
+                    relationList.add(new SytHospitalRelation(sytHospital.getId(),clientId,0L,sytHospital.getCreatedAt(),sytHospital.getCreatedAt()));
+                }
+            }
+            if(!relationList.isEmpty()){
+                sytHospitalRelationRepository.save(relationList);
+            }
+            //清空
+            sytHospitalListOld.clear();
+            sytHospitalListNew.clear();
+            relationList.clear();
+            bufferHospitalNames.clear();
+            logger.info(
+                    (cdr.getPageInfo().hasNext()?(cdr.getPageInfo().getNumber()+1)*cdr.getPageInfo().getPageSize()
+                     :((cdr.getPageInfo().getNumber())*cdr.getPageInfo().getPageSize()+cdr.getDataList().size())
+                     )
+                    +"/"+cdr.getPageInfo().getTotalElements());
         }while(cdr!=null && cdr.getPageInfo().hasNext());
     }
     public void save(List<SytHospital> list,List<SytHospitalRelation> listRel,Long clientId){

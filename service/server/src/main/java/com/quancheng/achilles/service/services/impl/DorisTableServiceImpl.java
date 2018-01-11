@@ -8,6 +8,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
+import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ import com.quancheng.achilles.dao.ds_st.repository.AchillesTemplateRepository;
 import com.quancheng.achilles.dao.ds_st.repository.DorisTableColumnsRepository;
 import com.quancheng.achilles.dao.ds_st.repository.DorisTableInfoRepository;
 import com.quancheng.achilles.dao.ds_st.repository.DorisTableParamRepository;
+import com.quancheng.achilles.service.config.DBConfiguration;
+import com.quancheng.achilles.service.config.SpringBeanUtil;
 import com.quancheng.achilles.service.model.ChartDataResp;
 import com.quancheng.achilles.service.model.DorisTableTO;
 import com.quancheng.achilles.service.model.PageInfo;
@@ -105,11 +109,17 @@ public class DorisTableServiceImpl {
         ChartDataResp cdr = new ChartDataResp();
         try {
             Long begin = System.currentTimeMillis();
-            par.put("countCol", dti.getLatitudeCols());
+            par.put("countCol", dti.getLatitudeCols()==null?1:dti.getLatitudeCols());
             par.put("tableName", dti.getRemark());
-            List<Map<String,Object>> result =orderQueryRepository.queryPageDataLimit(par);
+            SqlSession ss = null;
+            if( dti.getDataSource() == null){
+                ss= SpringBeanUtil.getBean(SqlSession.class, DBConfiguration.default_query_session);
+            }else {
+                ss= SpringBeanUtil.getBean(SqlSession.class, dti.getDataSource());
+            }
+            List<Map<String,Object>> result =orderQueryRepository.queryPageDataLimit(par,ss);
             Long end = System.currentTimeMillis();
-            Long count = orderQueryRepository.queryPageDataCount(par);
+            Long count = orderQueryRepository.queryPageDataCount(par,ss);
             Long end2 = System.currentTimeMillis();
             LOG.info("query data cost {} seconds",(end-begin)/1000);
             LOG.info("query count cost {} seconds",(end2-end)/1000);

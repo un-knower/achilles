@@ -32,6 +32,10 @@ import com.quancheng.achilles.dao.quancheng_db.model.UcbUser;
 
 @Configuration
 public class DBConfiguration {
+    
+    public final static String default_query_session="writeSqlSession";
+    
+    public final static String default_read_session="readSqlSession";
     /**数据平台数据库实例数据源*/
     /*=====ds read begin======*/
     @Primary
@@ -42,20 +46,52 @@ public class DBConfiguration {
         return ds;
     }
 
-    @Primary
-    @Bean
-    public SqlSessionFactoryBean readSqlSessionFactoryBean(@Qualifier("quanchengDBReadDataSource") DataSource dataSource) {
-        SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
-        sqlSessionFactory.setDataSource(dataSource);
-        sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-read-config.xml"));
-        return sqlSessionFactory;
-    }
+//    @Primary
+//    @Bean
+//    public SqlSessionFactoryBean readSqlSessionFactoryBean(@Qualifier("quanchengDBReadDataSource") DataSource dataSource) {
+//        SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
+//        sqlSessionFactory.setDataSource(dataSource);
+//        sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-read-config.xml"));
+//        return sqlSessionFactory;
+//    }
 
-    @Bean
+    @Bean(name=default_read_session)
     @Primary
     public SqlSession readSqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
+    @Primary
+    @Bean(name = "readonlySqlSessionFactoryBean")
+    public SqlSessionFactoryBean readonlySqlSessionFactoryBean(@Qualifier("quanchengDBReadDataSource") DataSource dataSource) {
+        SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
+        sqlSessionFactory.setDataSource(dataSource);
+        sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-config.xml"));
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        // 将加载多个绝对匹配的所有Resource
+        // 将首先通过ClassLoader.getResources("META-INF")加载非模式路径部分
+        // 然后进行遍历模式匹配
+        Resource[] resources = null;
+        try {
+            resources = resolver.getResources("classpath:/sqlmapper/*-sqlmap.xml");
+            sqlSessionFactory.setMapperLocations(resources);
+        } catch (IOException e) {
+            System.err.println("readonlySqlSessionFactoryBean have a error " + e.getMessage());
+        }
+        sqlSessionFactory.setTypeAliasesPackage("com.quancheng.achilles.dao.ds_st.model");
+        // 分页插件
+        PageHelper pageHelper = new PageHelper();
+        Properties props = new Properties();
+        props.setProperty("reasonable", "true");
+        props.setProperty("supportMethodsArguments", "true");
+        props.setProperty("returnPageInfo", "check");
+        props.setProperty("params", "count=countSql");
+        props.setProperty("pageSizeZero", "true");
+        pageHelper.setProperties(props);
+        // 添加插件
+        sqlSessionFactory.setPlugins(new Interceptor[] { pageHelper });
+        return sqlSessionFactory;
+    }
+    
     /*=====ds read end======*/
     /*=====ds write begin======*/
     @Bean(name = "quanchengDBWriteDataSource")
@@ -72,7 +108,7 @@ public class DBConfiguration {
         sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-write-config.xml"));
         return sqlSessionFactory;
     }
-    @Bean(name = "writeSqlSession")
+    @Bean(name = default_query_session)
     public SqlSession sqlSessionTemplate(@Qualifier("writeSqlSessionFactoryBean") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }

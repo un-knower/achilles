@@ -21,6 +21,8 @@ public class DorisTableInfo {
     @ApiModelProperty(value="维度字段") @Column(name = "latitude_cols") private String latitudeCols;
     @ApiModelProperty(value="值字段") @Column(name = "valus_cols") private String valusCols;
     @ApiModelProperty(value="展示字段")@Column(name = "show_cols") private String showCols;
+    @Column(name = "data_source") private String dataSource;
+    
     public Long getId() {
         return id;
     }
@@ -74,5 +76,11 @@ public class DorisTableInfo {
     }
     public void setShowCols(String showCols) {
         this.showCols = showCols;
+    }
+    public String getDataSource() {
+        return dataSource;
+    }
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }
 }   
