@@ -70,7 +70,7 @@ public class TemplateController {
             return new ArrayList<>();
         }
         for (AchillesDiyTemplateColumns achillesDiyTemplateColumns : cols) {
-            if(achillesDiyTemplateColumns.getTableCol().trim().matches("^[a-z\\.A-Z_\\s]+$")){
+            if(achillesDiyTemplateColumns.getTableCol().trim().matches("^[\u4e00-\u9fa5\\'\"a-z\\.A-Z_\\s]+$")){
                 String[] arr = achillesDiyTemplateColumns.getTableCol().trim().split("\\s");
                 achillesDiyTemplateColumns.setTableCol(arr[arr.length-1].indexOf(".")!=-1?arr[arr.length-1].substring(arr[arr.length-1].lastIndexOf(".")+1):arr[arr.length-1]);
             } 
