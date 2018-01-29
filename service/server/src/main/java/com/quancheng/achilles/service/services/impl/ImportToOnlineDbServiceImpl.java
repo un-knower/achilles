@@ -179,12 +179,12 @@ public class ImportToOnlineDbServiceImpl {
             });
             //批量保存
             for (int i = 0; !sytHospitalListOld.isEmpty() && i < sytHospitalListOld.size(); i++) {
-                relationList.add(new SytHospitalRelation(sytHospitalListOld.get(i).getId(),clientId,0L,sytHospitalListOld.get(i).getCreatedAt(),sytHospitalListOld.get(i).getCreatedAt()));
+                relationList.add(new SytHospitalRelation(sytHospitalListOld.get(i).getId(),clientId,0L,sytHospitalListOld.get(i).getCreatedAt(),date));
             }
             if(!sytHospitalListNew.isEmpty()){
                 sytHospitalRepository.save(sytHospitalListNew);
                 for (SytHospital sytHospital : sytHospitalListNew) {
-                    relationList.add(new SytHospitalRelation(sytHospital.getId(),clientId,0L,sytHospital.getCreatedAt(),sytHospital.getCreatedAt()));
+                    relationList.add(new SytHospitalRelation(sytHospital.getId(),clientId,0L,date,date));
                 }
             }
             if(!relationList.isEmpty()){
