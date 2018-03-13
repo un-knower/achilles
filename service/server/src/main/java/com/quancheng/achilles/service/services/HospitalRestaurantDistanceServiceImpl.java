@@ -59,6 +59,7 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
     @Autowired
     private BaseService        baseService;
 
+    
     public <T> Boolean saveHospitalInfoToDB(List<T> datas) {
         int insert = sqlSession.insert("HospitalInfoMapper.batchInsert", datas);
         return insert > 0 ? true : false;
@@ -166,25 +167,39 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
                 companyName = companyInfoMap.get("companyName");
             }
         }
-
         for (Map<String, String> map : mapsFromExcel) {
             Map<String, String> mapParam = new HashMap<>();
-            mapParam.put("name",
-                         StringUtils.isEmpty(map.get("hospitalName")) ? map.get("restaurantName") : map.get("hospitalName"));
+            mapParam.put("name", StringUtils.isEmpty(map.get("hospitalName")) ? map.get("restaurantName") : map.get("hospitalName"));
             String cityName = map.get("cityName").replaceAll("直辖", "").replaceAll("市", "");
             mapParam.put("cityName", cityName);
             String address = map.get("address");
             mapParam.put("address", StringUtils.isEmpty(address) ? "" : address);
-            Map<String, Double> mapLocation = UtilClassHelper.getLatAndLngByAddressFromBaidu(mapParam);
-            if (mapLocation != null) {
-                Double lng = mapLocation.get("lng");
-                Double lat = mapLocation.get("lat");
-                if (lng != null && lat != null) {
-                    map.put("lng", mapLocation.get("lng").toString());
-                    map.put("lat", mapLocation.get("lat").toString());
-                    map.put("settable", "1");
-                } else {
-                    map.put("settable", "0");
+            String idName = "";
+            if (type instanceof HospitalInfo) {
+                idName = "hospitalId";
+            } else if (type instanceof RestaurantInfo) {
+                idName = "restaurantId";
+            }
+            String idVal = map.get(idName);
+            if (idVal == null || idVal.trim().equals("")) {
+                map.put(idName, UUID.randomUUID().toString().replaceAll("-", ""));
+            }
+            //有对应id直接查线上坐标
+            if(map.containsKey("lng")&&map.containsKey("lat")&&map.get("lng")!=null&&map.get("lat")!=null) {
+                map.put("lng",  map.get("lng"));
+                map.put("lat",  map.get("lat"));
+            }else {
+                Map<String, Double> mapLocation = UtilClassHelper.getLatAndLngByAddressFromBaidu(mapParam);
+                if (mapLocation != null) {
+                    Double lng = mapLocation.get("lng");
+                    Double lat = mapLocation.get("lat");
+                    if (lng != null && lat != null) {
+                        map.put("lng", mapLocation.get("lng").toString());
+                        map.put("lat", mapLocation.get("lat").toString());
+                        map.put("settable", "1");
+                    } else {
+                        map.put("settable", "0");
+                    }
                 }
             }
             String cityId = cityInfo.get(cityName);
@@ -197,16 +212,7 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
             if (!StringUtils.isEmpty(companyId)) {
                 map.put("companyId", companyId);
             }
-            String idName = "";
-            if (type instanceof HospitalInfo) {
-                idName = "hospitalId";
-            } else if (type instanceof RestaurantInfo) {
-                idName = "restaurantId";
-            }
-            String idVal = map.get(idName);
-            if (idVal == null || idVal.trim().equals("")) {
-                map.put(idName, UUID.randomUUID().toString().replaceAll("-", ""));
-            }
+            
 
             map.put("companyId", companyId);
             // String jsonString = JSON.toJSONString(map);

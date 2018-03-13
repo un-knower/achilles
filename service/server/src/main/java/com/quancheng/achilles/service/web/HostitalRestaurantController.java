@@ -1,19 +1,14 @@
 package com.quancheng.achilles.service.web;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -27,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.aliyun.odps.OdpsException;
 import com.github.pagehelper.PageInfo;
 import com.quancheng.achilles.dao.constant.InnConstantODPSTables;
@@ -211,9 +205,10 @@ public class HostitalRestaurantController {
                 distanceService.queryFromODPSAndSaveToDB(uuid);
 
                 export(1, uuid, distances, isWaimaiOk, waimai, reserve, username, excelName);
-            } catch (IOException | OdpsException | ParseException | TimeoutException | ExecutionException e) {
-                HostitalRestaurantController.isUsed = false;
+            } catch (Exception e) {
                 logger.error("upload have a error {}", e);
+            }finally{
+                HostitalRestaurantController.isUsed = false;
             }
             return true;
         }

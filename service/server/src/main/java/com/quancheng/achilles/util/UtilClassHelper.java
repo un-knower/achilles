@@ -312,7 +312,15 @@ public class UtilClassHelper {
             Map<String, String> rowMap = new HashMap<>();
             for (int col = 0; col < length; col++) {
                 String key = keys.get(col);
-                String value = getCellValue(row.getCell(col));
+                String value=null;
+                try {
+                    value = getCellValue(row.getCell(col));
+                } catch (Exception e) {
+                    int ce=row.getCell(col).getCellType();
+                    System.err.println("get Value from row:"+(row.getRowNum()+1));
+                    
+                    throw e;
+                }
                 if(rowMap.containsKey(key)){
                     rowMap.remove(key);
                     rowMap.put(key, rowMap.get(key)+","+value);
