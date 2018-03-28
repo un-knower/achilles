@@ -20,7 +20,7 @@
         <Logger name="druid.sql.Statement" level="warn"/>
         <Logger name="druid.sql.ResultSet" level="warn"/>
         <Logger name="RocketmqClient" level="warn"/>
-        <Root level="error">
+        <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>

@@ -14,12 +14,16 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.openservices.ons.api.Action;
@@ -34,6 +38,8 @@ import com.quancheng.starter.messagequeue.MessageListenerDef;
 
 @MessageListenerDef(topic = "mq.aliyun.topic", tags = "terra_order_entry")
 public class MqConsumer implements MessageListener ,InitializingBean{
+    
+    private final Logger LOGGER = LoggerFactory.getLogger(MqConsumer.class);
     @Autowired
     OrderStatisticCityRepository orderStatisticCityRepository;
     @Autowired
@@ -64,6 +70,7 @@ public class MqConsumer implements MessageListener ,InitializingBean{
                 return  Action.CommitMessage;
             }
             Integer terraId = datas.getJSONArray("id").getInteger(0);
+            LOGGER.info("statistic for terra_id:{}",terraId);
             if(lastMaxId!=0) {
                 synchronized (lastMaxId) {
                     if(lastMaxId!=0) {
@@ -119,7 +126,6 @@ public class MqConsumer implements MessageListener ,InitializingBean{
             return  null;
         }
         final String newCity=city.replaceAll("市", "");
-        System.out.println(newCity);
         if(!entityMap.containsKey(newCity)) {
             List<OrderStatisticCity> orderStatisticCities=orderStatisticCityRepository.findAll(Specifications.where(new Specification<OrderStatisticCity>() {
                 public Predicate toPredicate(Root<OrderStatisticCity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -129,7 +135,7 @@ public class MqConsumer implements MessageListener ,InitializingBean{
             entityMap.put(newCity, CollectionUtils.isEmpty(orderStatisticCities)? new OrderStatisticCity(0,0d,newCity ,terraId):orderStatisticCities.get(0));
         }
         OrderStatisticCity orderStatisticCity= entityMap.get(newCity);
-        if(orderStatisticCity.getLastOrderId()==null  && terraId!=null) {
+        if( terraId!=null) {
             orderStatisticCity.setLastOrderId(terraId);
         }
         AtomicInteger ai=cityCount.get(newCity);
