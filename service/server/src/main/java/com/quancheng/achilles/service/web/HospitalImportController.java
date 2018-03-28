@@ -14,7 +14,7 @@ import com.quancheng.achilles.service.services.impl.ImportToOnlineDbServiceImpl;
 
 @RequestMapping("/hospital")
 @RestController
-public class ImportController {
+public class HospitalImportController {
     @Autowired
     ImportToOnlineDbServiceImpl importToOnlineDbServiceImpl;
     @Autowired

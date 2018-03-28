@@ -17,6 +17,16 @@
             <groupId>com.quancheng.application</groupId>
             <artifactId>achilles.dao</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>io.grpc</groupId>
+            		<artifactId>grpc-netty</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.springframework.boot</groupId>
+            		<artifactId>spring-boot-starter-web</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <!-- 分页插件 -->
 		<dependency>
@@ -24,6 +34,19 @@
 			<artifactId>pagehelper</artifactId>
 			<version>4.1.6</version>
 		</dependency>
+		 <dependency>
+            <groupId>com.quancheng.shared</groupId>
+            <artifactId>messagequeue-spring-boot-starter</artifactId>
+            <version>1.0.3-SNAPSHOT</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.springframework.boot</groupId>
+            		<artifactId>
+            			spring-boot-configuration-processor
+            		</artifactId>
+            	</exclusion>
+            </exclusions>
+		 </dependency>
     </dependencies>
 
 </project>

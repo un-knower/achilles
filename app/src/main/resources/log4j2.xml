@@ -19,8 +19,9 @@
         <Logger name="druid.sql.Connection" level="info"/>
         <Logger name="druid.sql.Statement" level="warn"/>
         <Logger name="druid.sql.ResultSet" level="warn"/>
+        <Logger name="RocketmqClient" level="warn"/>
         <Root level="error">
-            <AppenderRef ref="Uploadlog"/>
+            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
 </Configuration>

@@ -13,6 +13,7 @@
     </Appenders>
     <Loggers>
         <Logger name="log4j.logger.java.sql.PreparedStatement" level="DEBUG"/>
+        <Logger name="RocketmqClient" level="warn"/>
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
