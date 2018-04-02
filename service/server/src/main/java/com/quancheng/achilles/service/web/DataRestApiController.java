@@ -1,5 +1,8 @@
 package com.quancheng.achilles.service.web;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,7 +14,13 @@ import com.quancheng.achilles.service.realtime.MqConsumer;
 @RestController
 public class DataRestApiController {
     @RequestMapping(path="/order/realtime/statistic",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public OdpsBaseResponse<OrderStatisticCity> orderRealTimeStatistic() {
-        return new OdpsBaseResponse<>(MqConsumer.export());
+    public OdpsBaseResponse<List<OrderStatisticCity>> orderRealTimeStatistic(Integer top) {
+        return new OdpsBaseResponse<>(Arrays.asList(MqConsumer.exportDetail(top==null?0:top)));
+    }
+    
+    
+    @RequestMapping(path="/order/realtime/total",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public OdpsBaseResponse<OrderStatisticCity> orderRealTimeStatisticTotal() {
+        return new OdpsBaseResponse<>(Arrays.asList(MqConsumer.exportStatistic()));
     }
 }

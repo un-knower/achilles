@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.DoubleAdder;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -32,6 +32,7 @@ import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.MessageListener;
 import com.quancheng.achilles.dao.ds_qc.model.Region;
 import com.quancheng.achilles.dao.ds_qc.repository.RegionRepository;
+import com.quancheng.achilles.dao.quancheng_db.model.OrderStatistic;
 import com.quancheng.achilles.dao.quancheng_db.model.OrderStatisticCity;
 import com.quancheng.achilles.dao.quancheng_db.repository.OrderStatisticCityRepository;
 import com.quancheng.starter.messagequeue.MessageListenerDef;
@@ -45,9 +46,13 @@ public class MqConsumer implements MessageListener ,InitializingBean{
     @Autowired
     RegionRepository regionRepository;
     
-    private static final Map<String,AtomicInteger> cityCount = new HashMap<>();
+    private static final Map<String,OrderStatistic > cacheMap = new ConcurrentHashMap<>();
     
-    private static final Map<String,OrderStatisticCity> entityMap = new ConcurrentHashMap<>();
+    private static final AtomicInteger peopleSum = new AtomicInteger(0);
+    
+    private static final DoubleAdder moneySum = new DoubleAdder();
+    
+    private static final AtomicInteger orderCount = new AtomicInteger();
     
     private   Integer lastMaxId= 0;
     
@@ -94,6 +99,7 @@ public class MqConsumer implements MessageListener ,InitializingBean{
         int pageSize = 1000;
         List<String> attributes = null ;
         int i=0;
+        List<OrderStatisticCity> results = new ArrayList<>(1000) ;
         do {
             attributes=orderStatisticCityRepository.queryOrderAttribute(lastMaxId, maxId,pageSize*i , pageSize );
             i++;
@@ -102,14 +108,14 @@ public class MqConsumer implements MessageListener ,InitializingBean{
             }
             for(String attribute:attributes){
                 try {
-                    doStatistic(JSONObject.parseObject(attribute),maxId);
+                    results.add(doStatistic(JSONObject.parseObject(attribute),maxId));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            orderStatisticCityRepository.save(entityMap.values());
+            orderStatisticCityRepository.save(results);
+            results.clear();
         }while(attributes!=null && attributes.size()==pageSize);
-        
     }
     
     private OrderStatisticCity doStatistic( JSONObject jsonAttribute,Integer terraId  ) {
@@ -126,46 +132,52 @@ public class MqConsumer implements MessageListener ,InitializingBean{
             return  null;
         }
         final String newCity=city.replaceAll("市", "");
-        if(!entityMap.containsKey(newCity)) {
+        if(!cacheMap.containsKey(newCity)) {
             List<OrderStatisticCity> orderStatisticCities=orderStatisticCityRepository.findAll(Specifications.where(new Specification<OrderStatisticCity>() {
                 public Predicate toPredicate(Root<OrderStatisticCity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                    return cb.equal(root.get("order_city"), newCity);
+                    return cb.equal(root.get("orderCity"), newCity);
                 }
             }));
-            entityMap.put(newCity, CollectionUtils.isEmpty(orderStatisticCities)? new OrderStatisticCity(0,0d,newCity ,terraId):orderStatisticCities.get(0));
+            cacheMap.put(newCity, CollectionUtils.isEmpty(orderStatisticCities)
+                    ?new OrderStatistic(newCity)
+                    :new OrderStatistic(orderStatisticCities.get(0)));
         }
-        OrderStatisticCity orderStatisticCity= entityMap.get(newCity);
+        OrderStatistic orderStatisticCity= cacheMap.get(newCity);
         if( terraId!=null) {
-            orderStatisticCity.setLastOrderId(terraId);
+            orderStatisticCity.getOrderStatisticCity().setLastOrderId(terraId);
         }
-        AtomicInteger ai=cityCount.get(newCity);
-        if(ai==null) {
-            ai=new AtomicInteger(orderStatisticCity.getOrder_count());
-            cityCount.put(newCity, ai);
-        }
-        int newCount=ai.incrementAndGet();
-        orderStatisticCity.setOrder_count(newCount);
-        
-       
         Double currentOrderPredictCost = jsonAttribute.getDouble("predictCost");
-        if(currentOrderPredictCost==null||currentOrderPredictCost>100000) {
-            return null;
+        if(currentOrderPredictCost==null || currentOrderPredictCost>100000) {
+            currentOrderPredictCost=0d;
         }
-        BigDecimal now=BigDecimal.valueOf(orderStatisticCity.getOrderSum());
-        BigDecimal result = now.add( currentOrderPredictCost==null?BigDecimal.ZERO:BigDecimal.valueOf(currentOrderPredictCost))
-        .setScale(2, BigDecimal.ROUND_HALF_UP);
-        orderStatisticCity.setOrderSum(result.doubleValue());
-        return orderStatisticCity;
+        Integer peopleNum = jsonAttribute.getInteger("peopleNum");
+        if(peopleNum==null) {
+            peopleNum=0;
+        }
+        orderStatisticCity.caculate(peopleNum, currentOrderPredictCost,1);
+        caculateTotal(currentOrderPredictCost,peopleNum,1);
+        return orderStatisticCity.getOrderStatisticCity();
     }
-    
-    public static List<OrderStatisticCity> export(){
-        List<OrderStatisticCity> result = new  ArrayList<>(entityMap.values());
-        Collections.sort(result ,new Comparator<OrderStatisticCity>() {
-            public int compare(OrderStatisticCity o1, OrderStatisticCity o2) {
-                return o1.getOrder_count().equals(o2.getOrder_count())?0:(o1.getOrder_count()>o2.getOrder_count()?1:-1);
+    public void caculateTotal(double money,int people,int orderCoun) {
+        moneySum.add(money);
+        peopleSum.addAndGet(people);
+        orderCount.addAndGet(orderCoun);
+    }
+    public static List<OrderStatisticCity> exportDetail(int top){
+        List<OrderStatistic > result = new  ArrayList<>(cacheMap.values());
+        Collections.sort(result ,new Comparator<OrderStatistic>() {
+            public int compare(OrderStatistic o1, OrderStatistic o2) {
+                return o1.getOrderStatisticCity().getOrderCount().equals(o2.getOrderStatisticCity().getOrderCount())
+                        ?0:(o1.getOrderStatisticCity().getOrderCount().intValue()>o2.getOrderStatisticCity().getOrderCount().intValue()?1:-1);
             }
         });
-        return result;
+        List<OrderStatisticCity> resuts=   new  ArrayList<>(top==0?result.size():top);
+        result.stream().limit(top==0?result.size():top).forEach(t->resuts.add(t.getOrderStatisticCity()));
+        return resuts;
+    }
+    
+    public static OrderStatisticCity exportStatistic(){
+         return new OrderStatisticCity(orderCount.get(),new BigDecimal(moneySum.sum()).setScale(2,BigDecimal.ROUND_HALF_UP),peopleSum.get());
     }
     public void afterPropertiesSet() throws Exception {
         List<OrderStatisticCity> orderStatisticCities=orderStatisticCityRepository.findAll();
@@ -174,8 +186,8 @@ public class MqConsumer implements MessageListener ,InitializingBean{
             if(orderStatisticCity.getLastOrderId()!=null&& orderStatisticCity.getLastOrderId()>max) {
                 max=orderStatisticCity.getLastOrderId();
             }
-            entityMap.put(orderStatisticCity.getOrder_city(), orderStatisticCity);
-            cityCount.put(orderStatisticCity.getOrder_city(), new AtomicInteger(orderStatisticCity.getOrder_count()));
+            cacheMap.put(orderStatisticCity.getOrderCity(), new OrderStatistic(orderStatisticCity));
+            caculateTotal(orderStatisticCity.getOrderSum().doubleValue(),orderStatisticCity.getPeopleSum() ,orderStatisticCity.getOrderCount() );
         }
         lastMaxId=max;
     }
