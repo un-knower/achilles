@@ -34,8 +34,18 @@ public class OdpsBaseResponse<T> {
     public OdpsBaseResponse( ) {
         super();
     } 
-    public OdpsBaseResponse( String message) {
+    public OdpsBaseResponse( String message ) {
         this.message =message;
         this.status="failed";
-    } 
+    }
+    public OdpsBaseResponse( String message,String status) {
+        this.message =message;
+        this.status=status;
+    }
+    public static <T>OdpsBaseResponse<T> success( String message) {
+        return new OdpsBaseResponse<T>(message,"success");
+    }
+    public static <T>OdpsBaseResponse<T> error( String message) {
+        return new OdpsBaseResponse<T>(message,"failed");
+    }
 }
