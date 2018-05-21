@@ -1,14 +1,16 @@
 package com.quancheng.achilles.service.web;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -56,7 +58,16 @@ public class SepcialRestaurantController {
         mv.addObject("companyList", dataItemServiceImpl.getDataItemDetail("ALL_CLIENT_LIST"));
         mv.setViewName("sepical/restaurant_edit");
         return mv;
-    } 
+    }
+    
+    @RequestMapping(value = "/restaurant/import", method = { RequestMethod.GET, RequestMethod.POST }, produces = {
+            MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.TEXT_HTML_VALUE })
+    public ModelAndView importBatch(  ModelAndView mv) { 
+        mv.addObject("companyList", dataItemServiceImpl.getDataItemDetail("ALL_CLIENT_LIST"));
+        mv.setViewName("sepical/restaurant_import");
+        return mv;
+    }
+    
     @RequestMapping(value = "/restaurant/save", method = {  RequestMethod.POST }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE})
     @ResponseBody
     public OdpsBaseResponse<Object> save(  String id, String gouldId, String restaurantName, String restaurantAddress, String restaurantCity, String gonghaiId, String isOnline, String companyId) { 
@@ -79,6 +90,14 @@ public class SepcialRestaurantController {
         if (json == null) {
             return OdpsBaseResponse.error("无效高德ID");
         }
+        specialRestEntity=buildRest(json ,id, gouldId, companyId, gonghaiId);
+        sepcialRestaurantRepository.save(specialRestEntity);
+        sepcialRestaurantRepository.updateCaciaOnlineStatus(specialRestEntity.getId());
+        return OdpsBaseResponse.success("DONE");
+    } 
+    
+    private SepicalRestaurant buildRest(JSONObject json,String id,String gouldId,String companyId,String gonghaiId) {
+        SepicalRestaurant specialRestEntity;
         if(!StringUtils.isEmpty(id)) {
             specialRestEntity=sepcialRestaurantRepository.findOne(id);
         }else {
@@ -90,20 +109,16 @@ public class SepcialRestaurantController {
             specialRestEntity.setGouldId(gouldId.trim());
             specialRestEntity.setCompanyId(companyId);
             specialRestEntity.setGonghaiId(gonghaiId.trim());
-            specialRestEntity.setAurantAddress(restaurantAddress.trim());
-            specialRestEntity.setAurantCity(restaurantCity.trim());
             specialRestEntity.setType("autoPass");
             specialRestEntity.setStatus("success");
-            specialRestEntity.setAurantName(restaurantName.trim());
+            specialRestEntity.setAurantAddress(json.getString("address").trim());
+            specialRestEntity.setAurantCity(json.getString("cityname").trim());
+            specialRestEntity.setAurantName(json.getString("name").trim());
             specialRestEntity.setGmtCreated(now);
             specialRestEntity.setGmtModified(now);
-        }
-        if (specialRestEntity.getAurantCity() == null || specialRestEntity.getAurantCity().isEmpty()) {
-            specialRestEntity.setAurantCity(json.getString("cityname"));
-        }
-        if (specialRestEntity.getAurantDistrict() == null || specialRestEntity.getAurantDistrict().isEmpty()) {
             specialRestEntity.setAurantDistrict(json.getString("adname"));
         }
+            
         if (json.getString("location") != null && !"[]".equals(json.getString("location"))) {
             String[] location = json.getString("location").split(",");
             specialRestEntity.setLatitude(location[1]);
@@ -137,8 +152,59 @@ public class SepcialRestaurantController {
                 specialRestEntity.setCategory(specialRestEntity.getCategory() == null ? string : (specialRestEntity.getCategory().indexOf(string) != -1  ? specialRestEntity.getCategory() : specialRestEntity.getCategory() + "|" + string));
             }
         }
-        sepcialRestaurantRepository.save(specialRestEntity);
-        sepcialRestaurantRepository.updateCaciaOnlineStatus(specialRestEntity.getId());
+        return specialRestEntity;
+    }
+    
+    
+    @RequestMapping(value = "/restaurant/save/batch", method = {  RequestMethod.POST }, produces = { MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @ResponseBody
+    public OdpsBaseResponse<Object> saveBatch(String restaurantInfo, String companyId) { 
+        String[] restaurantArray = restaurantInfo.split("\n");
+        Set<String> gouldIds = new HashSet<>(restaurantArray.length);
+        List<SepicalRestaurant> list = new ArrayList<>(restaurantArray.length);
+        List<String> ids = new ArrayList<>(restaurantArray.length);
+        SepicalRestaurant sr;
+        for (int i=0;i< restaurantArray.length;i++) {
+            String restStr = restaurantArray[i];
+            String[] infoArr = restStr.trim().split("@");
+            if(restStr.length()==2) {
+                return OdpsBaseResponse.error("第["+(i+1)+"]行,无效数据:"+restStr); 
+            }
+            String gouldId=infoArr[0].trim();
+            String gonghaiId= infoArr[1].trim();
+            if(gouldIds.contains(gouldId.trim())) {
+                return OdpsBaseResponse.error("第["+(i+1)+"]行,数据重复:"+gouldId);
+            }
+            gouldIds.add(gouldId);
+            if(StringUtils.isEmpty(gouldId) ) {
+                return OdpsBaseResponse.error("第["+(i+1)+"]行,无效高德ID");
+            }
+            JSONObject json = GouldApiUtil.gouldByID(gouldId);
+            if (json == null) {
+                return OdpsBaseResponse.error("第["+(i+1)+"]行,无效高德ID");
+            }
+            sr = buildRest(json ,null, gouldId, companyId, gonghaiId);
+            ids.add(sr.getId());
+            list.add(sr);
+        }
+        List<SepicalRestaurant> specialRestEntity =  sepcialRestaurantRepository.findAll(Specifications.where(new Specification<SepicalRestaurant>() {
+                public Predicate toPredicate(Root<SepicalRestaurant> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                    return root.get("gouldId").in(gouldIds.toArray());
+                }
+            }).and(new Specification<SepicalRestaurant>() {
+                public Predicate toPredicate(Root<SepicalRestaurant> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                    return cb.equal(root.get("companyId"), companyId.trim());
+                }
+            }));
+        if(specialRestEntity!=null && specialRestEntity.size()!=0) {
+            String repeatGouldIds="";
+            for (SepicalRestaurant sepicalRestaurant : specialRestEntity) {
+                repeatGouldIds= sepicalRestaurant.getId()+" ";
+            }
+            return OdpsBaseResponse.error("重复餐厅:"+repeatGouldIds);
+        }
+        sepcialRestaurantRepository.save(list);
+        sepcialRestaurantRepository.updateCaciaOnlineStatus(ids.toArray(new String[ids.size()]));
         return OdpsBaseResponse.success("DONE");
     } 
 }

@@ -21,7 +21,7 @@ public interface SepcialRestaurantRepository extends JpaRepository<SepicalRestau
                     "left join quancheng_db.`16860_restaurant_client` c on a.company_id=c.client_id and c.restaurant_id=b.id and c.deleted_at is null " + 
                     "left join quancheng_db.`api_client_blacklists` d on b.id=d.restaurant_id and d.client_id=a.company_id and d.deleted_at is null " + 
                     "set a.online_status=case when b.id is not null and c.id is not null and d.id is null then 'online' else 'offline' end   " + 
-                    "where a.online_status is null and a.id=:id"  ,
+                    "where a.online_status is null and a.id  in (:id)"  ,
             nativeQuery=true)
-    public void updateCaciaOnlineStatus(@Param("id") String id);
+    public void updateCaciaOnlineStatus(@Param("id") String ... id);
 }

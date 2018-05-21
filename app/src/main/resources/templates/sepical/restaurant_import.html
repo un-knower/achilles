@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+  <head th:replace="fragments/head :: head"></head>
+    
+   <body class="fix-sidebar fix-header">
+      <!-- Preloader -->
+      <div class="preloader">
+         <div class="cssload-speeding-wheel"></div>
+      </div>
+      <div id="wrapper">
+         <!-- Top Navigation -->
+         <nav th:replace="fragments/top_navbar :: navbar">
+         </nav>
+         <!-- End Top Navigation -->
+         
+         <!-- Left navbar-sidebar -->
+         <div th:replace="fragments/left_sidebar :: sidebar">
+         </div>
+         <!-- Left navbar-sidebar end -->
+         <!-- Page Content -->
+         <div id="page-wrapper">
+            <div class="container-fluid">
+               <div class="row bg-title">
+                  <!-- .page title -->
+                  <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                     <h4 class="page-title">企业后台-特许餐厅录入</h4>
+                  </div>
+                  <!-- /.page title -->
+                  <!-- .breadcrumb -->
+                  <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                     <ol class="breadcrumb">
+                        <li><a th:href="@{/}">首页</a></li>
+                        <li><a th:href="@{/ops}">运营数据</a></li>
+                        <li class="active"><a th:href="@{#}">企业后台-特许餐厅录入</a></li>
+                     </ol>
+                  </div>
+                  <!-- /.breadcrumb -->
+               </div>
+               <!-- .row -->
+               <div class="row">
+                  <div class="col-md-8">
+                     <div class="white-box">
+                        <h3 class="box-title">企业后台-特许餐厅导入</h3>
+                        <div class="row">
+                          <form id="submit-form" th:action="@{/sepcial/restaurant/edit}" method="post">
+                              <input type="hidden" name="id" th:value="${editInfo==null?null:editInfo.id}"/>
+                              <input type="hidden" id="_csrf" th:value="${_csrf.token}"/>
+                              <table class="table table-hover" style="border: none;">
+<!--                                   <tr> -->
+<!--                                       <td align="right" style="padding:22px 12px;font-size: 16px;"><span>高德ID</span></td> -->
+<!--                                       <td> -->
+<!--                                             <div class="col-md-6"> -->
+<!-- 			                                <input type="text" class="form-control" name="gouldId" id="gouldId" th:value="${editInfo==null?null:editInfo.gouldId}"   th:required="required"  /> -->
+<!-- 			                                </div> -->
+<!--                                       </td> -->
+<!--                                   </tr> -->
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;" width="30%"><span>企业</span></td>
+                                      <td>
+                                            <div class="col-md-6">
+                                              <select class="selectpicker"  data-style="form-control"  name="companyId"  id="companyId" >
+                                                <option></option>
+                                                <option  th:each="x : ${companyList}" th:value="${x.detailKey}" th:text="${x.detailText}"   >
+<!--                                                 th:selected="${  editInfo!=null and x.detailKey==editInfo.companyId}" -->
+                                               
+                                                </option>
+                                              </select>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td align="right" style="padding:22px 12px;font-size: 16px;">
+                                      <span>
+                                      特许-格式:高德id@公海id,
+                                      一行一条数据
+                                      </span>
+                                      </td>
+                                      <td>
+                                            <div class="col-md-6">
+<!--                                                 <input type="text" class="form-control" /> -->
+                                                <textarea rows="30" cols="100%" name="restaurantInfo" id="restaurantInfo"  th:required="required"></textarea>
+                                            </div>
+                                      </td>
+                                  </tr>
+                                   <tr>
+                                       <td >
+                                       </td>  
+                                      <td >
+                                         <div class="col-md-6">
+			                                  <button type="button" onclick="upload();" class="btn btn-block btn-primary waves-effect waves-light" style="height: 38px;">Submit</button>
+			                              </div>
+                                      </td>
+                                  </tr>   
+                              </table>
+                          </form>
+                        </div><!-- /.row -->
+                     </div>
+                  </div>
+               </div>
+               <!-- /.row -->
+               <!-- .right-sidebar -->
+               <div th:replace="fragments/right_sidebar :: rightsidebar">
+               </div>
+               <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer th:replace="fragments/footer :: footer"></footer>
+         </div>
+         <!-- /#page-wrapper -->
+      </div>
+      <!-- /#wrapper -->
+      <div class="foot_scripts" id="foot_scripts" th:replace="fragments/foot_scripts :: foot_scripts"></div>
+   </body>
+    <script type="text/javascript">
+         /*<![CDATA[*/
+        	       function validate(obj){
+        	    	       var keys=obj.rules;
+        	    	       for(var key in keys){
+        	    	    	        var vl=$("#"+key).val();
+        	    	    	        if(!vl){
+        	    	    	        	     sweetAlert("异常", obj.messages[key].required, "error");
+        	    	    	        	     return ;
+        	    	    	        }
+        	    	       }
+        	    	       obj.submitHandler();
+        	    	   }
+        	       function upload(){
+        	    	        validate({
+        	               rules: {
+        	            	       restaurantInfo: { required: true  },
+        	                   companyId: { required: true  },
+//         	                   restaurantName: { required: true  },
+//         	                   restaurantAddress: { required: true  },
+//         	                   restaurantCity: { required: true  },
+//         	                   gonghaiId: { required: true }
+        	               },
+        	               messages: {
+        	            	       restaurantInfo: { required: "特许信息不能为空"},
+        	            	       companyId: { required: "企业不能为空"}
+        	            	       //,
+//         	            	       restaurantName: { required: "餐厅名不能为空"},
+//         	            	       restaurantAddress: { required: "餐厅地址不能为空"},
+//         	            	       restaurantCity: { required: "城市不能为空"},
+//         	            	       gonghaiId: { required: "公海不能为空"}
+        	               },
+        	               submitHandler: function ( ) {
+        	            	   //submitHandler begin
+	        	            	  var url='/sepcial/restaurant/save/batch';
+	                       var formData = new FormData($("#submit-form")[0])
+	                       $.ajax({
+	                           url:url ,  //server script to process data
+	                           type: 'post',
+	                           data:formData,
+	                           dataType: 'json',
+	                           processData: false,  // 不处理数据
+	                           contentType: false ,  // 不设置内容类型
+	                           beforeSend: function(request){
+	                               request.setRequestHeader("X-CSRF-TOKEN", $("#_csrf").val()); 
+	                            },
+	                           success:function(resp){
+	                                   if(resp ){
+	                                       if(resp.status=='success'){
+	                                           sweetAlert(resp.message);
+	                                       }else{
+	                                           sweetAlert("异常", resp.message , "error");
+	                                       }
+	                                   }else{
+	                                       sweetAlert("异常", resp, "error");
+	                                   }
+	                           },
+	                           error:function(XMLHttpRequest, textStatus, errorThrown){
+	                                   sweetAlert("异常", textStatus+'', "error");
+	                           }
+	                       });
+	                       //submitHandler end        
+        	               }
+        	           });
+               }
+	     /*]]>*/
+   </script>
+</html>
