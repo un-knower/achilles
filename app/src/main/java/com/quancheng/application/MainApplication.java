@@ -20,8 +20,10 @@ import org.thymeleaf.dialect.springdata.SpringDataDialect;
         "com.quancheng.*.service.view", "com.quancheng.*.service.api", "com.quancheng.service.*",
         // dao
         "com.quancheng.achilles.dao.*.repository", "com.quancheng.achilles.dao.write",
-        "com.quancheng.shared.*", "com.quancheng.saluki.monitor.web"})
-@ImportResource({"classpath*:quancheng-app-*.xml"})
+        "com.quancheng.shared.*", "com.quancheng.saluki.monitor.web"
+        //
+        ,"com.saluki.client","com.quancheng.starter.log"})
+@ImportResource({"classpath*:quancheng-app-*.xml","classpath*:saluki.xml"})
 @SpringBootApplication
 public class MainApplication {
     static{
