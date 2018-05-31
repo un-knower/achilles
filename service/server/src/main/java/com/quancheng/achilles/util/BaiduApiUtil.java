@@ -1,16 +1,19 @@
 package com.quancheng.achilles.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.quancheng.achilles.service.web.HostitalRestaurantController;
 import com.quancheng.achilles.util.model.PoiInfo;
+import com.quancheng.starter.log.LogUtil;
+import com.quancheng.starter.log.QcLog;
 
 public class BaiduApiUtil {
-    private static  Logger logger = LogManager.getLogger(BaiduApiUtil.class);
+    private static final QcLog logger = LogUtil.getLogger(HostitalRestaurantController.class);
+
     private static final String BAIDU_API_AK = "so17LnMwpaTC06kXfpHLmIGb";
     private static String baiduPoi="http://api.map.baidu.com/geocoder/v2/?location=%s&output=json&pois=1&ak=%s";
     private static String baiduLngLat="http://api.map.baidu.com/geocoder/v2/?ak=%s&output=json&address=%s&city=%s";
@@ -68,7 +71,7 @@ public class BaiduApiUtil {
         try {
             json = getPoiInfoFromBaidu(addressOrName, city, careKeys);
         } catch (Exception e) {
-            logger.error(e );
+            logger.error("",e );
             return null;
         }
         if(json == null ){

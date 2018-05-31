@@ -7,12 +7,12 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.aliyun.odps.OdpsException;
 import com.github.pagehelper.PageInfo;
 import com.quancheng.achilles.dao.constant.InnConstantODPSTables;
@@ -32,13 +33,15 @@ import com.quancheng.achilles.dao.odps.model.RestaurantInfo;
 import com.quancheng.achilles.service.services.HospitalRestaurantDistanceService;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
+import com.quancheng.starter.log.LogUtil;
+import com.quancheng.starter.log.QcLog;
 
 import io.swagger.annotations.ApiParam;
 
 @Controller
 public class HostitalRestaurantController {
 
-    Logger                               logger           = LogManager.getLogger(HostitalRestaurantController.class);
+    private static final QcLog logger = LogUtil.getLogger(HostitalRestaurantController.class);
 
     @Autowired
     HospitalRestaurantDistanceService    distanceService;

@@ -2,8 +2,6 @@ package com.quancheng.achilles.service.controller;
 
 import javax.annotation.Resource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,12 +13,14 @@ import com.quancheng.achilles.dao.odps.model.OdpsFlyCheck;
 import com.quancheng.achilles.service.model.OdpsBaseResponse;
 import com.quancheng.achilles.service.model.OdpsRestRequest;
 import com.quancheng.achilles.service.odps.ODPSQueryService;
+import com.quancheng.starter.log.LogUtil;
+import com.quancheng.starter.log.QcLog;
 
 @Controller
 @RequestMapping(path = "/api/odps")
 public class OdpsSytController {
 
-    Logger           logger = LogManager.getLogger();
+    private static final QcLog logger = LogUtil.getLogger(OdpsSytController.class);
     @Resource
     ODPSQueryService odpsService;
 

@@ -13,8 +13,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +30,8 @@ import com.quancheng.achilles.dao.odps.model.RestaurantInfo;
 import com.quancheng.achilles.service.odps.ODPSQueryService;
 import com.quancheng.achilles.util.JsonUtil;
 import com.quancheng.achilles.util.UtilClassHelper;
+import com.quancheng.starter.log.LogUtil;
+import com.quancheng.starter.log.QcLog;
 
 /**
  * <strong>描述：医院餐厅距离计算service</strong>TODO 描述 <br>
@@ -48,8 +48,8 @@ import com.quancheng.achilles.util.UtilClassHelper;
 
 @Service
 public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurantDistanceService {
+    private static final QcLog logger = LogUtil.getLogger(HospitalRestaurantDistanceServiceImpl.class);
 
-    Logger                     logger = LogManager.getLogger(HospitalRestaurantDistanceServiceImpl.class);
     @Qualifier("statisticsSqlSessionTemplate")
     @Resource(name = "statisticsSqlSessionTemplate")
     private SqlSessionTemplate sqlSession;

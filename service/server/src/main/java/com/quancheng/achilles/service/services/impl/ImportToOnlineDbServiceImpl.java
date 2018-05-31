@@ -16,8 +16,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,16 +28,19 @@ import com.quancheng.achilles.dao.quancheng_db.model.SytHospital;
 import com.quancheng.achilles.dao.quancheng_db.model.SytHospitalRelation;
 import com.quancheng.achilles.dao.quancheng_db.repository.SytHospitalRelationRepository;
 import com.quancheng.achilles.dao.quancheng_db.repository.SytHospitalRepository;
+import com.quancheng.achilles.service.controller.OdpsSytController;
 import com.quancheng.achilles.service.model.ChartDataResp;
 import com.quancheng.achilles.service.model.PageInfo;
 import com.quancheng.achilles.service.services.DataImportService;
 import com.quancheng.achilles.util.BaiduApiUtil;
 import com.quancheng.achilles.util.model.PoiInfo;
+import com.quancheng.starter.log.LogUtil;
+import com.quancheng.starter.log.QcLog;
 
 @Service
 public class ImportToOnlineDbServiceImpl {
     
-    Logger logger = LogManager.getLogger(this.getClass());
+    private static final QcLog logger = LogUtil.getLogger(ImportToOnlineDbServiceImpl.class);
     @Autowired
     DataImportService dataImportService;
     
