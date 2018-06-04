@@ -23,7 +23,7 @@ import org.thymeleaf.dialect.springdata.SpringDataDialect;
         "com.quancheng.shared.*", "com.quancheng.saluki.monitor.web"
         //
         ,"com.saluki.client","com.quancheng.starter.log"})
-@ImportResource({"classpath*:quancheng-app-*.xml","classpath*:saluki.xml"})
+@ImportResource({"classpath*:quancheng-app-*.xml","classpath*:saluki.xml","classpath*:log.xml"})
 @SpringBootApplication
 public class MainApplication {
     static{
