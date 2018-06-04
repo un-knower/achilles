@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class RecordToJsonUitl {
 
-    final static QcLog logger = LogUtil.getLogger();
+    final static QcLog logger = LogUtil.getLogger(RecordToJsonUitl.class);
 
     public static JSONObject json(Record record) {
         JSONObject json = new JSONObject();
