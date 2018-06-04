@@ -23,6 +23,11 @@
 			<artifactId>achilles.server</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+              <groupId>com.quancheng.application</groupId>
+            <artifactId>achilles.dependency</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>

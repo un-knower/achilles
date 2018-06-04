@@ -33,15 +33,13 @@ import com.quancheng.achilles.dao.odps.model.RestaurantInfo;
 import com.quancheng.achilles.service.services.HospitalRestaurantDistanceService;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
-import com.quancheng.starter.log.LogUtil;
-import com.quancheng.starter.log.QcLog;
 
 import io.swagger.annotations.ApiParam;
 
 @Controller
 public class HostitalRestaurantController {
 
-    private static final QcLog logger = LogUtil.getLogger(HostitalRestaurantController.class);
+//    private static final QcLog logger = LogUtil.getLogger(HostitalRestaurantController.class);
 
     @Autowired
     HospitalRestaurantDistanceService    distanceService;
@@ -85,7 +83,7 @@ public class HostitalRestaurantController {
         try {
             response.sendRedirect("/ops/hospitalrestaurant/view");
         } catch (IOException e) {
-            logger.error("upload sendRedirect have a error {}", e);
+//            logger.error("upload sendRedirect have a error {}", e);
         }
     }
 
@@ -148,7 +146,7 @@ public class HostitalRestaurantController {
         } catch (Exception e) {
             export.setStatus("-1");
             export.setMsg("error");
-            logger.error("upload have a error {}", e);
+//            logger.error("upload have a error {}", e);
             isUsed = false;
         }
         // setModelAndView(mv);
@@ -209,7 +207,7 @@ public class HostitalRestaurantController {
 
                 export(1, uuid, distances, isWaimaiOk, waimai, reserve, username, excelName);
             } catch (Exception e) {
-                logger.error("upload have a error {}", e);
+//                logger.error("upload have a error {}", e);
             }finally{
                 HostitalRestaurantController.isUsed = false;
             }
@@ -318,7 +316,7 @@ public class HostitalRestaurantController {
                 try {
                     distanceService.deleteODPSTable(ODPSTableName);
                 } catch (OdpsException | IOException e) {
-                    logger.error("deleteODPSTable have a error {}", e);
+//                    logger.error("deleteODPSTable have a error {}", e);
                 }
             }
         }

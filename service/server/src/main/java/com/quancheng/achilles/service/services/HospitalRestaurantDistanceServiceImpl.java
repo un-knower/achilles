@@ -30,8 +30,6 @@ import com.quancheng.achilles.dao.odps.model.RestaurantInfo;
 import com.quancheng.achilles.service.odps.ODPSQueryService;
 import com.quancheng.achilles.util.JsonUtil;
 import com.quancheng.achilles.util.UtilClassHelper;
-import com.quancheng.starter.log.LogUtil;
-import com.quancheng.starter.log.QcLog;
 
 /**
  * <strong>描述：医院餐厅距离计算service</strong>TODO 描述 <br>
@@ -48,7 +46,7 @@ import com.quancheng.starter.log.QcLog;
 
 @Service
 public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurantDistanceService {
-    private static final QcLog logger = LogUtil.getLogger(HospitalRestaurantDistanceServiceImpl.class);
+//    private static final QcLog logger = LogUtil.getLogger(HospitalRestaurantDistanceServiceImpl.class);
 
     @Qualifier("statisticsSqlSessionTemplate")
     @Resource(name = "statisticsSqlSessionTemplate")
@@ -222,7 +220,7 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
                 list.add(type);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException e) {
-                logger.error("jsonToObjectBy have a error {}", e);
+//                logger.error("jsonToObjectBy have a error {}", e);
             }
 
         }

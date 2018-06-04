@@ -13,14 +13,11 @@ import com.quancheng.achilles.dao.odps.model.OdpsFlyCheck;
 import com.quancheng.achilles.service.model.OdpsBaseResponse;
 import com.quancheng.achilles.service.model.OdpsRestRequest;
 import com.quancheng.achilles.service.odps.ODPSQueryService;
-import com.quancheng.starter.log.LogUtil;
-import com.quancheng.starter.log.QcLog;
 
 @Controller
 @RequestMapping(path = "/api/odps")
 public class OdpsSytController {
 
-    private static final QcLog logger = LogUtil.getLogger(OdpsSytController.class);
     @Resource
     ODPSQueryService odpsService;
 

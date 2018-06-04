@@ -28,19 +28,15 @@ import com.quancheng.achilles.dao.quancheng_db.model.SytHospital;
 import com.quancheng.achilles.dao.quancheng_db.model.SytHospitalRelation;
 import com.quancheng.achilles.dao.quancheng_db.repository.SytHospitalRelationRepository;
 import com.quancheng.achilles.dao.quancheng_db.repository.SytHospitalRepository;
-import com.quancheng.achilles.service.controller.OdpsSytController;
 import com.quancheng.achilles.service.model.ChartDataResp;
 import com.quancheng.achilles.service.model.PageInfo;
 import com.quancheng.achilles.service.services.DataImportService;
 import com.quancheng.achilles.util.BaiduApiUtil;
 import com.quancheng.achilles.util.model.PoiInfo;
-import com.quancheng.starter.log.LogUtil;
-import com.quancheng.starter.log.QcLog;
 
 @Service
 public class ImportToOnlineDbServiceImpl {
     
-    private static final QcLog logger = LogUtil.getLogger(ImportToOnlineDbServiceImpl.class);
     @Autowired
     DataImportService dataImportService;
     
@@ -196,11 +192,11 @@ public class ImportToOnlineDbServiceImpl {
             sytHospitalListNew.clear();
             relationList.clear();
             bufferHospitalNames.clear();
-            logger.info(
-                    (cdr.getPageInfo().hasNext()?(cdr.getPageInfo().getNumber()+1)*cdr.getPageInfo().getPageSize()
-                     :((cdr.getPageInfo().getNumber())*cdr.getPageInfo().getPageSize()+cdr.getDataList().size())
-                     )
-                    +"/"+cdr.getPageInfo().getTotalElements());
+//            logger.info(
+//                    (cdr.getPageInfo().hasNext()?(cdr.getPageInfo().getNumber()+1)*cdr.getPageInfo().getPageSize()
+//                     :((cdr.getPageInfo().getNumber())*cdr.getPageInfo().getPageSize()+cdr.getDataList().size())
+//                     )
+//                    +"/"+cdr.getPageInfo().getTotalElements());
         }while(cdr!=null && cdr.getPageInfo().hasNext());
     }
     public void save(List<SytHospital> list,List<SytHospitalRelation> listRel,Long clientId){
@@ -219,7 +215,7 @@ public class ImportToOnlineDbServiceImpl {
                     errorHospitalList.add(sytHospital.getName());
                 }
             }
-            logger.error("error message:{},cause:{}",e.getMessage(),e.getCause()!=null?"nothing":e.getCause().getMessage());
+//            logger.error("error message:{},cause:{}",e.getMessage(),e.getCause()!=null?"nothing":e.getCause().getMessage());
             throw e;
         }
     }
