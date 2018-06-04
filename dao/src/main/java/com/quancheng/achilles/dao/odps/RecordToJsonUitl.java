@@ -1,23 +1,21 @@
 package com.quancheng.achilles.dao.odps;
 
+import com.aliyun.odps.Column;
+import com.aliyun.odps.OdpsType;
+import com.aliyun.odps.data.Record;
+import com.quancheng.achilles.util.JsonUtil;
+import com.quancheng.starter.log.LogUtil;
+import com.quancheng.starter.log.QcLog;
+import net.sf.json.JSONObject;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.aliyun.odps.Column;
-import com.aliyun.odps.OdpsType;
-import com.aliyun.odps.data.Record;
-import com.quancheng.achilles.util.JsonUtil;
-
-import net.sf.json.JSONObject;
-
 public class RecordToJsonUitl {
 
-    final static Logger logger = LogManager.getLogger();
+    final static QcLog logger = LogUtil.getLogger();
 
     public static JSONObject json(Record record) {
         JSONObject json = new JSONObject();
