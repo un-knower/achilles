@@ -21,6 +21,7 @@ import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.services.DataImportService;
 import com.quancheng.achilles.service.services.impl.DataItemServiceImpl;
 import com.quancheng.achilles.service.services.impl.DorisTableServiceImpl;
+import com.quancheng.starter.log.QcLoggable;
 
 import io.swagger.annotations.ApiParam;
 /***
@@ -105,7 +106,7 @@ public class DataImportController {
             }).start();   
         }
     }
-    
+    @QcLoggable(QcLoggable.Type.NONE)
     @RequestMapping(path = "/model/status" ,produces = { MediaType.APPLICATION_JSON_UTF8_VALUE },method=RequestMethod.GET)
     public String request( ){
         return status;

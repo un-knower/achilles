@@ -20,7 +20,7 @@ public class OssFileInfo implements Serializable {
     public static final char OSS_STATUS_ERROR = '1';
     public static final char OSS_STATUS_OUTDATED = '2';
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "user_name")
