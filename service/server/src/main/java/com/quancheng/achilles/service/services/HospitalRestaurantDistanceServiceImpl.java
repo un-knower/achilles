@@ -1,5 +1,6 @@
 package com.quancheng.achilles.service.services;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -138,7 +139,7 @@ public class HospitalRestaurantDistanceServiceImpl implements HospitalRestaurant
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Boolean saveExcelToDB(MultipartFile file, T type, String companyId,
+    public <T> Boolean saveExcelToDB(File file, T type, String companyId,
                                      Boolean clearTable) throws IOException {
         if (clearTable != null && clearTable) {
             if (type instanceof HospitalInfo) {

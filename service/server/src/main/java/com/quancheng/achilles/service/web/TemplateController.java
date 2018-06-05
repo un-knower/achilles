@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.quancheng.achilles.dao.ds_qc.model.BaseResponse;
 import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.dao.ds_st.model.DorisTableInfo;
@@ -22,14 +25,11 @@ import com.quancheng.achilles.service.services.impl.AchillesDiyColumnsServiceImp
 import com.quancheng.achilles.service.services.impl.DorisTableServiceImpl;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
-import com.quancheng.starter.log.LogUtil;
-import com.quancheng.starter.log.QcLog;
-import com.quancheng.starter.log.QcLoggable;
 
 @Controller
 @RequestMapping(path = "/ops/template")
 public class TemplateController {
-    private static final QcLog logger = LogUtil.getLogger(TemplateController.class);
+//    private static final QcLog logger = LogUtil.getLogger(TemplateController.class);
     @Autowired
     AchillesDiyColumnsServiceImpl achillesDiyColumnsServiceImpl;
     @Autowired
@@ -87,16 +87,16 @@ public class TemplateController {
     @RequestMapping(path="export",method = { RequestMethod.POST }, produces = {
             MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
-    @QcLoggable(QcLoggable.Type.RESPONSE)
+//    @QcLoggable(QcLoggable.Type.RESPONSE)
     public BaseResponse export(HttpServletRequest request)   {
           Map<String,String[]> params = request.getParameterMap();
         if(params==null|| params.size()==0) {
-            logger.error("invalid paramter 2");
+//            logger.error("invalid paramter 2");
             return new BaseResponse("500","invalid paramter 2");
         }
         
         if(params.get("templateId")==null|| params.get("templateId").length==0) {
-            logger.error("invalid paramter 3");
+//            logger.error("invalid paramter 3");
             return new BaseResponse("500","invalid paramter 3");
         }
         final Map<String,String[]> param = new HashMap<>();

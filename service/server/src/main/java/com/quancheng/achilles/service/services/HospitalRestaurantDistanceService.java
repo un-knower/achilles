@@ -1,13 +1,12 @@
 package com.quancheng.achilles.service.services;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-
-import org.springframework.web.multipart.MultipartFile;
 
 import com.aliyun.odps.OdpsException;
 import com.github.pagehelper.PageInfo;
@@ -32,7 +31,7 @@ public interface HospitalRestaurantDistanceService {
     Boolean clearHospitalInfo();
 
     /** Excel信息到DB */
-    <T> Boolean saveExcelToDB(MultipartFile file, T type, String companyId, Boolean clearTable) throws IOException;
+    <T> Boolean saveExcelToDB(File file, T type, String companyId, Boolean clearTable) throws IOException;
 
     /** 清空餐厅信息表 */
     Boolean clearRestaurantInfo();

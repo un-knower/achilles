@@ -1,5 +1,6 @@
 package com.quancheng.achilles.service.web;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,6 @@ import com.quancheng.achilles.dao.odps.model.RestaurantInfo;
 import com.quancheng.achilles.service.services.HospitalRestaurantDistanceService;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
-import com.quancheng.starter.log.QcLoggable;
 
 import io.swagger.annotations.ApiParam;
 
@@ -48,7 +48,7 @@ public class HostitalRestaurantController {
     OssServiceDBUtil                     ossServiceDBUtil;
     private final static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(5);
     private static boolean               isUsed           = false;
-    @QcLoggable(QcLoggable.Type.NONE)
+//    @QcLoggable(QcLoggable.Type.NONE)
     @RequestMapping(value = "/api/ops/hospitalrestaurant/getStatus", method = RequestMethod.POST)
     @ResponseBody
     public Boolean getStatus() {
@@ -77,18 +77,30 @@ public class HostitalRestaurantController {
                                   @ApiParam(value = "选择插入城市列表") @RequestParam(value = "cityIds", required = false) String[] cityIds,
                                   HttpServletRequest request, HttpServletResponse response, ModelAndView mv) {
         String remoteUser = request.getRemoteUser();
-        EXECUTOR_SERVICE.execute(() -> {
-            upload(file, isUpload, excelType, excelCompanyId, distances, isInsertDatas, isIncludeSpecial, taskType,
-                   waimai, isWaimaiOk, reserve, compareCompany, companyIds, cityIds, remoteUser);
-        });
+        File nf;
         try {
+                File dir = new File("./upload/");
+                if(!dir.exists()) {
+                    dir.mkdir();
+                }
+                nf=new File(dir.getAbsolutePath()+"/"+file.getOriginalFilename());
+                file.transferTo(nf);
+                File oldfile =new File(file.getOriginalFilename());
+                if( oldfile.exists()) {
+                    oldfile.delete();
+                }
+                
+            EXECUTOR_SERVICE.execute(() -> {
+                upload(nf, isUpload, excelType, excelCompanyId, distances, isInsertDatas, isIncludeSpecial, taskType,
+                       waimai, isWaimaiOk, reserve, compareCompany, companyIds, cityIds, remoteUser);
+            });
             response.sendRedirect("/ops/hospitalrestaurant/view");
         } catch (IOException e) {
 //            logger.error("upload sendRedirect have a error {}", e);
         }
     }
 
-    public void upload(MultipartFile file, Boolean isUpload, String excelType, String excelCompanyId, Double distances,
+    public void upload(File file, Boolean isUpload, String excelType, String excelCompanyId, Double distances,
                        Boolean isInsertDatas, Boolean isIncludeSpecial, String taskType, String waimai,
                        Boolean isWaimaiOk, String reserve, Boolean compareCompany, String[] companyIds,
                        String[] cityIds, String remoteUser) {
@@ -126,33 +138,28 @@ public class HostitalRestaurantController {
                 }
             }
             String excelName = "医院餐厅距离计算详情";
-            if (isUpload != null && isUpload) {
-                if (!file.isEmpty()) {
-                    String originalFilename = file.getOriginalFilename();
+            if (isUpload != null && isUpload && file.exists()) {
+                    String originalFilename = file.getName();
                     if (!StringUtils.isEmpty(originalFilename)) {
                         excelName = excelName + "(" + originalFilename.split("\\.")[0] + ")";
                     }
                     saveExcelToDB = distanceService.saveExcelToDB(file, otype, excelCompanyId, !clearTable);
                     if (!saveExcelToDB) {
                         export.setMsg("上传失败，没保存到数据库");
+                    }else {
+                        EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, remoteUser, excelName,
+                                distances, isWaimaiOk, waimai, reserve, isIncludeSpecial));
                     }
-                } else {
-                    export.setMsg("上传失败，因为文件是空的.");
-                }
+            }else {
+                EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, remoteUser, excelName,
+                        distances, isWaimaiOk, waimai, reserve, isIncludeSpecial));
             }
-            EXECUTOR_SERVICE.submit(new Handel(taskType, excelType, compareCompany, otype, remoteUser, excelName,
-                                               distances, isWaimaiOk, waimai, reserve, isIncludeSpecial));
-            // isUsed = !submit.get(30, TimeUnit.MINUTES);
-
         } catch (Exception e) {
+            e.printStackTrace();
             export.setStatus("-1");
             export.setMsg("error");
-//            logger.error("upload have a error {}", e);
             isUsed = false;
         }
-        // setModelAndView(mv);
-        // return mv.addObject("status", export);
-
     }
 
     class Handel implements Callable<Boolean> {

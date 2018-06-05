@@ -1,5 +1,7 @@
 package com.quancheng.achilles.service.web;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.quancheng.achilles.dao.ds_st.model.DorisTableColumns;
@@ -21,6 +24,7 @@ import com.quancheng.achilles.service.constants.InnConstantPage;
 import com.quancheng.achilles.service.services.DataImportService;
 import com.quancheng.achilles.service.services.impl.DataItemServiceImpl;
 import com.quancheng.achilles.service.services.impl.DorisTableServiceImpl;
+//import com.quancheng.starter.log.QcLoggable;
 import com.quancheng.starter.log.QcLoggable;
 
 import io.swagger.annotations.ApiParam;
@@ -48,6 +52,8 @@ public class DataImportController {
     DataItemServiceImpl dataItemServiceImpl;
     
     private static volatile String status="free";
+    
+    String dir = "upload/";
     /***
      * 模版 列表
      * @param mv
@@ -93,17 +99,32 @@ public class DataImportController {
             @ApiParam(value = "模版id") @RequestParam(value = "dorisTableId", required = false) Long dorisTableId) {
         if("free".equals(status)){
             status="busy";
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        dataImportService.doImport(file, dorisTableId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }finally{
-                        status="free";
-                    }
+            File nf;
+            try {
+                File dir = new File("./upload/");
+                if(!dir.exists()) {
+                    dir.mkdir();
                 }
-            }).start();   
+                nf=new File(dir.getAbsolutePath()+"/"+file.getOriginalFilename());
+                file.transferTo(nf);
+                File oldfile =new File(file.getOriginalFilename());
+                if( oldfile.exists()) {
+                    oldfile.delete();
+                }
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            dataImportService.doImport(nf, dorisTableId);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }finally{
+                            status="free";
+                        }
+                    }
+                }).start();   
+            } catch (IllegalStateException | IOException e1) {
+                e1.printStackTrace();
+            }
         }
     }
     @QcLoggable(QcLoggable.Type.NONE)

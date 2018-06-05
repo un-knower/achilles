@@ -1,6 +1,7 @@
 package com.quancheng.achilles.service.services.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -12,14 +13,16 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
 import com.quancheng.achilles.dao.ds_st.mapper.DataImportTemplateMapper;
 import com.quancheng.achilles.dao.ds_st.model.AchillesDiyTemplateColumns;
 import com.quancheng.achilles.dao.ds_st.model.DataItemDetail;
@@ -50,7 +53,7 @@ public class DataImportServiceImpl implements DataImportService {
     DataItemServiceImpl dataItemServiceImpl;
     String dateTypePrex="CONVERT_";
     String dateDefaultPrex = "DEFAULT_";
-    public void doImport(MultipartFile file, Long tableId) {
+    public void doImport(File file, Long tableId) {
         try {
             DorisTableInfo table = dorisTableInfoRepository.findOne(tableId);
             List<DorisTableColumns> cols =  dorisTableColumnsRepository.findAll(new Specification<DorisTableColumns>() {
@@ -79,7 +82,7 @@ public class DataImportServiceImpl implements DataImportService {
                     defaultMapping.put(dorisTableColumns.getColName(), dorisTableColumns.getDataType().substring(dateTypePrex.length()));
                 }
             }
-            UtilClassHelper.processByGivenRowHandler(file.getInputStream(),file.getOriginalFilename(), 100, new Consumer<List<Map<String, String>>>(){
+            UtilClassHelper.processByGivenRowHandler(new FileInputStream(file)  ,file.getName(), 100, new Consumer<List<Map<String, String>>>(){
                 public void accept(List<Map<String, String>> t) {
                     doInsert(colsArr,t,table,convertMapping,defaultMapping);
                 }
@@ -87,7 +90,9 @@ public class DataImportServiceImpl implements DataImportService {
        } catch (IOException e) {
            e.printStackTrace();
        }finally{
-           new File(file.getOriginalFilename()).delete();
+           if(file.exists()) {
+               file.delete();
+           }
        }
     }
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
