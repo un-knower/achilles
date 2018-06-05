@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.quancheng.achilles.dao.ds_qc.model.BaseResponse;
 import com.quancheng.achilles.dao.ds_st.model.OssFileInfo;
 import com.quancheng.achilles.service.services.OssFileInfoService;
+import com.quancheng.starter.log.QcLoggable;
 
 /**
  * @author lijun jiang
@@ -33,7 +34,7 @@ public class DownLoadRecordController {
 
     @RequestMapping(value = "/ops/lastest-10-files", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-//    @QcLoggable(QcLoggable.Type.NONE)
+    @QcLoggable(QcLoggable.Type.NONE)
     public BaseResponse getLatest10OssFiles(HttpSession session, ModelAndView mv) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();

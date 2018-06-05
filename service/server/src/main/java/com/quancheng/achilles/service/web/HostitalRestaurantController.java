@@ -34,6 +34,7 @@ import com.quancheng.achilles.dao.odps.model.RestaurantInfo;
 import com.quancheng.achilles.service.services.HospitalRestaurantDistanceService;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
+import com.quancheng.starter.log.QcLoggable;
 
 import io.swagger.annotations.ApiParam;
 
@@ -48,7 +49,7 @@ public class HostitalRestaurantController {
     OssServiceDBUtil                     ossServiceDBUtil;
     private final static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(5);
     private static boolean               isUsed           = false;
-//    @QcLoggable(QcLoggable.Type.NONE)
+    @QcLoggable(QcLoggable.Type.NONE)
     @RequestMapping(value = "/api/ops/hospitalrestaurant/getStatus", method = RequestMethod.POST)
     @ResponseBody
     public Boolean getStatus() {
