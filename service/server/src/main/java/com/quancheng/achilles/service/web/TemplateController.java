@@ -22,12 +22,14 @@ import com.quancheng.achilles.service.services.impl.AchillesDiyColumnsServiceImp
 import com.quancheng.achilles.service.services.impl.DorisTableServiceImpl;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
+import com.quancheng.starter.log.LogUtil;
+import com.quancheng.starter.log.QcLog;
 import com.quancheng.starter.log.QcLoggable;
 
 @Controller
 @RequestMapping(path = "/ops/template")
 public class TemplateController {
-    
+    private static final QcLog logger = LogUtil.getLogger(TemplateController.class);
     @Autowired
     AchillesDiyColumnsServiceImpl achillesDiyColumnsServiceImpl;
     @Autowired
@@ -88,14 +90,16 @@ public class TemplateController {
     @QcLoggable(QcLoggable.Type.RESPONSE)
     public BaseResponse export(HttpServletRequest request)   {
         if(request == null) {
+            logger.error("invalid paramter 1");
             return new BaseResponse("500","invalid paramter 1");
         }
-        
         final Map<String,String[]> param = request.getParameterMap();
         if(param==null|| param.size()==0) {
+            logger.error("invalid paramter 2");
             return new BaseResponse("500","invalid paramter 2");
         }
         if(param.get("templateId")==null|| param.get("templateId").length==0) {
+            logger.error("invalid paramter 3");
             return new BaseResponse("500","invalid paramter 3");
         }
         class AsyncUploadToOSS implements Runnable {
