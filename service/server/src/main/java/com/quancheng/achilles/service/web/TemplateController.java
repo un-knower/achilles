@@ -1,6 +1,7 @@
 package com.quancheng.achilles.service.web;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import com.quancheng.achilles.service.services.impl.AchillesDiyColumnsServiceImp
 import com.quancheng.achilles.service.services.impl.DorisTableServiceImpl;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
+import com.quancheng.starter.log.QcLoggable;
 
 @Controller
 @RequestMapping(path = "/ops/template")
@@ -83,8 +85,19 @@ public class TemplateController {
     @RequestMapping(path="export",method = { RequestMethod.POST }, produces = {
             MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
+    @QcLoggable(QcLoggable.Type.RESPONSE)
     public BaseResponse export(HttpServletRequest request)   {
+        if(request == null) {
+            return new BaseResponse("500","invalid paramter 1");
+        }
+        
         final Map<String,String[]> param = request.getParameterMap();
+        if(param==null|| param.size()==0) {
+            return new BaseResponse("500","invalid paramter 2");
+        }
+        if(param.get("templateId")==null|| param.get("templateId").length==0) {
+            return new BaseResponse("500","invalid paramter 3");
+        }
         class AsyncUploadToOSS implements Runnable {
             private String username;
             public AsyncUploadToOSS( String username) {
@@ -93,6 +106,13 @@ public class TemplateController {
             @Override
             public void run() {
                 ChartDataResp cdr =null;
+                if(param.get("templateId")==null|| param.get("templateId").length==0) {
+                    try {
+                        throw  new Exception("500 ,invalid paramter");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 Long templateId=Long.parseLong(param.get("templateId")[0].toString());
                 DorisTableTO dtt = dorisTableServiceImpl.query(templateId);
                 List<AchillesDiyTemplateColumns> cols = achillesDiyColumnsServiceImpl.getTemplateColsByTemplate(templateId);
