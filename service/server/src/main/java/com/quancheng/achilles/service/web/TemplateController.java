@@ -89,18 +89,19 @@ public class TemplateController {
     @ResponseBody
     @QcLoggable(QcLoggable.Type.RESPONSE)
     public BaseResponse export(HttpServletRequest request)   {
-        if(request == null) {
-            logger.error("invalid paramter 1");
-            return new BaseResponse("500","invalid paramter 1");
-        }
-        final Map<String,String[]> param = request.getParameterMap();
-        if(param==null|| param.size()==0) {
+          Map<String,String[]> params = request.getParameterMap();
+        if(params==null|| params.size()==0) {
             logger.error("invalid paramter 2");
             return new BaseResponse("500","invalid paramter 2");
         }
-        if(param.get("templateId")==null|| param.get("templateId").length==0) {
+        
+        if(params.get("templateId")==null|| params.get("templateId").length==0) {
             logger.error("invalid paramter 3");
             return new BaseResponse("500","invalid paramter 3");
+        }
+        final Map<String,String[]> param = new HashMap<>();
+        for (String key : params.keySet()) {
+            param.put(key, params.get(key));
         }
         class AsyncUploadToOSS implements Runnable {
             private String username;
@@ -110,13 +111,6 @@ public class TemplateController {
             @Override
             public void run() {
                 ChartDataResp cdr =null;
-                if(param.get("templateId")==null|| param.get("templateId").length==0) {
-                    try {
-                        throw  new Exception("500 ,invalid paramter");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
                 Long templateId=Long.parseLong(param.get("templateId")[0].toString());
                 DorisTableTO dtt = dorisTableServiceImpl.query(templateId);
                 List<AchillesDiyTemplateColumns> cols = achillesDiyColumnsServiceImpl.getTemplateColsByTemplate(templateId);
