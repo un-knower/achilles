@@ -83,17 +83,18 @@ public class HostitalRestaurantController {
         String remoteUser = request.getRemoteUser();
         File nf;
         try {
-                File dir = new File("upload/");
-                if(!dir.exists()) {
-                    dir.mkdir();
-                }
-                nf=new File(dir.getAbsolutePath()+"/"+file.getOriginalFilename());
+            File dir = new File("upload/");
+            if(!dir.exists()) {
+                dir.mkdir();
+            }
+            nf=file==null?null:new File(dir.getAbsolutePath()+"/"+file.getOriginalFilename());
+            if(file!=null) {
                 file.transferTo(nf);
                 File oldfile =new File(file.getOriginalFilename());
                 if( oldfile.exists()) {
                     oldfile.delete();
                 }
-                
+            }
             EXECUTOR_SERVICE.execute(() -> {
                 upload(nf, isUpload, excelType, excelCompanyId, distances, isInsertDatas, isIncludeSpecial, taskType,
                        waimai, isWaimaiOk, reserve, compareCompany, companyIds, cityIds, remoteUser);

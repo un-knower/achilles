@@ -97,7 +97,7 @@ public class DataImportController {
     @ResponseBody
     public void importOption(  @ApiParam(value = "导入Excel的文件") @RequestParam(value = "file", required = false) MultipartFile file, 
             @ApiParam(value = "模版id") @RequestParam(value = "dorisTableId", required = false) Long dorisTableId) {
-        if("free".equals(status)){
+        if("free".equals(status) && file!=null){
             status="busy";
             File nf;
             try {
@@ -105,11 +105,13 @@ public class DataImportController {
                 if(!dir.exists()) {
                     dir.mkdir();
                 }
-                nf=new File(dir.getAbsolutePath()+"/"+file.getOriginalFilename());
-                file.transferTo(nf);
-                File oldfile =new File(file.getOriginalFilename());
-                if( oldfile.exists()) {
-                    oldfile.delete();
+                nf=file==null?null:new File(dir.getAbsolutePath()+"/"+file.getOriginalFilename());
+                if(file != null) {
+                    file.transferTo(nf);
+                    File oldfile =new File(file.getOriginalFilename());
+                    if( oldfile.exists()) {
+                        oldfile.delete();
+                    }
                 }
                 new Thread(new Runnable() {
                     public void run() {
