@@ -60,6 +60,7 @@ public class HostitalRestaurantController {
     /**
      * 上传和计算
      */
+    @QcLoggable(QcLoggable.Type.NONE)
     @RequestMapping(value = "/ops/hospitalrestaurant/upload", method = RequestMethod.POST)
     @ResponseBody
     public void uploadCalculation(@ApiParam(value = "导入Excel的文件") @RequestParam(value = "file", required = false) MultipartFile file,
