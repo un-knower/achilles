@@ -88,7 +88,7 @@ public class HostitalRestaurantController {
                 dir.mkdir();
             }
             nf=file==null?null:new File(dir.getAbsolutePath()+"/"+file.getOriginalFilename());
-            if(file!=null) {
+            if(file!=null && file.getOriginalFilename()!=null && !file.getOriginalFilename().isEmpty()) {
                 file.transferTo(nf);
                 File oldfile =new File(file.getOriginalFilename());
                 if( oldfile.exists()) {
