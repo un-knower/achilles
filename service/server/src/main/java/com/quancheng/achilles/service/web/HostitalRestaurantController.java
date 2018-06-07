@@ -34,6 +34,8 @@ import com.quancheng.achilles.dao.odps.model.RestaurantInfo;
 import com.quancheng.achilles.service.services.HospitalRestaurantDistanceService;
 import com.quancheng.achilles.service.utils.DownloadBuilder;
 import com.quancheng.achilles.service.utils.OssServiceDBUtil;
+import com.quancheng.starter.log.LogUtil;
+import com.quancheng.starter.log.QcLog;
 import com.quancheng.starter.log.QcLoggable;
 
 import io.swagger.annotations.ApiParam;
@@ -41,7 +43,7 @@ import io.swagger.annotations.ApiParam;
 @Controller
 public class HostitalRestaurantController {
 
-//    private static final QcLog logger = LogUtil.getLogger(HostitalRestaurantController.class);
+    private static final QcLog logger = LogUtil.getLogger(HostitalRestaurantController.class);
 
     @Autowired
     HospitalRestaurantDistanceService    distanceService;
@@ -98,7 +100,7 @@ public class HostitalRestaurantController {
             });
             response.sendRedirect("/ops/hospitalrestaurant/view");
         } catch (IOException e) {
-//            logger.error("upload sendRedirect have a error {}", e);
+            logger.error("upload sendRedirect have a error {}", e);
         }
     }
 
