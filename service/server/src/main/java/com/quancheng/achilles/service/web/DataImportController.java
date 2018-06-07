@@ -101,7 +101,7 @@ public class DataImportController {
             status="busy";
             File nf;
             try {
-                File dir = new File("./upload/");
+                File dir = new File("upload/");
                 if(!dir.exists()) {
                     dir.mkdir();
                 }
