@@ -6,7 +6,7 @@ app是个标准的springboot工程,目前是基于1.4.0版本。
 
 每个应用都需要从基础工程中fetch出来,原则上不允许单个应用去修改里面的内容
 
-### 商宴通组织架构
+### 组织架构
     事业部:16860_member.business_id ==16860_organizational_structure.id --> 16860_member.business_id--> ifnull[0,null] -->16860_member. division_id == 16860_organizational_structure.old_id
  
     子公司:16860_member.branch_id ==16860_organizational_structure.id --> 16860_member.branch_id--> ifnull[0,null] --> 16860_member.invoice_id == 16860_organizational_structure.old_id
@@ -16,7 +16,7 @@ app是个标准的springboot工程,目前是基于1.4.0版本。
      产品组:16860_member.productgroup_id ==16860_organizational_structure.id --> 16860_member.productgroup_id--> ifnull[0,null] --> 16860_member.invoice_id == 16860_organizational_structure.old_id
  
     大区   :16860_member.business_id ==16860_organizational_structure.id --> 16860_member.business_id--> ifnull[0,null] --> 16860_member.division_id == 16860_organizational_structure.old_id
-### 商宴通数据字典
+### 数据字典
     16860_account : 订单结算单；商户发起申请结算
     16860_account_copy : 订单结算单；商户发起申请结算
     16860_action : 系统行为表
